@@ -1,13 +1,7 @@
-/*
- * ROFI One Dark
- *
- * Based on OneDark.vim (https://github.com/joshdick/onedark.vim)
- *
- * Author: Benjamin Stauss
- * User: me-benni
- *
- */
-
+configuration {
+  theme: "onedark";
+  show-icons: true;
+}
 
 * {
   black:      #000000;
