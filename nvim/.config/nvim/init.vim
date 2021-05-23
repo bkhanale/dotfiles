@@ -16,8 +16,14 @@ set termguicolors
 colorscheme onedark
 
 set list
-set listchars=eol:⏎,tab:␉·,trail:␠,nbsp:⎵
-filetype on
+set listchars=tab:→\ ,space:·,nbsp:␣,trail:•,eol:¶,precedes:«,extends:»
+set guicursor=i:block
+filetype plugin indent on
+
+set tabstop=4
+set shiftwidth=4
+set softtabstop=4
+set expandtab
 
 " Keyboard mappings
 nnoremap <leader>n :NERDTreeFocus<CR>
@@ -55,6 +61,7 @@ autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTr
 let g:NERDTreeGitStatusUseNerdFonts = 1
 " Hides the brackets around the git status
 let g:NERDTreeGitStatusConcealBrackets = 1
+let g:NERDTreeShowHidden = 1
 
 " Set powerline glyphs
 let g:airline_powerline_fonts = 1
