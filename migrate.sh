@@ -143,6 +143,17 @@ info "Applying dotfiles…"
 chezmoi apply --source="$DOTFILES_DIR"
 success "chezmoi apply complete"
 
+# ── Fix .gnupg permissions (gpg is strict: 700 dirs, 600 files) ───────────────
+# chezmoi writing gpg-agent.conf can leave directory permissions that break keyboxd
+if [[ -d "$HOME/.gnupg" ]]; then
+  info "Fixing ~/.gnupg permissions…"
+  chmod 700 "$HOME/.gnupg"
+  find "$HOME/.gnupg" -type d -exec chmod 700 {} \;
+  find "$HOME/.gnupg" -type f -exec chmod 600 {} \;
+  gpgconf --kill all 2>/dev/null || true   # restart daemons fresh
+  success "GPG permissions fixed"
+fi
+
 # ── Step 4: Write secrets.zsh ─────────────────────────────────────────────────
 header "Step 4 — Write secrets.zsh (gitignored)"
 
