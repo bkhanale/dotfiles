@@ -244,6 +244,62 @@ require("lazy").setup({
     end,
   },
 
+  -- ── File tree ─────────────────────────────────────────────────────────────
+  {
+    "nvim-tree/nvim-tree.lua",
+    dependencies = { "nvim-tree/nvim-web-devicons" },
+    config = function()
+      -- Disable netrw in favour of nvim-tree
+      vim.g.loaded_netrw       = 1
+      vim.g.loaded_netrwPlugin = 1
+
+      require("nvim-tree").setup({
+        hijack_directories = {
+          enable    = true, -- auto-open tree when nvim is given a directory
+          auto_open = true,
+        },
+        view = {
+          width          = 35,
+          side           = "left",
+          preserve_window_proportions = true,
+        },
+        renderer = {
+          group_empty   = true,
+          highlight_git = true,
+          icons = {
+            show = { git = true, folder = true, file = true },
+          },
+        },
+        filters = { dotfiles = false },
+        git     = { enable = true, ignore = false },
+        actions = {
+          open_file = {
+            quit_on_open     = false,
+            window_picker    = { enable = true },
+          },
+        },
+        update_focused_file = { enable = true, update_root = false },
+      })
+
+      -- Auto-open the tree when nvim starts with a directory argument,
+      -- then place an empty buffer to the right for a side-by-side view.
+      vim.api.nvim_create_autocmd("VimEnter", {
+        callback = function(data)
+          local is_dir = vim.fn.isdirectory(data.file) == 1
+          if is_dir then
+            vim.cmd.cd(data.file)
+            require("nvim-tree.api").tree.open()
+            -- Defer so the tree split is fully set up before we switch panes
+            vim.schedule(function()
+              vim.cmd("wincmd l") -- move focus to the right (editing) pane
+              vim.cmd("enew")     -- open a blank buffer there
+            end)
+          end
+        end,
+      })
+    end,
+  },
+
   -- ── Which-key ─────────────────────────────────────────────────────────────
   {
     "folke/which-key.nvim",
@@ -259,7 +315,7 @@ require("lazy").setup({
   performance = {
     rtp = {
       disabled_plugins = {
-        "gzip", "matchit", "matchparen", "netrwPlugin",
+        "gzip", "matchit", "matchparen",
         "tarPlugin", "tohtml", "tutor", "zipPlugin",
       },
     },
