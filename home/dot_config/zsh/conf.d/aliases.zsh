@@ -48,9 +48,9 @@ alias gsp='git stash pop'
 alias gss='git stash'
 
 # ── Kubernetes ────────────────────────────────────────────────────────────────
-alias k='kubectl'
-alias kx='kubectx'
-alias kns='kubens'
+command -v kubectl  &>/dev/null && alias k='kubectl'
+command -v kubectx  &>/dev/null && alias kx='kubectx'
+command -v kubens   &>/dev/null && alias kns='kubens'
 
 # ── Misc utilities ────────────────────────────────────────────────────────────
 alias cls='clear'
@@ -58,8 +58,10 @@ alias reload='exec zsh'
 alias path='echo $PATH | tr ":" "\n"'
 alias which='type -a'
 alias psg='ps aux | grep'
-alias dps='docker ps'
-alias dc='docker compose'
+if command -v docker &>/dev/null; then
+  alias dps='docker ps'
+  alias dc='docker compose'
+fi
 
 # ── Project aliases ───────────────────────────────────────────────────────────
 alias scli="$HOME/workspace/bkhanale/scripts/dist/cli"
