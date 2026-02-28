@@ -1,16 +1,4 @@
-# ~/.zshenv — loaded for ALL zsh instances (login, interactive, scripts)
-# Keep this file minimal — only set env vars that must be available everywhere.
-
-# ── XDG Base Directory Specification ─────────────────────────────────────────
-export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
-export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
-export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
-export XDG_STATE_HOME="${XDG_STATE_HOME:-$HOME/.local/state}"
-
-# ── ZDOTDIR — tell zsh to load configs from ~/.config/zsh/ ───────────────────
-export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
-
-# ── mise ──────────────────────────────────────────────────────────────────────
-export MISE_DATA_DIR="$XDG_DATA_HOME/mise"
-export MISE_CACHE_DIR="$XDG_CACHE_HOME/mise"
-export MISE_CONFIG_DIR="$XDG_CONFIG_HOME/mise"
+# ~/.config/zsh/.zshenv
+# NOTE: This file is NOT automatically sourced by zsh when ZDOTDIR is set inside
+# ~/.zshenv. All env vars (XDG, ZDOTDIR, mise) live in ~/.zshenv (home/dot_zshenv)
+# so they are available before .zshrc runs. This file is intentionally empty.

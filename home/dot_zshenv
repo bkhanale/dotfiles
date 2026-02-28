@@ -1,4 +1,18 @@
-# ~/.zshenv — first file zsh reads for any session (login, interactive, script)
-# Single responsibility: redirect ZDOTDIR so zsh finds the real config under XDG.
+# ~/.zshenv — first file zsh reads for ANY session (login, interactive, script).
+# Sets ZDOTDIR to redirect zsh to XDG config dir, plus all env vars that must
+# be available before .zshrc runs (XDG, mise, etc.).
 
-export ZDOTDIR="$HOME/.config/zsh"
+# ── XDG Base Directory Specification ─────────────────────────────────────────
+export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
+export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
+export XDG_STATE_HOME="${XDG_STATE_HOME:-$HOME/.local/state}"
+
+# ── ZDOTDIR — redirect zsh to load configs from ~/.config/zsh/ ───────────────
+# Must come after XDG_CONFIG_HOME is set.
+export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
+
+# ── mise ──────────────────────────────────────────────────────────────────────
+export MISE_DATA_DIR="$XDG_DATA_HOME/mise"
+export MISE_CACHE_DIR="$XDG_CACHE_HOME/mise"
+export MISE_CONFIG_DIR="$XDG_CONFIG_HOME/mise"
