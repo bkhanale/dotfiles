@@ -48,7 +48,7 @@ fi
 success "Homebrew: $(brew --version | head -1)"
 
 info "Running brew bundle (this may take a while)…"
-brew bundle --file="$DOTFILES_DIR/Brewfile" --no-lock
+brew bundle --file="$DOTFILES_DIR/Brewfile"
 success "brew bundle complete"
 
 # Reload brew env in this session
