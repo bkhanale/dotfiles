@@ -11,31 +11,26 @@ export LANG='en_US.UTF-8'
 export LC_ALL='en_US.UTF-8'
 
 # ── Node.js ───────────────────────────────────────────────────────────────────
-export NODE_OPTIONS='--max-old-space-size=4096'
+export NODE_OPTIONS='--max-old-space-size=8192'
 
-# ── OpenSSL (macOS Homebrew) ──────────────────────────────────────────────────
-if [[ "$(uname)" == "Darwin" ]] && command -v brew &>/dev/null; then
-  _brew_prefix="$(brew --prefix)"
-  if [[ -d "$_brew_prefix/opt/openssl" ]]; then
-    export LDFLAGS="-L$_brew_prefix/opt/openssl/lib $LDFLAGS"
-    export CPPFLAGS="-I$_brew_prefix/opt/openssl/include $CPPFLAGS"
-    export PKG_CONFIG_PATH="$_brew_prefix/opt/openssl/lib/pkgconfig:$PKG_CONFIG_PATH"
-  fi
-  unset _brew_prefix
-fi
+# ── OpenSSL ───────────────────────────────────────────────────────────────────
+# Using local OpenSSL 1.1 build (required for some older dependencies)
+export OPENSSL_PREFIX="$HOME/.local/openssl-1.1"
 
-# ── MySQL / PostgreSQL (macOS Homebrew) ───────────────────────────────────────
-if [[ "$(uname)" == "Darwin" ]] && command -v brew &>/dev/null; then
-  _brew_prefix="$(brew --prefix)"
-  [[ -d "$_brew_prefix/opt/mysql-client/bin" ]] \
-    && export PATH="$_brew_prefix/opt/mysql-client/bin:$PATH"
-  [[ -d "$_brew_prefix/opt/postgresql@16/bin" ]] \
-    && export PATH="$_brew_prefix/opt/postgresql@16/bin:$PATH"
-  unset _brew_prefix
-fi
+# ── MySQL (macOS Homebrew) ────────────────────────────────────────────────────
+# Pin to mysql@8.0 — update path if you upgrade MySQL
+[[ -d "/opt/homebrew/Cellar/mysql@8.0/8.0.43_3/bin" ]] \
+  && export PATH="/opt/homebrew/Cellar/mysql@8.0/8.0.43_3/bin:$PATH"
+
+# ── PostgreSQL (macOS Homebrew) ───────────────────────────────────────────────
+[[ -d "/opt/homebrew/opt/postgresql@18/bin" ]] \
+  && export PATH="/opt/homebrew/opt/postgresql@18/bin:$PATH"
+
+# ── Nginx ─────────────────────────────────────────────────────────────────────
+[[ -d "/opt/nginx/sbin" ]] && export PATH="/opt/nginx/sbin:$PATH"
 
 # ── Vault ─────────────────────────────────────────────────────────────────────
-# VAULT_ADDR and VAULT_TOKEN are set in secrets.zsh
+# VAULT_ADDR, VAULT_TOKEN, and other secrets are set in secrets.zsh
 
 # ── GPG ───────────────────────────────────────────────────────────────────────
 export GPG_TTY="$(tty)"

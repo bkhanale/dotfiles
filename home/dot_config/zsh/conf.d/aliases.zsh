@@ -61,5 +61,5 @@ alias psg='ps aux | grep'
 alias dps='docker ps'
 alias dc='docker compose'
 
-# ── scli (keep existing alias) ────────────────────────────────────────────────
-# alias scli='...'  # add your scli alias if needed
+# ── Project aliases ───────────────────────────────────────────────────────────
+alias scli="$HOME/workspace/bkhanale/scripts/dist/cli"
