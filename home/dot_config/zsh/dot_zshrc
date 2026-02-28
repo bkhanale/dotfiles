@@ -1,0 +1,45 @@
+# ~/.config/zsh/.zshrc — interactive shell bootstrap
+# Thin orchestration file: sets up completion, sources conf.d/*, inits tools.
+
+# ── Completion ────────────────────────────────────────────────────────────────
+# Cache zcompdump in XDG cache dir (not ~/), regenerate at most once per day
+zsh_cache="$XDG_CACHE_HOME/zsh"
+[[ -d "$zsh_cache" ]] || mkdir -p "$zsh_cache"
+
+autoload -Uz compinit
+if [[ -n "$zsh_cache/zcompdump"(#qN.mh+24) ]]; then
+  compinit -d "$zsh_cache/zcompdump"
+else
+  compinit -C -d "$zsh_cache/zcompdump"
+fi
+unset zsh_cache
+
+# ── Source conf.d modules ─────────────────────────────────────────────────────
+# Files are sourced in alphabetical order; prefix with numbers to force order.
+if [[ -d "$ZDOTDIR/conf.d" ]]; then
+  for _file in "$ZDOTDIR/conf.d/"*.zsh; do
+    [[ -r "$_file" ]] && source "$_file"
+  done
+  unset _file
+fi
+
+# ── Zsh plugins (installed via Homebrew / pacman) ─────────────────────────────
+# macOS (Homebrew)
+if [[ "$(uname)" == "Darwin" ]]; then
+  _brew_prefix="$(brew --prefix 2>/dev/null)"
+  [[ -f "$_brew_prefix/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] \
+    && source "$_brew_prefix/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+  [[ -f "$_brew_prefix/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] \
+    && source "$_brew_prefix/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+  unset _brew_prefix
+# Arch Linux (pacman)
+elif [[ -f /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then
+  source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+  source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+fi
+
+# ── Starship prompt ───────────────────────────────────────────────────────────
+command -v starship &>/dev/null && eval "$(starship init zsh)"
+
+# ── Secrets (gitignored, never committed) ─────────────────────────────────────
+[[ -f "$ZDOTDIR/secrets.zsh" ]] && source "$ZDOTDIR/secrets.zsh"

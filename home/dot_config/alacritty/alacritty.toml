@@ -1,0 +1,145 @@
+# alacritty.toml — Alacritty terminal configuration
+# Theme: Tokyo Night Night
+# Font: FiraCode Nerd Font Mono
+
+[general]
+import = []
+
+# ── Window ────────────────────────────────────────────────────────────────────
+[window]
+padding        = { x = 12, y = 10 }
+decorations    = "buttonless"   # macOS: hide title bar; Linux: change to "full"
+opacity        = 1.0
+blur           = false
+startup_mode   = "Windowed"
+title          = "Alacritty"
+dynamic_title  = true
+
+# ── Scrolling ─────────────────────────────────────────────────────────────────
+[scrolling]
+history    = 10000
+multiplier = 3
+
+# ── Font ──────────────────────────────────────────────────────────────────────
+[font]
+size = 13.0
+
+[font.normal]
+family = "FiraCode Nerd Font Mono"
+style  = "Regular"
+
+[font.bold]
+family = "FiraCode Nerd Font Mono"
+style  = "Bold"
+
+[font.italic]
+family = "FiraCode Nerd Font Mono"
+style  = "Light Italic"
+
+[font.bold_italic]
+family = "FiraCode Nerd Font Mono"
+style  = "Bold Italic"
+
+# ── Colours: Tokyo Night Night ─────────────────────────────────────────────────
+[colors]
+draw_bold_text_with_bright_colors = true
+
+[colors.primary]
+background = "#1a1b26"
+foreground = "#c0caf5"
+
+[colors.cursor]
+text   = "#1a1b26"
+cursor = "#c0caf5"
+
+[colors.vi_mode_cursor]
+text   = "#1a1b26"
+cursor = "#bb9af7"
+
+[colors.selection]
+text       = "CellForeground"
+background = "#33467c"
+
+[colors.search.matches]
+foreground = "#1a1b26"
+background = "#3d59a1"
+
+[colors.search.focused_match]
+foreground = "#1a1b26"
+background = "#7aa2f7"
+
+[colors.normal]
+black   = "#15161e"
+red     = "#f7768e"
+green   = "#9ece6a"
+yellow  = "#e0af68"
+blue    = "#7aa2f7"
+magenta = "#bb9af7"
+cyan    = "#7dcfff"
+white   = "#a9b1d6"
+
+[colors.bright]
+black   = "#414868"
+red     = "#f7768e"
+green   = "#9ece6a"
+yellow  = "#e0af68"
+blue    = "#7aa2f7"
+magenta = "#bb9af7"
+cyan    = "#7dcfff"
+white   = "#c0caf5"
+
+# ── Bell ──────────────────────────────────────────────────────────────────────
+[bell]
+animation = "EaseOutExpo"
+duration  = 0
+color     = "#ff9e64"
+
+# ── Cursor ────────────────────────────────────────────────────────────────────
+[cursor]
+style       = { shape = "Block", blinking = "Off" }
+unfocused_hollow = true
+
+# ── Mouse ─────────────────────────────────────────────────────────────────────
+[mouse]
+hide_when_typing = true
+
+# ── Key bindings ──────────────────────────────────────────────────────────────
+[[keyboard.bindings]]
+key   = "Return"
+mods  = "Super|Shift"
+action = "SpawnNewInstance"
+
+[[keyboard.bindings]]
+key   = "V"
+mods  = "Super"
+action = "Paste"
+
+[[keyboard.bindings]]
+key   = "C"
+mods  = "Super"
+action = "Copy"
+
+[[keyboard.bindings]]
+key   = "Q"
+mods  = "Super"
+action = "Quit"
+
+[[keyboard.bindings]]
+key   = "N"
+mods  = "Super"
+action = "SpawnNewInstance"
+
+[[keyboard.bindings]]
+key    = "Equals"
+mods   = "Super"
+action = "IncreaseFontSize"
+
+[[keyboard.bindings]]
+key    = "Minus"
+mods   = "Super"
+action = "DecreaseFontSize"
+
+[[keyboard.bindings]]
+key    = "Key0"
+mods   = "Super"
+action = "ResetFontSize"

@@ -1,0 +1,12 @@
+# ~/.gnupg/gpg-agent.conf — chezmoi template
+# Managed by chezmoi — do not edit directly.
+# GPG agent configuration with platform-specific pinentry.
+
+default-cache-ttl 3600
+max-cache-ttl 86400
+
+{{- if eq .chezmoi.os "darwin" }}
+pinentry-program /opt/homebrew/bin/pinentry-mac
+{{- else if eq .chezmoi.os "linux" }}
+pinentry-program /usr/bin/pinentry-curses
+{{- end }}

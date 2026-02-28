@@ -1,0 +1,12 @@
+# .chezmoiignore — files chezmoi should not manage
+
+# Secrets — managed locally, never committed
+.config/zsh/secrets.zsh
+
+# macOS junk
+**/.DS_Store
+
+# Editor temp files
+**/*.swp
+**/*.swo
+**/*~

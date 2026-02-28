@@ -1,0 +1,135 @@
+# starship.toml — Starship prompt configuration
+# Theme: Tokyo Night Night
+# https://starship.rs/config/
+
+"$schema" = 'https://starship.rs/config-schema.json'
+
+format = """
+$directory\
+$git_branch\
+$git_status\
+$cmd_duration\
+$line_break\
+$character"""
+
+right_format = """
+$nodejs\
+$python\
+$ruby\
+$java\
+$status"""
+
+# ── Palette: Tokyo Night Night ────────────────────────────────────────────────
+palette = "tokyo_night_night"
+
+[palettes.tokyo_night_night]
+bg         = "#1a1b26"
+bg_dark    = "#16161e"
+bg_float   = "#16161e"
+fg         = "#c0caf5"
+fg_dark    = "#a9b1d6"
+comment    = "#565f89"
+cyan       = "#7dcfff"
+blue       = "#7aa2f7"
+blue1      = "#2ac3de"
+blue2      = "#0db9d7"
+blue5      = "#89ddff"
+blue6      = "#b4f9f8"
+blue7      = "#394b70"
+magenta    = "#bb9af7"
+magenta2   = "#ff007c"
+purple     = "#9d7cd8"
+orange     = "#ff9e64"
+yellow     = "#e0af68"
+green      = "#9ece6a"
+green1     = "#73daca"
+green2     = "#41a6b5"
+teal       = "#1abc9c"
+red        = "#f7768e"
+red1       = "#db4b4b"
+white      = "#c0caf5"
+storm      = "#2f3549"
+terminal_black = "#414868"
+
+# ── Directory ─────────────────────────────────────────────────────────────────
+[directory]
+style             = "bold blue"
+read_only         = " 󰌾"
+truncation_length = 4
+truncate_to_repo  = true
+
+# ── Git ───────────────────────────────────────────────────────────────────────
+[git_branch]
+symbol = " "
+style  = "bold magenta"
+format = "[$symbol$branch(:$remote_branch)]($style) "
+
+[git_status]
+style     = "bold red"
+format    = "([$all_status$ahead_behind]($style) )"
+conflicted = "󰞇 "
+ahead      = "⇡${count}"
+behind     = "⇣${count}"
+diverged   = "⇕⇡${ahead_count}⇣${behind_count}"
+untracked  = " ${count}"
+stashed    = "󰏗 ${count}"
+modified   = " ${count}"
+staged     = " ${count}"
+renamed    = "󰑕 ${count}"
+deleted    = " ${count}"
+
+# ── Command duration ──────────────────────────────────────────────────────────
+[cmd_duration]
+min_time           = 2000
+format             = "[$duration]($style) "
+style              = "yellow"
+show_notifications = false
+
+# ── Character (prompt symbol) ─────────────────────────────────────────────────
+[character]
+success_symbol = "[❯](bold green)"
+error_symbol   = "[❯](bold red)"
+vimcmd_symbol  = "[❮](bold green)"
+
+# ── Languages (right side, only when relevant) ────────────────────────────────
+[nodejs]
+symbol           = " "
+style            = "bold green"
+format           = "[$symbol($version)]($style) "
+detect_files     = ["package.json", ".nvmrc", ".node-version"]
+detect_folders   = ["node_modules"]
+
+[python]
+symbol           = " "
+style            = "bold yellow"
+format           = "[$symbol($version)(\\($virtualenv\\))]($style) "
+detect_files     = ["requirements.txt", "Pipfile", "pyproject.toml", ".python-version"]
+
+[ruby]
+symbol           = " "
+style            = "bold red"
+format           = "[$symbol($version)]($style) "
+detect_files     = ["Gemfile", ".ruby-version"]
+
+[java]
+symbol           = " "
+style            = "bold red"
+format           = "[$symbol($version)]($style) "
+detect_files     = ["pom.xml", "build.gradle", ".java-version"]
+
+# ── Status ────────────────────────────────────────────────────────────────────
+[status]
+disabled = false
+style    = "bold red"
+format   = "[$symbol$status]($style) "
+symbol   = " "
+
+# ── Misc (disabled) ───────────────────────────────────────────────────────────
+[package]
+disabled = true
+
+[aws]
+disabled = true
+
+[gcloud]
+disabled = true

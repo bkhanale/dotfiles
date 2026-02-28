@@ -1,0 +1,52 @@
+# packages.arch.txt — Arch Linux package list
+# Installed via: yay -S --needed --noconfirm (see install.sh)
+
+# ── Shell ─────────────────────────────────────────────────────────────────────
+zsh
+zsh-autosuggestions
+zsh-syntax-highlighting
+starship
+direnv
+zoxide
+fzf
+
+# ── Version manager ───────────────────────────────────────────────────────────
+mise
+
+# ── Modern CLI ────────────────────────────────────────────────────────────────
+eza
+bat
+fd
+ripgrep
+the_silver_searcher
+
+# ── Data tools ────────────────────────────────────────────────────────────────
+jq
+yq
+
+# ── Editor ────────────────────────────────────────────────────────────────────
+neovim
+
+# ── Git ───────────────────────────────────────────────────────────────────────
+git
+github-cli
+git-delta
+
+# ── GPG ───────────────────────────────────────────────────────────────────────
+gnupg
+pinentry
+
+# ── Utilities ─────────────────────────────────────────────────────────────────
+curl
+wget
+httpie
+tldr
+tree
+watch
+
+# ── Terminal ──────────────────────────────────────────────────────────────────
+alacritty
+zellij
+
+# ── Fonts (AUR) ───────────────────────────────────────────────────────────────
+ttf-firacode-nerd

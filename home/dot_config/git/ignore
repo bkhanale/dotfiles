@@ -1,0 +1,40 @@
+# ~/.config/git/ignore — global gitignore
+
+# ── macOS ─────────────────────────────────────────────────────────────────────
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# ── Editor artefacts ──────────────────────────────────────────────────────────
+*.swp
+*.swo
+*~
+.idea/
+*.iml
+.vscode/
+*.code-workspace
+
+# ── Environment / secrets ─────────────────────────────────────────────────────
+.env
+.env.*
+!.env.example
+!.env.*.example
+secrets.zsh
+
+# ── Dependencies (usually repo-level, but belt + braces) ─────────────────────
+node_modules/
+.direnv/
+.mise/
+.python-version
+
+# ── Build outputs ─────────────────────────────────────────────────────────────
+dist/
+build/
+*.o
+*.a
+*.so
+*.dylib

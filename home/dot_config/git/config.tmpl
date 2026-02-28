@@ -1,0 +1,85 @@
+# ~/.config/git/config — chezmoi template
+# Managed by chezmoi — do not edit directly.
+
+[user]
+	name       = {{ .name }}
+	email      = {{ .email }}
+{{- if .gpgKey }}
+	signingkey = {{ .gpgKey }}
+{{- end }}
+
+[core]
+	editor        = nvim
+	autocrlf      = input
+	excludesfile  = ~/.config/git/ignore
+	pager         = delta
+	whitespace    = trailing-space,space-before-tab
+
+[init]
+	defaultBranch = main
+
+[push]
+	autoSetupRemote = true
+	default         = current
+
+[pull]
+	rebase = true
+
+[rebase]
+	autosquash = true
+	autostash  = true
+
+[merge]
+	conflictstyle = zdiff3
+
+[diff]
+	colorMoved    = zebra
+	algorithm     = histogram
+
+[fetch]
+	prune     = true
+	pruneTags = true
+
+{{- if .gpgKey }}
+[commit]
+	gpgsign = true
+
+[tag]
+	gpgsign = true
+
+[gpg]
+	program = gpg
+{{- end }}
+
+[delta]
+	navigate    = true
+	light       = false
+	side-by-side = true
+	line-numbers = true
+
+[interactive]
+	diffFilter = delta --color-only
+
+[color]
+	ui = auto
+
+[alias]
+	lg  = log --oneline --graph --decorate
+	lga = log --oneline --graph --decorate --all
+	st  = status -sb
+	co  = checkout
+	sw  = switch
+	rb  = rebase
+	undo = reset --soft HEAD~1
+	wip  = !git add -A && git commit -m 'WIP [skip ci]'
+
+[url "git@github.com:"]
+	insteadOf = https://github.com/
+
+{{- if eq .chezmoi.os "darwin" }}
+[credential]
+	helper = osxkeychain
+{{- else if eq .chezmoi.os "linux" }}
+[credential]
+	helper = /usr/lib/git-core/git-credential-libsecret
+{{- end }}

@@ -1,0 +1,22 @@
+# ~/.config/mise/config.toml — mise global tool versions
+# Run `mise install` after bootstrapping to pull all runtimes.
+# https://mise.jdx.dev/
+
+[settings]
+# Always use pre-compiled binaries (faster, no build toolchain needed)
+prefer_precompiled = true
+# Experimental features
+experimental       = true
+
+[tools]
+# Node.js — LTS release via pre-built binary
+node   = "lts"
+
+# Python — pre-compiled CPython via indygreg builds
+python = "3.12"
+
+# Java — Adoptium Temurin pre-built JDK (temurin backend)
+java   = "temurin-21"
+
+# Ruby — pre-compiled via ruby-build / rubyinstaller binaries
+ruby   = "latest"

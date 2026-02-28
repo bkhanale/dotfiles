@@ -1,0 +1,48 @@
+// zellij config.kdl — Zellij terminal multiplexer configuration
+// Theme: Tokyo Night Night
+
+// ── Shell ─────────────────────────────────────────────────────────────────────
+default_shell "zsh"
+
+// ── Layout ────────────────────────────────────────────────────────────────────
+default_layout "default"
+layout_dir "~/.config/zellij/layouts"
+
+// ── Behaviour ─────────────────────────────────────────────────────────────────
+default_mode "normal"
+mouse_mode true
+copy_on_select true
+scroll_buffer_size 10000
+copy_clipboard "system"
+scrollback_editor "/usr/bin/nvim"
+
+// ── UI ────────────────────────────────────────────────────────────────────────
+pane_frames false
+auto_layout true
+session_serialization true
+
+// ── Theme: Tokyo Night Night ──────────────────────────────────────────────────
+theme "tokyo-night-night"
+
+themes {
+    tokyo-night-night {
+        bg          "#1a1b26"
+        fg          "#c0caf5"
+        black       "#15161e"
+        red         "#f7768e"
+        green       "#9ece6a"
+        yellow      "#e0af68"
+        blue        "#7aa2f7"
+        magenta     "#bb9af7"
+        cyan        "#7dcfff"
+        white       "#a9b1d6"
+        orange      "#ff9e64"
+    }
+}
+
+// ── Key bindings (prefix-free defaults, keep Zellij's ctrl-g unlock) ──────────
+keybinds clear-defaults=false {
+    normal {
+        // Let Ctrl-a pass through to the terminal (avoid conflict with shell)
+    }
+}
