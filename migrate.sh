@@ -96,11 +96,15 @@ fi
 # ── rvm ───────────────────────────────────────────────────────────────────────
 if [[ -d "$HOME/.rvm" ]]; then
   info "Removing rvm and all installed Ruby versions…"
-  # Try graceful implode first, fall back to rm
-  if [[ -x "$HOME/.rvm/bin/rvm" ]]; then
-    "$HOME/.rvm/bin/rvm" implode --force 2>/dev/null || true
+  # Passenger and some other gems compile native extensions with sudo,
+  # leaving root-owned files inside ~/.rvm that require sudo to delete.
+  if find "$HOME/.rvm" -not -user "$(whoami)" -print -quit 2>/dev/null | grep -q .; then
+    warn "Found root-owned files in ~/.rvm (built with sudo) — using sudo to remove"
+    sudo rm -rf "$HOME/.rvm"
+  else
+    chmod -R u+w "$HOME/.rvm" 2>/dev/null || true
+    rm -rf "$HOME/.rvm"
   fi
-  rm -rf "$HOME/.rvm"
   success "rvm removed"
 else
   success "rvm: already gone"
