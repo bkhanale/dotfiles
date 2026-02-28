@@ -44,15 +44,13 @@ require("lazy").setup({
     "nvim-treesitter/nvim-treesitter",
     build  = ":TSUpdate",
     config = function()
-      require("nvim-treesitter.configs").setup({
+      require("nvim-treesitter").setup({
         ensure_installed = {
           "bash", "css", "dockerfile", "go", "html", "java",
           "javascript", "json", "lua", "markdown", "python",
           "ruby", "rust", "toml", "typescript", "yaml",
         },
-        highlight         = { enable = true },
-        indent            = { enable = true },
-        auto_install      = true,
+        auto_install = true,
       })
     end,
   },
@@ -125,23 +123,24 @@ require("lazy").setup({
         end,
       })
 
-      -- Configure each server
-      local lspconfig = require("lspconfig")
-      local servers   = {
-        lua_ls        = {
-          settings = { Lua = { diagnostics = { globals = { "vim" } } } },
-        },
-        bashls        = {},
-        pyright       = {},
-        ts_ls         = {},
-        jsonls        = {},
-        yamlls        = {},
-        dockerls      = {},
-      }
-      for server, config in pairs(servers) do
-        config.capabilities = capabilities
-        lspconfig[server].setup(config)
-      end
+      -- Configure each server via vim.lsp.config (nvim 0.11+)
+      vim.lsp.config("*", {
+        capabilities = capabilities,
+      })
+
+      vim.lsp.config("lua_ls", {
+        settings = { Lua = { diagnostics = { globals = { "vim" } } } },
+      })
+
+      vim.lsp.enable({
+        "lua_ls",
+        "bashls",
+        "pyright",
+        "ts_ls",
+        "jsonls",
+        "yamlls",
+        "dockerls",
+      })
 
       -- nvim-cmp completion
       local cmp    = require("cmp")
