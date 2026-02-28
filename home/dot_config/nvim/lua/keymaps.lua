@@ -57,3 +57,8 @@ map("n", "<leader>fs", "<cmd>Telescope lsp_document_symbols<CR>", { desc = "Docu
 map("n", "[d", vim.diagnostic.goto_prev, { desc = "Prev diagnostic" })
 map("n", "]d", vim.diagnostic.goto_next, { desc = "Next diagnostic" })
 map("n", "<leader>d", vim.diagnostic.open_float, { desc = "Diagnostic float" })
+
+-- ── File tree (nvim-tree) ─────────────────────────────────────────────────────
+map("n", "<leader>e",  "<cmd>NvimTreeToggle<CR>",   { desc = "Toggle file tree" })
+map("n", "<leader>ef", "<cmd>NvimTreeFocus<CR>",    { desc = "Focus file tree" })
+map("n", "<leader>er", "<cmd>NvimTreeRefresh<CR>",  { desc = "Refresh file tree" })
