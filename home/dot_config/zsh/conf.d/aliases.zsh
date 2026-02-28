@@ -62,6 +62,7 @@ if command -v docker &>/dev/null; then
   alias dps='docker ps'
   alias dc='docker compose'
 fi
+alias cz='chezmoi'
 
 # ── Project aliases ───────────────────────────────────────────────────────────
 alias scli="$HOME/workspace/bkhanale/scripts/dist/cli"
