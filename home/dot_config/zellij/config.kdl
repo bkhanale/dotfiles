@@ -17,7 +17,7 @@ copy_clipboard "system"
 scrollback_editor "/usr/bin/nvim"
 
 // ── UI ────────────────────────────────────────────────────────────────────────
-pane_frames false
+pane_frames true
 auto_layout true
 session_serialization true
 
