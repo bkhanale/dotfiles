@@ -6,7 +6,7 @@
 # Experimental features (required for some backends)
 experimental = true
 # Python: use precompiled builds from astral-sh/python-build-standalone (faster)
-python.compile = 0
+python.compile = false
 
 [tools]
 # Node.js — pinned to v22 line (was nvm default v22.15.0)
