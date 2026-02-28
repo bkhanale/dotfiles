@@ -115,13 +115,32 @@ success "All old version managers removed"
 # ── Step 3: Apply chezmoi dotfiles ────────────────────────────────────────────
 header "Step 3 — Apply dotfiles via chezmoi"
 
-info "chezmoi will prompt for your name, email, and GPG key ID."
-info "Source: $DOTFILES_DIR"
-echo ""
+CHEZMOI_CONFIG_DIR="$HOME/.config/chezmoi"
+CHEZMOI_CONFIG="$CHEZMOI_CONFIG_DIR/chezmoi.toml"
 
-# Always run init with the local source — promptStringOnce is idempotent
-# (only prompts if the value isn't already stored in ~/.config/chezmoi/chezmoi.toml)
-chezmoi init --source="$DOTFILES_DIR" --apply
+# Collect data interactively here rather than relying on chezmoi's
+# promptStringOnce (which can fail to prompt when called inside a bash script)
+if [[ ! -f "$CHEZMOI_CONFIG" ]] || ! grep -q 'name' "$CHEZMOI_CONFIG" 2>/dev/null; then
+  echo ""
+  printf "  Enter your details for git config and GPG signing:\n"
+  printf "  Full name: "; read -r _cm_name
+  printf "  Email:     "; read -r _cm_email
+  printf "  GPG key ID (leave blank to skip signing): "; read -r _cm_gpg
+
+  mkdir -p "$CHEZMOI_CONFIG_DIR"
+  cat > "$CHEZMOI_CONFIG" <<EOF
+[data]
+  name    = "$_cm_name"
+  email   = "$_cm_email"
+  gpgKey  = "$_cm_gpg"
+EOF
+  success "chezmoi config written to $CHEZMOI_CONFIG"
+else
+  info "chezmoi config already contains data — skipping prompts"
+fi
+
+info "Applying dotfiles…"
+chezmoi apply --source="$DOTFILES_DIR"
 success "chezmoi apply complete"
 
 # ── Step 4: Write secrets.zsh ─────────────────────────────────────────────────
