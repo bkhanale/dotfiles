@@ -281,6 +281,21 @@ require("lazy").setup({
         update_focused_file = { enable = true, update_root = false },
       })
 
+      -- Guard: only auto-quit after startup is fully done.
+      local startup_done = false
+
+      -- Auto-close nvim when nvim-tree is the only window remaining.
+      vim.api.nvim_create_autocmd("BufEnter", {
+        nested = true,
+        callback = function()
+          if not startup_done then return end
+          if #vim.api.nvim_list_wins() == 1
+            and vim.bo.filetype == "NvimTree" then
+            vim.cmd("quit")
+          end
+        end,
+      })
+
       -- Auto-open the tree when nvim starts with a directory argument,
       -- then place an empty buffer to the right for a side-by-side view.
       vim.api.nvim_create_autocmd("VimEnter", {
@@ -293,7 +308,10 @@ require("lazy").setup({
             vim.schedule(function()
               vim.cmd("wincmd l") -- move focus to the right (editing) pane
               vim.cmd("enew")     -- open a blank buffer there
+              startup_done = true
             end)
+          else
+            startup_done = true
           end
         end,
       })
