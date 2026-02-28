@@ -39,10 +39,3 @@ themes {
         orange      "#ff9e64"
     }
 }
-
-// ── Key bindings ─────────────────────────────────────────────────────────────
-// default_mode is "locked": all keys pass through to the terminal.
-// Press Ctrl+g to enter Zellij normal mode (panes, tabs, etc.).
-// Press Ctrl+g again (or Esc) to lock back.
-keybinds clear-defaults=false {
-}
