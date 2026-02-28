@@ -9,14 +9,15 @@ prefer_precompiled = true
 experimental       = true
 
 [tools]
-# Node.js — LTS release via pre-built binary
-node   = "lts"
+# Node.js — pinned to v22 line (was nvm default v22.15.0)
+node   = "22.15.0"
 
-# Python — pre-compiled CPython via indygreg builds
-python = "3.12"
+# Python — pinned to match pyenv install (3.13.11)
+python = "3.13.11"
 
-# Java — Adoptium Temurin pre-built JDK (temurin backend)
+# Java — Adoptium Temurin 21 (replaces Homebrew openjdk@21 / jenv 21.0.10)
 java   = "temurin-21"
 
-# Ruby — pre-compiled via ruby-build / rubyinstaller binaries
-ruby   = "latest"
+# Ruby — using 3.2.4 (modern install); rvm default was EOL 2.6.6
+# For projects that need 2.6.6, add a local .mise.toml with: ruby = "2.6.6"
+ruby   = "3.2.4"
