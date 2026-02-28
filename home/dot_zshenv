@@ -1,0 +1,4 @@
+# ~/.zshenv — first file zsh reads for any session (login, interactive, script)
+# Single responsibility: redirect ZDOTDIR so zsh finds the real config under XDG.
+
+export ZDOTDIR="$HOME/.config/zsh"
