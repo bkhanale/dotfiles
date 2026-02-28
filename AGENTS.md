@@ -8,6 +8,8 @@ This file documents conventions for AI agents (Copilot, Claude, etc.) working in
 
 This is a **chezmoi**-managed dotfiles repo. Source files live in `home/` and map to the home directory on apply. chezmoi handles templating, encryption, and cross-platform differences.
 
+`.chezmoiroot` is set to `home/` — chezmoi treats `home/` as the source root, so `home/dot_config/` maps to `~/.config/`.
+
 ---
 
 ## chezmoi Naming Conventions
@@ -35,7 +37,7 @@ Files ending in `.tmpl` are rendered as Go templates before being written to the
 {{- end }}
 ```
 
-User data (from `chezmoi.toml.tmpl` prompts) is available as:
+User data (from `~/.config/chezmoi/chezmoi.toml`) is available as:
 - `.name`
 - `.email`
 - `.gpgKey`
@@ -45,6 +47,28 @@ Built-in chezmoi data:
 - `.chezmoi.arch` — `"amd64"`, `"arm64"`, etc.
 - `.chezmoi.hostname`
 - `.chezmoi.homeDir`
+
+### chezmoi Data — Critical Note
+
+**Do NOT rely on `promptStringOnce` being called interactively from a bash script.**
+When `chezmoi init` is invoked from inside a bash script (e.g. `migrate.sh`), the prompts often fail silently, leaving `~/.config/chezmoi/chezmoi.toml` empty. Then `chezmoi apply` fails with:
+
+```
+template: ...: map has no entry for key "name"
+```
+
+**Correct approach**: Write `~/.config/chezmoi/chezmoi.toml` directly in the script using bash `read` prompts, then call `chezmoi apply`:
+
+```bash
+mkdir -p ~/.config/chezmoi
+cat > ~/.config/chezmoi/chezmoi.toml <<EOF
+[data]
+  name    = "$_name"
+  email   = "$_email"
+  gpgKey  = "$_gpg"
+EOF
+chezmoi apply --source="$DOTFILES_DIR"
+```
 
 ---
 
@@ -105,7 +129,7 @@ To add a new Zsh module:
 - Gitignored file: `~/.config/zsh/secrets.zsh`
 - Example template committed: `home/dot_config/zsh/secrets.zsh.example`
 - The file is sourced at the end of `dot_zshrc` if it exists
-- chezmoi ignores it via `.chezmoiignore`
+- chezmoi ignores it via `home/.chezmoiignore`
 
 **Never** commit real tokens, passwords, or API keys. If you see a secret in a tracked file, remove it immediately and rotate the credential.
 
@@ -120,8 +144,76 @@ Config lives in `home/dot_config/nvim/`. Entry point is `init.lua`. Plugins are 
 ## mise (Version Manager)
 
 Global tool config: `home/dot_config/mise/config.toml`.
-`prefer_precompiled = true` is set globally — do not override this per-tool unless there is a compelling reason (and document it).
-Do not add version manager init snippets (`nvm`, `pyenv`, `jenv`, `rvm`) anywhere — mise replaces all of them.
+
+### Current global versions
+
+| Tool | Version | Notes |
+|---|---|---|
+| node | 22.15.0 | precompiled binary |
+| python | 3.13.11 | precompiled via astral-sh/python-build-standalone |
+| java | temurin-21 | Adoptium prebuilt JDK |
+| ruby | 3.2.4 | compiled from source via ruby-build (~10-15 min first install) |
+
+### mise settings gotchas
+
+- `prefer_precompiled` **no longer exists** as a setting — it was removed from mise. Do not add it; it causes a warning and is ignored.
+- Python precompiled builds are now the default. To explicitly ensure precompiled Python: `python.compile = false` (boolean, not `0` — mise will reject an integer).
+- `experimental = true` is required for some backends (e.g. the temurin Java backend).
+- Do not add version manager init snippets (`nvm`, `pyenv`, `jenv`, `rvm`) anywhere — mise replaces all of them.
+- For per-project overrides, add a `.mise.toml` in the project root — do not modify the global config.
+
+---
+
+## Brewfile
+
+- Do **not** add `tap "homebrew/bundle"` — this tap is deprecated and was removed. `brew bundle` is now built into Homebrew itself.
+- Casks go at the bottom of the Brewfile after all `brew` lines.
+- After adding a new formula, run `brew bundle --file=Brewfile` to verify it installs cleanly.
+
+---
+
+## GPG
+
+### Permissions (critical)
+
+After `chezmoi apply` writes to `~/.gnupg/`, directory permissions can become incorrect, causing `keyboxd` to open its SQLite database read-only. This manifests as:
+
+```
+gpg: error writing keyring '[keyboxd]': Attempt to write a readonly SQL database
+```
+
+**Fix** (always run after chezmoi apply touches `.gnupg`):
+
+```bash
+chmod 700 ~/.gnupg
+find ~/.gnupg -type d -exec chmod 700 {} \;
+find ~/.gnupg -type f -exec chmod 600 {} \;
+gpgconf --kill all   # restart keyboxd and gpg-agent fresh
+```
+
+`migrate.sh` does this automatically.
+
+### Signing failures
+
+- If `git commit` fails with `Inappropriate ioctl for device`: ensure `GPG_TTY=$(tty)` is set. It is exported in `conf.d/exports.zsh`.
+- If pinentry doesn't appear: run `gpgconf --kill gpg-agent` to force a restart.
+
+---
+
+## migrate.sh
+
+`migrate.sh` is the clean-slate migration script for moving an existing machine to this dotfiles setup. It:
+
+1. Installs Homebrew packages
+2. Removes old version managers — including handling **root-owned files** in `~/.rvm` (passenger gem builds with sudo leave root-owned files; the script uses `sudo rm -rf` when detected)
+3. Writes `~/.config/chezmoi/chezmoi.toml` via interactive bash prompts (not `promptStringOnce`)
+4. Runs `chezmoi apply`
+5. Fixes `~/.gnupg` permissions
+6. Writes `~/.config/zsh/secrets.zsh` by extracting values from the old `~/.zshrc`
+7. Removes old dotfiles (backs up `~/.zshrc` to `~/.zshrc.pre-migration.bak`)
+8. Runs `mise install`
+
+Do not change the ordering of steps — the sequence is intentional.
 
 ---
 
@@ -132,3 +224,7 @@ Do not add version manager init snippets (`nvm`, `pyenv`, `jenv`, `rvm`) anywher
 - Do not commit to `~/.zshrc` directly — the source is `home/dot_config/zsh/dot_zshrc`
 - Do not use `~/` hard-coded paths in config files — use XDG variables
 - Do not add powerline or pure prompt — the prompt is Starship
+- Do not add `tap "homebrew/bundle"` to the Brewfile — it's deprecated
+- Do not set `prefer_precompiled` in mise config — it no longer exists
+- Do not use integers for boolean mise settings (use `true`/`false`, not `1`/`0`)
+- Do not rely on `promptStringOnce` working interactively inside bash scripts
