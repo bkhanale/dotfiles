@@ -2,8 +2,6 @@
 # Usage: brew bundle
 # Install everything: brew bundle --file=Brewfile
 
-tap "homebrew/bundle"
-
 # ── Dotfile manager ───────────────────────────────────────────────────────────
 brew "chezmoi"
 
