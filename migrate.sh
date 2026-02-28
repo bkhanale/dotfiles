@@ -119,12 +119,9 @@ info "chezmoi will prompt for your name, email, and GPG key ID."
 info "Source: $DOTFILES_DIR"
 echo ""
 
-if chezmoi data &>/dev/null 2>&1; then
-  info "chezmoi already initialised — running apply…"
-  chezmoi apply --source="$DOTFILES_DIR"
-else
-  chezmoi init --source="$DOTFILES_DIR" --apply
-fi
+# Always run init with the local source — promptStringOnce is idempotent
+# (only prompts if the value isn't already stored in ~/.config/chezmoi/chezmoi.toml)
+chezmoi init --source="$DOTFILES_DIR" --apply
 success "chezmoi apply complete"
 
 # ── Step 4: Write secrets.zsh ─────────────────────────────────────────────────
