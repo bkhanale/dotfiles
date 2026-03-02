@@ -144,3 +144,53 @@ action = "DecreaseFontSize"
 key    = "Key0"
 mods   = "Super"
 action = "ResetFontSize"
+
+# ── Natural text editing (macOS iTerm2-style) ────────────────────────────────
+
+# Cmd+Backspace → delete entire line (sends Ctrl+U)
+[[keyboard.bindings]]
+key   = "Back"
+mods  = "Super"
+chars = "\u0015"
+
+# Opt+Backspace → delete word backward (sends Esc + DEL)
+[[keyboard.bindings]]
+key   = "Back"
+mods  = "Alt"
+chars = "\u001b\u007f"
+
+# Cmd+Left → jump to beginning of line (sends Ctrl+A)
+[[keyboard.bindings]]
+key   = "Left"
+mods  = "Super"
+chars = "\u0001"
+
+# Cmd+Right → jump to end of line (sends Ctrl+E)
+[[keyboard.bindings]]
+key   = "Right"
+mods  = "Super"
+chars = "\u0005"
+
+# Opt+Left → jump one word backward (sends Esc+b)
+[[keyboard.bindings]]
+key   = "Left"
+mods  = "Alt"
+chars = "\u001bb"
+
+# Opt+Right → jump one word forward (sends Esc+f)
+[[keyboard.bindings]]
+key   = "Right"
+mods  = "Alt"
+chars = "\u001bf"
+
+# Cmd+Delete → kill to end of line (sends Ctrl+K)
+[[keyboard.bindings]]
+key   = "Delete"
+mods  = "Super"
+chars = "\u000b"
+
+# Opt+Delete → delete word forward (sends Esc+d)
+[[keyboard.bindings]]
+key   = "Delete"
+mods  = "Alt"
+chars = "\u001bd"
