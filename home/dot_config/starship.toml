@@ -1,171 +1,269 @@
-# starship.toml — Starship prompt configuration
-# Theme: Tokyo Night Night
+# starship.toml — Data-rich Starship prompt (Tokyo Night Night)
 # https://starship.rs/config/
 
 "$schema" = 'https://starship.rs/config-schema.json'
 
 format = """
+$os\
+$username\
+$hostname\
 $directory\
 $git_branch\
 $git_commit\
+$git_state\
 $git_status\
 $git_metrics\
-$cmd_duration\
-$line_break\
-$character"""
-
-right_format = """
-$direnv\
+$fill\
+$docker_context\
+$kubernetes\
+$terraform\
+$aws\
+$gcloud\
+$package\
+$c\
 $golang\
 $rust\
 $nodejs\
 $python\
 $ruby\
 $java\
-$status"""
+$lua\
+$kotlin\
+$swift\
+$zig\
+$elixir\
+$php\
+$typst\
+$cmd_duration\
+$jobs\
+$time\
+$line_break\
+$direnv\
+$status\
+$character"""
 
-# ── Palette: Tokyo Night Night ────────────────────────────────────────────────
-palette = "tokyo_night_night"
+# ── Palette ──────────────────────────────────────────────────────────────────
+palette = "tokyonight"
 
-[palettes.tokyo_night_night]
-bg         = "#1a1b26"
-bg_dark    = "#16161e"
-bg_float   = "#16161e"
-fg         = "#c0caf5"
-fg_dark    = "#a9b1d6"
-comment    = "#565f89"
-cyan       = "#7dcfff"
-blue       = "#7aa2f7"
-blue1      = "#2ac3de"
-blue2      = "#0db9d7"
-blue5      = "#89ddff"
-blue6      = "#b4f9f8"
-blue7      = "#394b70"
-magenta    = "#bb9af7"
-magenta2   = "#ff007c"
-purple     = "#9d7cd8"
-orange     = "#ff9e64"
-yellow     = "#e0af68"
-green      = "#9ece6a"
-green1     = "#73daca"
-green2     = "#41a6b5"
-teal       = "#1abc9c"
-red        = "#f7768e"
-red1       = "#db4b4b"
-white      = "#c0caf5"
-storm      = "#2f3549"
-terminal_black = "#414868"
+[palettes.tokyonight]
+bg      = "#1a1b26"
+fg      = "#c0caf5"
+comment = "#565f89"
+blue    = "#7aa2f7"
+cyan    = "#7dcfff"
+green   = "#9ece6a"
+magenta = "#bb9af7"
+purple  = "#9d7cd8"
+orange  = "#ff9e64"
+red     = "#f7768e"
+yellow  = "#e0af68"
+teal    = "#73daca"
 
-# ── Directory ─────────────────────────────────────────────────────────────────
+# ── Prompt chrome ────────────────────────────────────────────────────────────
+[os]
+disabled = false
+style    = "bold fg"
+
+[os.symbols]
+Macos   = "󰀵 "
+Linux   = "󰌽 "
+Windows = "󰍲 "
+Ubuntu  = "󰕈 "
+Fedora  = "󰣛 "
+Arch    = "󰣇 "
+Debian  = "󰣚 "
+
+[username]
+show_always = false
+style_user  = "bold blue"
+style_root  = "bold red"
+format      = "[$user]($style)@"
+
+[hostname]
+ssh_only   = true
+style      = "bold cyan"
+format     = "[$hostname]($style) "
+trim_at    = "."
+
 [directory]
 style             = "bold blue"
 read_only         = " 󰌾"
 truncation_length = 4
 truncate_to_repo  = true
+home_symbol       = "󰋜 ~"
 
-# ── Git ───────────────────────────────────────────────────────────────────────
-[git_commit]
-only_detached   = true
-tag_disabled    = false
-tag_max_candidates = 3
-tag_symbol      = " "
-style           = "bold green"
-format          = "[($hash$tag )]($style)"
+[fill]
+symbol = " "
 
-[git_metrics]
-disabled        = false
-format          = "([+$added]($added_style) )([-$deleted]($deleted_style) )"
-added_style     = "bold green"
-deleted_style   = "bold red"
-only_nonzero_diffs = true
-
-[git_branch]
-symbol = " "
-style  = "bold magenta"
-format = "[$symbol$branch(:$remote_branch)]($style) "
-
-[git_status]
-style     = "bold red"
-format    = "([$all_status$ahead_behind]($style) )"
-conflicted = "󰞇 "
-ahead      = "⇡${count}"
-behind     = "⇣${count}"
-diverged   = "⇕⇡${ahead_count}⇣${behind_count}"
-untracked  = " ${count}"
-stashed    = "󰏗 ${count}"
-modified   = " ${count}"
-staged     = " ${count}"
-renamed    = "󰑕 ${count}"
-deleted    = " ${count}"
-
-# ── Command duration ──────────────────────────────────────────────────────────
-[cmd_duration]
-min_time           = 500
-format             = "[$duration]($style) "
-style              = "yellow"
-show_notifications = false
-
-# ── Character (prompt symbol) ─────────────────────────────────────────────────
 [character]
 success_symbol = "[❯](bold green)"
 error_symbol   = "[❯](bold red)"
 vimcmd_symbol  = "[❮](bold green)"
 
-# ── Languages (right side, only when relevant) ────────────────────────────────
-[direnv]
+[status]
 disabled = false
-format   = "[$symbol$loaded/$allowed]($style) "
-symbol   = "direnv "
-style    = "bold orange"
+symbol   = "󰅙 "
+format   = "[$symbol$status( $common_meaning)]($style) "
+style    = "bold red"
+
+[jobs]
+symbol    = "󰜎 "
+style     = "bold cyan"
+threshold = 1
+format    = "[$symbol$number]($style) "
+
+[time]
+disabled       = false
+format         = "[󰥔 $time]($style) "
+style          = "comment"
+time_format    = "%H:%M"
+use_12hr       = false
+
+# ── Git ──────────────────────────────────────────────────────────────────────
+[git_branch]
+symbol = " "
+style  = "bold magenta"
+format = "[$symbol$branch(:$remote_branch)]($style) "
+
+[git_commit]
+tag_disabled = false
+tag_symbol   = " 󰓹 "
+style        = "bold purple"
+format       = "[( $hash$tag)]($style) "
+commit_hash_length = 4
+
+[git_state]
+style  = "bold yellow"
+format = "[$state( $progress_current/$progress_total)]($style) "
+
+[git_status]
+style      = "bold red"
+format     = "([$all_status$ahead_behind]($style) )"
+ahead      = "⇡${count}"
+behind     = "⇣${count}"
+diverged   = "⇕⇡${ahead_count}⇣${behind_count}"
+conflicted = "󰘬 ${count}"
+untracked  = "󰋗 ${count}"
+stashed    = "󰏗 ${count}"
+modified   = "󰏫 ${count}"
+staged     = "󰐗 ${count}"
+renamed    = "󰑕 ${count}"
+deleted    = "󰍷 ${count}"
+
+[git_metrics]
+disabled          = false
+added_style       = "bold green"
+deleted_style     = "bold red"
+format            = "([+$added]($added_style) )([-$deleted]($deleted_style) )"
+only_nonzero_diffs = true
+
+# ── Cloud & Infra ────────────────────────────────────────────────────────────
+[docker_context]
+symbol = "󰡨 "
+style  = "bold cyan"
+format = "[$symbol$context]($style) "
+
+[kubernetes]
+disabled = false
+symbol   = "󱃾 "
+style    = "bold blue"
+format   = "[$symbol$context(\\($namespace\\))]($style) "
+
+[terraform]
+symbol = "󱁢 "
+style  = "bold purple"
+format = "[$symbol$workspace]($style) "
+
+[aws]
+symbol = "󰸏 "
+style  = "bold orange"
+format = "[$symbol($profile)(\\($region\\))]($style) "
+
+[gcloud]
+symbol = "󱇶 "
+style  = "bold blue"
+format = "[$symbol($account@$project)(\\($region\\))]($style) "
+
+# ── Package ──────────────────────────────────────────────────────────────────
+[package]
+symbol = "󰏗 "
+style  = "bold orange"
+format = "[$symbol$version]($style) "
+
+[direnv]
+disabled       = false
+symbol         = "󰌪 "
+style          = "bold yellow"
+format         = "[$symbol$loaded/$allowed]($style) "
+
+# ── Languages ────────────────────────────────────────────────────────────────
+[c]
+symbol = "󰙱 "
+style  = "bold blue"
+format = "[$symbol($version(-$name))]($style) "
 
 [golang]
-symbol = " "
+symbol = "󰟓 "
 style  = "bold cyan"
 format = "[$symbol($version)]($style) "
 
 [rust]
-symbol = " "
+symbol = "󱘗 "
 style  = "bold orange"
 format = "[$symbol($version)]($style) "
 
 [nodejs]
-symbol           = " "
-style            = "bold green"
-format           = "[$symbol($version)]($style) "
-detect_files     = ["package.json", ".nvmrc", ".node-version"]
-detect_folders   = ["node_modules"]
+symbol       = "󰎙 "
+style        = "bold green"
+format       = "[$symbol($version)]($style) "
+detect_files = ["package.json", ".nvmrc", ".node-version"]
 
 [python]
-symbol           = " "
-style            = "bold yellow"
-format           = "[$symbol($version)(\\($virtualenv\\))]($style) "
-detect_files     = ["requirements.txt", "Pipfile", "pyproject.toml", ".python-version"]
+symbol = "󰌠 "
+style  = "bold yellow"
+format = "[$symbol($version)(\\($virtualenv\\))]($style) "
 
 [ruby]
-symbol           = " "
-style            = "bold red"
-format           = "[$symbol($version)]($style) "
-detect_files     = ["Gemfile", ".ruby-version"]
+symbol = "󰴭 "
+style  = "bold red"
+format = "[$symbol($version)]($style) "
 
 [java]
-symbol           = " "
-style            = "bold red"
-format           = "[$symbol($version)]($style) "
-detect_files     = ["pom.xml", "build.gradle", ".java-version"]
+symbol = "󰬷 "
+style  = "bold orange"
+format = "[$symbol($version)]($style) "
 
-# ── Status ────────────────────────────────────────────────────────────────────
-[status]
-disabled = false
-style    = "bold red"
-format   = "[$symbol$status]($style) "
-symbol   = " "
+[lua]
+symbol = "󰢱 "
+style  = "bold blue"
+format = "[$symbol($version)]($style) "
 
-# ── Misc (disabled) ───────────────────────────────────────────────────────────
-[package]
-disabled = true
+[kotlin]
+symbol = "󱈙 "
+style  = "bold purple"
+format = "[$symbol($version)]($style) "
 
-[aws]
-disabled = true
+[swift]
+symbol = "󰛥 "
+style  = "bold orange"
+format = "[$symbol($version)]($style) "
 
-[gcloud]
-disabled = true
+[zig]
+symbol = " "
+style  = "bold yellow"
+format = "[$symbol($version)]($style) "
+
+[elixir]
+symbol = " "
+style  = "bold magenta"
+format = "[$symbol($version)(\\(OTP $otp_version\\))]($style) "
+
+[php]
+symbol = "󰌟 "
+style  = "bold purple"
+format = "[$symbol($version)]($style) "
+
+[typst]
+symbol = "󰬛 "
+style  = "bold teal"
+format = "[$symbol($version)]($style) "
