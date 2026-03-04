@@ -15,7 +15,7 @@ mouse_mode true
 copy_on_select true
 scroll_buffer_size 10000
 copy_clipboard "system"
-scrollback_editor "/usr/bin/nvim"
+scrollback_editor "nvim"
 
 // ── UI ────────────────────────────────────────────────────────────────────────
 pane_frames true
@@ -38,5 +38,27 @@ themes {
         cyan        "#7dcfff"
         white       "#a9b1d6"
         orange      "#ff9e64"
+    }
+}
+
+// ── Keybindings ───────────────────────────────────────────────────────────────
+keybinds {
+    locked {
+        // Pane navigation
+        bind "Alt h" "Alt Left" { MoveFocusOrTab "Left"; }
+        bind "Alt l" "Alt Right" { MoveFocusOrTab "Right"; }
+        bind "Alt j" "Alt Down" { MoveFocus "Down"; }
+        bind "Alt k" "Alt Up" { MoveFocus "Up"; }
+
+        // Tab navigation
+        bind "Alt 1" { GoToTab 1; }
+        bind "Alt 2" { GoToTab 2; }
+        bind "Alt 3" { GoToTab 3; }
+        bind "Alt 4" { GoToTab 4; }
+        bind "Alt 5" { GoToTab 5; }
+        bind "Alt 6" { GoToTab 6; }
+        bind "Alt 7" { GoToTab 7; }
+        bind "Alt 8" { GoToTab 8; }
+        bind "Alt 9" { GoToTab 9; }
     }
 }
