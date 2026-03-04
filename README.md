@@ -89,13 +89,14 @@ This script:
 
 ```
 dotfiles/
-├── chezmoi.toml.tmpl        # chezmoi config — prompts for name/email/GPG key once
 ├── Brewfile                 # macOS package manifest (brew bundle)
 ├── install.sh               # one-command bootstrap
 ├── home/                    # maps to ~/ via chezmoi
+│   ├── .chezmoi.toml.tmpl   # chezmoi config — prompts for name/email/GPG key once
+│   ├── dot_zshenv           # sets ZDOTDIR, XDG vars
 │   ├── dot_config/
 │   │   ├── zsh/
-│   │   │   ├── dot_zshenv         # sets ZDOTDIR, XDG vars
+│   │   │   ├── dot_zshenv         # empty, bypasses default ~/.zshenv loading
 │   │   │   ├── dot_zshrc          # thin bootstrap; sources conf.d/*
 │   │   │   └── conf.d/            # modular config files sourced alphabetically
 │   │   ├── starship.toml
