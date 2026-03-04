@@ -75,10 +75,12 @@ chezmoi apply --source="$DOTFILES_DIR"
 ## Directory Layout
 
 ```
-home/dot_config/zsh/
+home/
 ├── dot_zshenv          # ZDOTDIR + XDG env vars — loaded for ALL zsh instances
-├── dot_zshrc           # interactive shell bootstrap — thin; sources conf.d/*
-└── conf.d/             # modular files sourced alphabetically by dot_zshrc
+└── dot_config/zsh/
+    ├── dot_zshenv      # empty, bypasses default ~/.zshenv loading
+    ├── dot_zshrc       # interactive shell bootstrap — thin; sources conf.d/*
+    └── conf.d/         # modular files sourced alphabetically by dot_zshrc
     ├── aliases.zsh
     ├── completions.zsh
     ├── exports.zsh
