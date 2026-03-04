@@ -2,6 +2,8 @@
 {{- $email := promptStringOnce . "email" "Email address" -}}
 {{- $gpgKey := promptStringOnce . "gpgKey" "GPG key ID (leave blank to skip signing)" -}}
 
+sourceDir = {{ .chezmoi.sourceDir | quote }}
+
 [data]
   name    = {{ $name | quote }}
   email   = {{ $email | quote }}
