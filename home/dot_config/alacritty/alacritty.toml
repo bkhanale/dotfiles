@@ -194,3 +194,9 @@ chars = "\u000b"
 key   = "Delete"
 mods  = "Alt"
 chars = "\u001bd"
+
+# Shift+Enter → newline in Claude Code and similar apps
+[[keyboard.bindings]]
+key   = "Return"
+mods  = "Shift"
+chars = "\u001b\r"

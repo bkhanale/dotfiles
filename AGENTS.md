@@ -219,6 +219,12 @@ Do not change the ordering of steps — the sequence is intentional.
 
 ---
 
+## Git Commits
+
+- Do not add `Co-Authored-By` trailers to commits
+
+---
+
 ## What NOT to Do
 
 - Do not add oh-my-zsh, Prezto, or any Zsh framework
