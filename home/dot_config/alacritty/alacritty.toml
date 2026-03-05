@@ -58,8 +58,8 @@ text   = "#1a1b26"
 cursor = "#bb9af7"
 
 [colors.selection]
-text       = "CellForeground"
-background = "#33467c"
+text       = "#c0caf5"
+background = "#515c7e"
 
 [colors.search.matches]
 foreground = "#1a1b26"

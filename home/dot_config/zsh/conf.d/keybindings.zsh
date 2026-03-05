@@ -3,6 +3,10 @@
 # ── Emacs-style line editing (familiar to most) ───────────────────────────────
 bindkey -e
 
+# ── Word style ───────────────────────────────────────────────────────────────
+# Treat /, _, ., -, etc. as word delimiters so Opt+Backspace stops at them
+WORDCHARS=''
+
 # ── Word navigation ───────────────────────────────────────────────────────────
 bindkey '^[[1;5C' forward-word   # Ctrl+Right
 bindkey '^[[1;5D' backward-word  # Ctrl+Left
