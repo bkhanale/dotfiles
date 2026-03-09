@@ -15,7 +15,6 @@ $git_status\
 $git_metrics\
 $fill\
 $docker_context\
-$kubernetes\
 $terraform\
 $aws\
 $gcloud\
@@ -34,12 +33,11 @@ $zig\
 $elixir\
 $php\
 $typst\
-$cmd_duration\
 $jobs\
-$time\
+$status\
+$cmd_duration\
 $line_break\
 $direnv\
-$status\
 $character"""
 
 # ── Palette ──────────────────────────────────────────────────────────────────
@@ -106,6 +104,12 @@ symbol   = "󰅙 "
 format   = "[$symbol$status( $common_meaning)]($style) "
 style    = "bold red"
 
+[cmd_duration]
+min_time          = 2000
+show_milliseconds = false
+style             = "bold yellow"
+format            = "[󱎫 $duration]($style) "
+
 [jobs]
 symbol    = "󰜎 "
 style     = "bold cyan"
@@ -113,7 +117,7 @@ threshold = 1
 format    = "[$symbol$number]($style) "
 
 [time]
-disabled       = false
+disabled       = true
 format         = "[󰥔 $time]($style) "
 style          = "comment"
 time_format    = "%H:%M"
@@ -164,7 +168,7 @@ style  = "bold cyan"
 format = "[$symbol$context]($style) "
 
 [kubernetes]
-disabled = false
+disabled = true
 symbol   = "󱃾 "
 style    = "bold blue"
 format   = "[$symbol$context(\\($namespace\\))]($style) "
