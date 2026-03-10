@@ -26,6 +26,10 @@ export OPENSSL_PREFIX="$HOME/.local/openssl-1.1"
 [[ -d "/opt/homebrew/opt/postgresql@18/bin" ]] \
   && export PATH="/opt/homebrew/opt/postgresql@18/bin:$PATH"
 
+# ── libpq (macOS Homebrew) ───────────────────────────────────────────────────
+[[ -d "/opt/homebrew/opt/libpq/bin" ]] \
+  && export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
+
 # ── Nginx ─────────────────────────────────────────────────────────────────────
 [[ -d "/opt/nginx/sbin" ]] && export PATH="/opt/nginx/sbin:$PATH"
 

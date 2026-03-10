@@ -34,6 +34,7 @@ brew "neovim"
 brew "git"
 brew "gh"
 brew "git-delta"     # better diffs
+brew "lazygit"
 
 # ── GPG ───────────────────────────────────────────────────────────────────────
 brew "gnupg"

@@ -52,8 +52,12 @@ command -v kubectl  &>/dev/null && alias k='kubectl'
 command -v kubectx  &>/dev/null && alias kx='kubectx'
 command -v kubens   &>/dev/null && alias kns='kubens'
 
+# ── Lazygit ──────────────────────────────────────────────────────────────────
+command -v lazygit &>/dev/null && alias lg='lazygit'
+
 # ── Zellij ───────────────────────────────────────────────────────────────────
-alias zj='zellij attach --create'
+alias zj='zellij'
+alias zja='zellij attach --create'
 
 # ── Misc utilities ────────────────────────────────────────────────────────────
 alias cls='clear'
