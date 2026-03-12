@@ -59,7 +59,7 @@ cursor = "#bb9af7"
 
 [colors.selection]
 text       = "#c0caf5"
-background = "#515c7e"
+background = "#364a82"
 
 [colors.search.matches]
 foreground = "#1a1b26"
@@ -103,6 +103,11 @@ unfocused_hollow = true
 # ── Mouse ─────────────────────────────────────────────────────────────────────
 [mouse]
 hide_when_typing = true
+
+# ── Selection ────────────────────────────────────────────────────────────
+[selection]
+semantic_escape_chars = ",│`|:\"' ()[]{}<>\t"
+save_to_clipboard = true
 
 # ── Key bindings ──────────────────────────────────────────────────────────────
 [[keyboard.bindings]]
