@@ -51,11 +51,21 @@
 	program = gpg
 {{- end }}
 
+[rerere]
+	enabled = true
+
+[branch]
+	sort = -committerdate
+
+[column]
+	ui = auto
+
 [delta]
-	navigate    = true
-	light       = false
-	side-by-side = true
-	line-numbers = true
+	navigate      = true
+	light         = false
+	side-by-side  = true
+	line-numbers  = true
+	syntax-theme  = tokyonight_night
 
 [interactive]
 	diffFilter = delta --color-only

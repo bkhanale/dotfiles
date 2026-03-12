@@ -11,8 +11,8 @@ command -v direnv &>/dev/null && eval "$(direnv hook zsh)"
 
 # ── fzf keybindings and completions ──────────────────────────────────────────
 if command -v fzf &>/dev/null; then
-  if [[ "$(uname)" == "Darwin" ]] && command -v brew &>/dev/null; then
-    _fzf_dir="$(brew --prefix)/opt/fzf"
+  if [[ -n "$HOMEBREW_PREFIX" ]]; then
+    _fzf_dir="$HOMEBREW_PREFIX/opt/fzf"
     [[ -f "$_fzf_dir/shell/key-bindings.zsh" ]]  && source "$_fzf_dir/shell/key-bindings.zsh"
     [[ -f "$_fzf_dir/shell/completion.zsh" ]]     && source "$_fzf_dir/shell/completion.zsh"
     unset _fzf_dir

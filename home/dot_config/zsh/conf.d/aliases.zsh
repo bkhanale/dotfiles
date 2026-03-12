@@ -17,8 +17,6 @@ else
 fi
 
 command -v bat &>/dev/null  && alias cat='bat --plain'
-command -v rg &>/dev/null   && alias grep='rg'
-command -v fd &>/dev/null   && alias find='fd'
 
 # ── Git ───────────────────────────────────────────────────────────────────────
 alias g='git'
@@ -64,7 +62,7 @@ alias cls='clear'
 alias reload='exec zsh'
 alias path='echo $PATH | tr ":" "\n"'
 alias which='type -a'
-alias psg='ps aux | grep'
+alias psg='pgrep -afl'
 if command -v docker &>/dev/null; then
   alias dps='docker ps'
   alias dc='docker compose'
@@ -72,4 +70,5 @@ fi
 alias cz='chezmoi'
 
 # ── Project aliases ───────────────────────────────────────────────────────────
-alias scli="$HOME/workspace/bkhanale/scripts/dist/cli"
+[[ -x "$HOME/workspace/bkhanale/scripts/dist/cli" ]] \
+  && alias scli="$HOME/workspace/bkhanale/scripts/dist/cli"

@@ -22,20 +22,14 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup({
   -- ── Colour scheme ────────────────────────────────────────────────────────
   {
-    "catppuccin/nvim",
-    name     = "catppuccin",
+    "folke/tokyonight.nvim",
     priority = 1000,
     config   = function()
-      require("catppuccin").setup({
-        flavour          = "mocha",
-        transparent_background = false,
-        integrations     = {
-          telescope  = true,
-          treesitter = true,
-          cmp        = true,
-        },
+      require("tokyonight").setup({
+        style            = "night",
+        transparent      = false,
       })
-      vim.cmd.colorscheme("catppuccin")
+      vim.cmd.colorscheme("tokyonight-night")
     end,
   },
 
@@ -44,13 +38,14 @@ require("lazy").setup({
     "nvim-treesitter/nvim-treesitter",
     build  = ":TSUpdate",
     config = function()
-      require("nvim-treesitter").setup({
+      require("nvim-treesitter.configs").setup({
         ensure_installed = {
           "bash", "css", "dockerfile", "go", "html", "java",
           "javascript", "json", "lua", "markdown", "python",
-          "ruby", "rust", "toml", "typescript", "yaml",
+          "ruby", "rust", "toml", "tsx", "typescript", "yaml",
         },
         auto_install = true,
+        highlight    = { enable = true },
       })
     end,
   },
@@ -210,7 +205,7 @@ require("lazy").setup({
     config = function()
       require("lualine").setup({
         options = {
-          theme            = "catppuccin",
+          theme            = "tokyonight",
           section_separators   = { left = "", right = "" },
           component_separators = { left = "", right = "" },
           globalstatus     = true,
@@ -249,10 +244,6 @@ require("lazy").setup({
     "nvim-tree/nvim-tree.lua",
     dependencies = { "nvim-tree/nvim-web-devicons" },
     config = function()
-      -- Disable netrw in favour of nvim-tree
-      vim.g.loaded_netrw       = 1
-      vim.g.loaded_netrwPlugin = 1
-
       require("nvim-tree").setup({
         hijack_directories = {
           enable    = true, -- auto-open tree when nvim is given a directory

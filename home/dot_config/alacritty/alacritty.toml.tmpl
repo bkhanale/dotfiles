@@ -8,13 +8,17 @@ import = []
 # ── Window ────────────────────────────────────────────────────────────────────
 [window]
 padding        = { x = 12, y = 10 }
-decorations    = "buttonless"   # macOS: hide title bar; Linux: change to "full"
+{{- if eq .chezmoi.os "darwin" }}
+decorations    = "buttonless"
+option_as_alt  = "Both"
+{{- else }}
+decorations    = "full"
+{{- end }}
 opacity        = 1.0
 blur           = false
 startup_mode   = "Windowed"
 title          = "Alacritty"
 dynamic_title  = true
-option_as_alt  = "Both"
 
 # ── Scrolling ─────────────────────────────────────────────────────────────────
 [scrolling]
@@ -110,6 +114,8 @@ semantic_escape_chars = ",│`|:\"' ()[]{}<>\t"
 save_to_clipboard = true
 
 # ── Key bindings ──────────────────────────────────────────────────────────────
+{{- if eq .chezmoi.os "darwin" }}
+
 [[keyboard.bindings]]
 key   = "Return"
 mods  = "Super|Shift"
@@ -158,12 +164,6 @@ key   = "Back"
 mods  = "Super"
 chars = "\u0015"
 
-# Opt+Backspace → delete word backward (sends Esc + DEL)
-[[keyboard.bindings]]
-key   = "Back"
-mods  = "Alt"
-chars = "\u001b\u007f"
-
 # Cmd+Left → jump to beginning of line (sends Ctrl+A)
 [[keyboard.bindings]]
 key   = "Left"
@@ -176,25 +176,33 @@ key   = "Right"
 mods  = "Super"
 chars = "\u0005"
 
-# Opt+Left → jump one word backward (sends Esc+b)
-[[keyboard.bindings]]
-key   = "Left"
-mods  = "Alt"
-chars = "\u001bb"
-
-# Opt+Right → jump one word forward (sends Esc+f)
-[[keyboard.bindings]]
-key   = "Right"
-mods  = "Alt"
-chars = "\u001bf"
-
 # Cmd+Delete → kill to end of line (sends Ctrl+K)
 [[keyboard.bindings]]
 key   = "Delete"
 mods  = "Super"
 chars = "\u000b"
 
-# Opt+Delete → delete word forward (sends Esc+d)
+{{- end }}
+
+# Opt/Alt+Backspace → delete word backward (sends Esc + DEL)
+[[keyboard.bindings]]
+key   = "Back"
+mods  = "Alt"
+chars = "\u001b\u007f"
+
+# Opt/Alt+Left → jump one word backward (sends Esc+b)
+[[keyboard.bindings]]
+key   = "Left"
+mods  = "Alt"
+chars = "\u001bb"
+
+# Opt/Alt+Right → jump one word forward (sends Esc+f)
+[[keyboard.bindings]]
+key   = "Right"
+mods  = "Alt"
+chars = "\u001bf"
+
+# Opt/Alt+Delete → delete word forward (sends Esc+d)
 [[keyboard.bindings]]
 key   = "Delete"
 mods  = "Alt"

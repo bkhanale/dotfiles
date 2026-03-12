@@ -24,14 +24,12 @@ if [[ -d "$ZDOTDIR/conf.d" ]]; then
 fi
 
 # ── Zsh plugins (installed via Homebrew / pacman) ─────────────────────────────
-# macOS (Homebrew)
-if [[ "$(uname)" == "Darwin" ]]; then
-  _brew_prefix="$(brew --prefix 2>/dev/null)"
-  [[ -f "$_brew_prefix/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] \
-    && source "$_brew_prefix/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
-  [[ -f "$_brew_prefix/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] \
-    && source "$_brew_prefix/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
-  unset _brew_prefix
+# macOS (Homebrew) — $HOMEBREW_PREFIX is set in conf.d/exports.zsh
+if [[ -n "$HOMEBREW_PREFIX" ]]; then
+  [[ -f "$HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] \
+    && source "$HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+  [[ -f "$HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] \
+    && source "$HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 # Arch Linux (pacman)
 elif [[ -f /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then
   source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh

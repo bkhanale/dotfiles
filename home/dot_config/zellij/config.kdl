@@ -34,6 +34,14 @@ keybinds {
         bind "Alt j" "Alt Down" { MoveFocus "Down"; }
         bind "Alt k" "Alt Up" { MoveFocus "Up"; }
 
+        // Quick actions (avoid switching modes for common operations)
+        bind "Alt n" { NewPane; }
+        bind "Alt t" { NewTab; }
+        bind "Alt w" { CloseFocus; }
+        bind "Alt f" { ToggleFocusFullscreen; }
+        bind "Alt [" { PreviousSwapLayout; }
+        bind "Alt ]" { NextSwapLayout; }
+
         // Tab navigation
         bind "Alt 1" { GoToTab 1; }
         bind "Alt 2" { GoToTab 2; }
