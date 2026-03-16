@@ -108,6 +108,29 @@ unfocused_hollow = true
 [mouse]
 hide_when_typing = true
 
+# ── Hints (clickable URLs) ────────────────────────────────────────────────────
+[hints]
+alphabet = "jfkdls;ahgurieowpq"
+
+[[hints.enabled]]
+{{- if eq .chezmoi.os "darwin" }}
+command = "open"
+{{- else }}
+command = "xdg-open"
+{{- end }}
+hyperlinks = true
+post_processing = true
+persist = false
+regex = "(ipfs:|ipns:|magnet:|mailto:|gemini://|gopher://|https://|http://|news:|file:|git://|ssh://|ftp://)[^\u0000-\u001F\u007F-\u009F<>\"\\s{-}\\^⟨⟩`]+"
+
+[hints.enabled.mouse]
+enabled = true
+{{- if eq .chezmoi.os "darwin" }}
+mods = "Super"
+{{- else }}
+mods = "Control"
+{{- end }}
+
 # ── Selection ────────────────────────────────────────────────────────────
 [selection]
 semantic_escape_chars = ",│`|:\"' ()[]{}<>\t"
