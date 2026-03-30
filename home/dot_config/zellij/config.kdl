@@ -44,6 +44,10 @@ keybinds {
         bind "Alt [" { PreviousSwapLayout; }
         bind "Alt ]" { NextSwapLayout; }
 
+        // Tab movement
+        bind "Alt i" { MoveTab "Left"; }
+        bind "Alt o" { MoveTab "Right"; }
+
         // Tab navigation
         bind "Alt 1" { GoToTab 1; }
         bind "Alt 2" { GoToTab 2; }
