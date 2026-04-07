@@ -167,14 +167,12 @@ else
 
   # Extract tokens from old .zshrc (if it still exists)
   _claude_token=""
-  _sentry_token=""
   _vault_addr=""
   _vault_token=""
   _requestly_path=""
 
   if [[ -f "$HOME/.zshrc" ]]; then
     _claude_token="$(grep -oP '(?<=CLAUDE_GH_MCP_TOKEN=")[^"]+' "$HOME/.zshrc" 2>/dev/null || true)"
-    _sentry_token="$(grep -oP '(?<=SENTRY_AUTH_TOKEN=")[^"]+' "$HOME/.zshrc" 2>/dev/null || true)"
     _vault_addr="$(grep -oP '(?<=VAULT_ADDR=")[^"]+' "$HOME/.zshrc" 2>/dev/null || true)"
     _vault_token="$(grep -oP '(?<=VAULT_TOKEN=")[^"]+' "$HOME/.zshrc" 2>/dev/null || true)"
     _requestly_path="$(grep -oP '(?<=REQUESTLY_LEGACY_PATH=")[^"]+' "$HOME/.zshrc" 2>/dev/null || true)"
@@ -185,7 +183,6 @@ else
 # Migrated from old .zshrc on $(date +%Y-%m-%d)
 
 export CLAUDE_GH_MCP_TOKEN="${_claude_token}"
-export SENTRY_AUTH_TOKEN="${_sentry_token}"
 export VAULT_ADDR="${_vault_addr}"
 export VAULT_TOKEN="${_vault_token}"
 export REQUESTLY_LEGACY_PATH="${_requestly_path}"

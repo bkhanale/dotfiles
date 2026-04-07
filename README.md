@@ -125,7 +125,6 @@ Expected variables:
 
 ```sh
 export CLAUDE_GH_MCP_TOKEN=""
-export SENTRY_AUTH_TOKEN=""
 export VAULT_ADDR=""
 export VAULT_TOKEN=""
 export REQUESTLY_LEGACY_PATH=""
