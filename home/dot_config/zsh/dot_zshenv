@@ -1,4 +1,4 @@
 # ~/.config/zsh/.zshenv
 # NOTE: This file is NOT automatically sourced by zsh when ZDOTDIR is set inside
-# ~/.zshenv. All env vars (XDG, ZDOTDIR, mise) live in ~/.zshenv (home/dot_zshenv)
+# ~/.zshenv. All env vars (XDG, ZDOTDIR) live in ~/.zshenv (home/dot_zshenv)
 # so they are available before .zshrc runs. This file is intentionally empty.

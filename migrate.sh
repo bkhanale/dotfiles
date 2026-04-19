@@ -2,12 +2,11 @@
 # migrate.sh — clean-slate migration to new chezmoi dotfiles
 #
 # WHAT THIS DOES (in order):
-#   1. Install Homebrew packages (chezmoi, mise, starship, etc.)
+#   1. Install Homebrew packages (chezmoi, starship, etc.)
 #   2. Remove all version managers (nvm, pyenv, jenv, rvm) + their runtimes
 #   3. Apply dotfiles via chezmoi (from local source)
 #   4. Write secrets.zsh to ~/.config/zsh/secrets.zsh (gitignored)
 #   5. Remove old shell config files (oh-my-zsh, p10k, ~/.zshrc, etc.)
-#   6. Install runtime versions via mise
 #
 # Run with:  bash ~/workspace/bkhanale/dotfiles/migrate.sh
 
@@ -58,7 +57,6 @@ eval "$(brew shellenv)"
 header "Step 2 — Remove version managers (nvm, pyenv, jenv, rvm)"
 
 warn "This will permanently delete all nvm/pyenv/jenv/rvm installed runtimes."
-warn "mise will be used instead. All versions in mise config.toml will be re-installed."
 confirm "Continue removing old version managers?" || { warn "Skipped version manager removal."; }
 
 # ── nvm ──────────────────────────────────────────────────────────────────────
@@ -234,22 +232,6 @@ rm -f "$HOME"/.zcompdump* 2>/dev/null || true
 
 success "Old config files cleaned up"
 
-# ── Step 6: Install runtimes via mise ────────────────────────────────────────
-header "Step 6 — Install runtime versions via mise"
-
-if command -v mise &>/dev/null; then
-  info "Running: mise install"
-  info "Installing: node (LTS), python (3.12), java (temurin-21), ruby (latest)"
-  mise install
-  success "mise install complete"
-
-  echo ""
-  info "Installed runtimes:"
-  mise list
-else
-  warn "mise not found in PATH — you may need to restart your shell first, then run: mise install"
-fi
-
 # ── Done ──────────────────────────────────────────────────────────────────────
 header "Migration complete!"
 
@@ -260,8 +242,7 @@ printf "  \033[1mNext steps:\033[0m\n"
 printf "  1. \033[0;36mRestart your terminal\033[0m — new config takes effect on next shell open\n"
 printf "  2. Verify your secrets file:  cat ~/.config/zsh/secrets.zsh\n"
 printf "  3. Run:  chezmoi diff         # should show nothing\n"
-printf "  4. Run:  mise doctor          # verify runtimes\n"
-printf "  5. Run:  time zsh -i -c exit  # should be < 200ms\n"
+printf "  4. Run:  time zsh -i -c exit  # should be < 200ms\n"
 printf "\n"
 printf "  If anything looks wrong, your old .zshrc is backed up at:\n"
 printf "  ~/.zshrc.pre-migration.bak\n"

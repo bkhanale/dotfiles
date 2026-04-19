@@ -1,8 +1,5 @@
 # conf.d/tools.zsh — initialise CLI tools that require eval hooks
 
-# ── mise (version manager — replaces nvm, pyenv, jenv, rvm) ──────────────────
-command -v mise &>/dev/null && eval "$(mise activate zsh)"
-
 # ── zoxide (smart cd replacement) ─────────────────────────────────────────────
 command -v zoxide &>/dev/null && eval "$(zoxide init zsh --cmd cd)"
 

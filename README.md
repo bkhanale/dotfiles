@@ -11,19 +11,9 @@ Personal dotfiles managed with [chezmoi](https://www.chezmoi.io/). Supports **ma
 | Prompt | Starship (Tokyo Night Night) |
 | Terminal | Alacritty |
 | Multiplexer | Zellij |
-| Version managers | mise (replaces nvm, pyenv, jenv, rvm) |
 | Editor | Neovim (lazy.nvim, minimal) |
 | Colour theme | Tokyo Night Night |
 | Font | FiraCode Nerd Font Mono |
-
-### mise versions
-
-| Tool | Version | Install method |
-|---|---|---|
-| Node.js | 22.15.0 | precompiled binary |
-| Python | 3.13.11 | precompiled (python-build-standalone) |
-| Java | temurin-21 | Adoptium prebuilt JDK |
-| Ruby | 3.2.4 | compiled from source (~10-15 min) |
 
 ---
 
@@ -35,7 +25,6 @@ Personal dotfiles managed with [chezmoi](https://www.chezmoi.io/). Supports **ma
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 brew install chezmoi
 chezmoi init --apply bkhanale/dotfiles
-mise install
 ```
 
 ### Fresh Arch Linux machine
@@ -47,7 +36,6 @@ git clone https://aur.archlinux.org/yay.git /tmp/yay && cd /tmp/yay && makepkg -
 # install chezmoi
 yay -S --noconfirm chezmoi
 chezmoi init --apply bkhanale/dotfiles
-mise install
 ```
 
 ### Already have chezmoi
@@ -74,7 +62,6 @@ This script:
 5. Fixes `~/.gnupg` permissions and restarts GPG daemons
 6. Extracts secrets from your old `~/.zshrc` → writes `~/.config/zsh/secrets.zsh`
 7. Backs up `~/.zshrc` to `~/.zshrc.pre-migration.bak` and removes old configs
-8. Runs `mise install`
 
 ---
 
@@ -103,8 +90,7 @@ dotfiles/
 │   │   ├── alacritty/
 │   │   ├── zellij/
 │   │   ├── nvim/
-│   │   ├── git/
-│   │   └── mise/
+│   │   └── git/
 │   └── dot_gnupg/
 └── AGENTS.md                # instructions for AI coding agents
 ```
@@ -158,8 +144,7 @@ chezmoi apply
 1. Install Homebrew (macOS) or ensure `git` + `yay` (Arch).
 2. Run the quick-start commands above.
 3. Copy `~/.config/zsh/secrets.zsh.example` → `secrets.zsh` and fill in values.
-4. Run `mise install` to pull runtimes.
-5. Import your GPG key: `gpg --import private-key.asc`
+4. Import your GPG key: `gpg --import private-key.asc`
 
 ---
 
@@ -167,7 +152,6 @@ chezmoi apply
 
 - [ ] `chezmoi diff` is clean (no pending changes)
 - [ ] Alacritty opens, Zellij starts, Starship prompt renders
-- [ ] `mise doctor` passes
 - [ ] `gpg --list-secret-keys` shows your signing key
 - [ ] `git commit` produces a signed commit
 - [ ] `time zsh -i -c exit` < 200 ms
@@ -190,10 +174,6 @@ gpgconf --kill all
 ### GPG: `Inappropriate ioctl for device` during git commit
 
 Ensure `GPG_TTY=$(tty)` is exported. It is set in `conf.d/exports.zsh` — open a fresh shell.
-
-### mise: ruby install takes 10-15 minutes
-
-Ruby has no precompiled binary and is compiled from source by ruby-build. This is expected. Other tools (node, python, java) install in seconds.
 
 ### chezmoi: `map has no entry for key "name"`
 

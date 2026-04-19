@@ -13,9 +13,6 @@ brew "direnv"
 brew "zoxide"
 brew "fzf"
 
-# ── Version manager ───────────────────────────────────────────────────────────
-brew "mise"
-
 # ── Modern CLI replacements ───────────────────────────────────────────────────
 brew "eza"           # ls replacement
 brew "bat"           # cat replacement

@@ -28,7 +28,6 @@ secrets.zsh
 # ── Dependencies (usually repo-level, but belt + braces) ─────────────────────
 node_modules/
 .direnv/
-.mise/
 .python-version
 
 # ── Build outputs ─────────────────────────────────────────────────────────────

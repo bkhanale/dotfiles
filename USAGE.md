@@ -25,8 +25,7 @@ Quick reference for getting the most out of the tools configured in this dotfile
    - [Custom functions](#custom-functions)
 5. [fzf — Fuzzy Finder](#fzf--fuzzy-finder)
 6. [zoxide — Smart cd](#zoxide--smart-cd)
-7. [mise — Version Manager](#mise--version-manager)
-8. [direnv — Per-directory Env](#direnv--per-directory-env)
+7. [direnv — Per-directory Env](#direnv--per-directory-env)
 
 ---
 
@@ -384,35 +383,6 @@ zoxide learns your most-visited directories and lets you jump to them with parti
 
 ---
 
-## mise — Version Manager
-
-`mise` replaces `nvm`, `pyenv`, `jenv`, and `rvm`. It is activated via `eval "$(mise activate zsh)"`.
-
-### Common commands
-
-| Command | Action |
-|---|---|
-| `mise list` | Show installed tool versions |
-| `mise use node@22` | Set the Node.js version (writes `.mise.toml`) |
-| `mise use --global python@3.13` | Set a global default |
-| `mise install` | Install all versions in `mise.toml` / global config |
-| `mise exec -- <cmd>` | Run a command in the mise-managed environment |
-| `mise which node` | Show the path of the active `node` binary |
-| `mise doctor` | Diagnose any mise problems |
-
-### Global tool versions (from `~/.config/mise/config.toml`)
-
-| Tool | Version |
-|---|---|
-| Node.js | 22.15.0 |
-| Python | 3.13 |
-| Java | temurin-21 |
-| Ruby | 3.2.4 |
-
-For per-project overrides, add a `.mise.toml` to the project root. Never modify the global config for project-specific versions.
-
----
-
 ## direnv — Per-directory Env
 
 `direnv` automatically loads/unloads environment variables when you enter/leave a directory containing an `.envrc` file.
@@ -429,5 +399,4 @@ Example `.envrc`:
 ```bash
 export DATABASE_URL="postgres://localhost/myapp_dev"
 export RAILS_ENV="development"
-use mise  # activate mise-managed tools for this project
 ```

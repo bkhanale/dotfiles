@@ -11,9 +11,6 @@ zstyle ':completion:*' use-cache yes
 zstyle ':completion:*' cache-path "$XDG_CACHE_HOME/zsh/zcompcache"
 
 # ── Completion for specific tools ─────────────────────────────────────────────
-# mise
-command -v mise &>/dev/null && eval "$(mise completion zsh)"
-
 # kubectl
 command -v kubectl &>/dev/null \
   && [[ ! -f "$XDG_CACHE_HOME/zsh/kubectl_completion" ]] \

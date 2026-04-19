@@ -143,29 +143,6 @@ Config lives in `home/dot_config/nvim/`. Entry point is `init.lua`. Plugins are 
 
 ---
 
-## mise (Version Manager)
-
-Global tool config: `home/dot_config/mise/config.toml`.
-
-### Current global versions
-
-| Tool | Version | Notes |
-|---|---|---|
-| node | 22.15.0 | precompiled binary |
-| python | 3.13.11 | precompiled via astral-sh/python-build-standalone |
-| java | temurin-21 | Adoptium prebuilt JDK |
-| ruby | 3.2.4 | compiled from source via ruby-build (~10-15 min first install) |
-
-### mise settings gotchas
-
-- `prefer_precompiled` **no longer exists** as a setting — it was removed from mise. Do not add it; it causes a warning and is ignored.
-- Python precompiled builds are now the default. To explicitly ensure precompiled Python: `python.compile = false` (boolean, not `0` — mise will reject an integer).
-- `experimental = true` is required for some backends (e.g. the temurin Java backend).
-- Do not add version manager init snippets (`nvm`, `pyenv`, `jenv`, `rvm`) anywhere — mise replaces all of them.
-- For per-project overrides, add a `.mise.toml` in the project root — do not modify the global config.
-
----
-
 ## Brewfile
 
 - Do **not** add `tap "homebrew/bundle"` — this tap is deprecated and was removed. `brew bundle` is now built into Homebrew itself.
@@ -213,7 +190,6 @@ gpgconf --kill all   # restart keyboxd and gpg-agent fresh
 5. Fixes `~/.gnupg` permissions
 6. Writes `~/.config/zsh/secrets.zsh` by extracting values from the old `~/.zshrc`
 7. Removes old dotfiles (backs up `~/.zshrc` to `~/.zshrc.pre-migration.bak`)
-8. Runs `mise install`
 
 Do not change the ordering of steps — the sequence is intentional.
 
@@ -228,11 +204,8 @@ Do not change the ordering of steps — the sequence is intentional.
 ## What NOT to Do
 
 - Do not add oh-my-zsh, Prezto, or any Zsh framework
-- Do not add nvm, pyenv, jenv, or rvm — use mise
 - Do not commit to `~/.zshrc` directly — the source is `home/dot_config/zsh/dot_zshrc`
 - Do not use `~/` hard-coded paths in config files — use XDG variables
 - Do not add powerline or pure prompt — the prompt is Starship
 - Do not add `tap "homebrew/bundle"` to the Brewfile — it's deprecated
-- Do not set `prefer_precompiled` in mise config — it no longer exists
-- Do not use integers for boolean mise settings (use `true`/`false`, not `1`/`0`)
 - Do not rely on `promptStringOnce` working interactively inside bash scripts

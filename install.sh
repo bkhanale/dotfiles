@@ -106,17 +106,6 @@ apply_chezmoi() {
   success "chezmoi apply complete"
 }
 
-# ── Install runtimes via mise ─────────────────────────────────────────────────
-install_mise_tools() {
-  if command -v mise &>/dev/null; then
-    info "Installing runtime versions with mise…"
-    mise install
-    success "mise install complete"
-  else
-    warn "mise not found — skipping runtime install (run 'mise install' after adding mise to PATH)"
-  fi
-}
-
 # ── Main ──────────────────────────────────────────────────────────────────────
 main() {
   case "$OS" in
@@ -126,7 +115,6 @@ main() {
   esac
 
   apply_chezmoi
-  install_mise_tools
 
   printf "\n"
   success "All done!"
@@ -142,7 +130,6 @@ main() {
   printf "\n"
   printf "    3. Verify with:\n"
   printf "       chezmoi diff         # should be clean\n"
-  printf "       mise doctor          # runtimes OK\n"
   printf "       time zsh -i -c exit  # should be < 200ms\n"
   printf "\n"
 }
