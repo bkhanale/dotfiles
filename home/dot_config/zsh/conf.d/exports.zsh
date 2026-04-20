@@ -45,9 +45,6 @@ export OPENSSL_PREFIX="$HOME/.local/openssl-1.1"
 # ── GPG ───────────────────────────────────────────────────────────────────────
 export GPG_TTY="$(tty)"
 
-# ── Local bin ─────────────────────────────────────────────────────────────────
-export PATH="$HOME/.local/bin:$PATH"
-
 # ── Homebrew (Apple Silicon path first) ───────────────────────────────────────
 if [[ -x /opt/homebrew/bin/brew ]]; then
   export HOMEBREW_PREFIX="/opt/homebrew"
