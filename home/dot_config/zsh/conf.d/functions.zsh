@@ -17,8 +17,9 @@ up() {
 
 # fcd — fuzzy-find and cd into a directory
 fcd() {
+  local fd_cmd; fd_cmd="$(command -v fd || command -v fdfind)" || return 1
   local dir
-  dir="$(fd --type d --hidden --exclude .git | fzf --preview 'eza --tree --level=1 {}')" \
+  dir="$("$fd_cmd" --type d --hidden --exclude .git | fzf --preview 'eza --tree --level=1 {} 2>/dev/null || ls -1 {}')" \
     && cd "$dir"
 }
 
@@ -31,10 +32,11 @@ fkill() {
 
 # gflog — fuzzy git log browser (requires fzf + bat)
 gflog() {
+  local bat_cmd; bat_cmd="$(command -v bat || command -v batcat)" || bat_cmd="cat"
   git log --oneline --color=always "$@" \
     | fzf --ansi --no-sort --reverse \
-          --preview 'git show {1} | bat --color=always -l diff' \
-          --bind 'enter:execute(git show {1} | bat --color=always -l diff | less -R)'
+          --preview "git show {1} | $bat_cmd --color=always -l diff" \
+          --bind "enter:execute(git show {1} | $bat_cmd --color=always -l diff | less -R)"
 }
 
 # extract — extract any archive

@@ -16,7 +16,12 @@ else
   alias ll='ls -lah'
 fi
 
-command -v bat &>/dev/null  && alias cat='bat --plain'
+if command -v bat &>/dev/null; then
+  alias cat='bat --plain'
+elif command -v batcat &>/dev/null; then
+  alias cat='batcat --plain'
+  alias bat='batcat'
+fi
 
 # ── Git ───────────────────────────────────────────────────────────────────────
 alias g='git'
@@ -53,9 +58,16 @@ command -v kubens   &>/dev/null && alias kns='kubens'
 # ── Lazygit ──────────────────────────────────────────────────────────────────
 command -v lazygit &>/dev/null && alias lg='lazygit'
 
+# ── fd (Debian ships as fdfind) ──────────────────────────────────────────────
+if ! command -v fd &>/dev/null && command -v fdfind &>/dev/null; then
+  alias fd='fdfind'
+fi
+
 # ── Zellij ───────────────────────────────────────────────────────────────────
-alias zj='zellij'
-alias zja='zellij attach --create'
+if command -v zellij &>/dev/null; then
+  alias zj='zellij'
+  alias zja='zellij attach --create'
+fi
 
 # ── Misc utilities ────────────────────────────────────────────────────────────
 alias cls='clear'
