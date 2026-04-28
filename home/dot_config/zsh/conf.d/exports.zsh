@@ -12,6 +12,12 @@ elif command -v batcat &>/dev/null; then
 fi
 export BAT_THEME='tokyonight_night'
 
+# ── eza ───────────────────────────────────────────────────────────────────────
+# Symbols Nerd Font Mono glyphs fill the cell edge-to-edge, so the default
+# 1-space gap after the icon looks cramped against the ~2 cells of column
+# padding before it. Bump to 2 for symmetric spacing.
+export EZA_ICON_SPACING=2
+
 # ── Language / locale ─────────────────────────────────────────────────────────
 export LANG='en_US.UTF-8'
 export LC_ALL='en_US.UTF-8'

@@ -65,13 +65,16 @@ disabled = false
 style    = "bold fg"
 
 [os.symbols]
-Macos   = "󰀵 "
-Linux   = "󰌽 "
-Windows = "󰍲 "
-Ubuntu  = "󰕈 "
-Fedora  = "󰣛 "
-Arch    = "󰣇 "
-Debian  = "󰣚 "
+# Symbols Nerd Font Mono glyphs fill the cell edge-to-edge. At line start
+# there's nothing to pad the left side, so use 2 trailing spaces to give the
+# icon visual breathing room before the next segment.
+Macos   = "󰀵  "
+Linux   = "󰌽  "
+Windows = "󰍲  "
+Ubuntu  = "󰕈  "
+Fedora  = "󰣛  "
+Arch    = "󰣇  "
+Debian  = "󰣚  "
 
 [username]
 show_always = false
