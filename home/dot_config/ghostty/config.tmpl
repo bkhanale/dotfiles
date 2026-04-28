@@ -8,9 +8,17 @@
 font-family             = FiraCode Nerd Font Mono
 font-size               = 12
 font-style              = Regular
-font-style-bold         = Retina
-font-style-italic       = Light Italic
-font-style-bold-italic  = Bold Italic
+font-style-bold         = Medium
+font-style-italic       = Italic
+font-style-bold-italic  = Medium Italic
+{{- if eq .chezmoi.os "darwin" }}
+# macOS dropped subpixel antialiasing in Mojave, which makes fonts render
+# thinner / hollower than on Linux. Re-thicken strokes to compensate.
+# Default strength is 255 (max) which is too aggressive — 100 keeps strokes
+# substantial without making everything look bold.
+font-thicken            = true
+font-thicken-strength   = 100
+{{- end }}
 
 # Route Nerd Font icon codepoints to Symbols Nerd Font Mono — its glyphs are
 # designed to fill the cell, so icons render larger and crisper than the
@@ -25,13 +33,15 @@ font-codepoint-map = U+F0000-U+FFFFD=Symbols Nerd Font Mono
 # Negative value lowers the maximum icon height to bring them in line with text.
 adjust-icon-height = -20%
 
-# ── Colours: Tokyo Night Night ────────────────────────────────────────────────
+# ── Colours: Tokyo Night Night (contrast-boosted) ─────────────────────────────
+# Foreground lifted from #c0caf5 → #d5dbf5 and palette 8 from #414868 →
+# #565f89 (canonical Tokyo Night comment colour) so dimmed text is legible.
 background        = 1a1b26
-foreground        = c0caf5
-cursor-color      = c0caf5
+foreground        = d5dbf5
+cursor-color      = d5dbf5
 cursor-text       = 1a1b26
-selection-background = 364a82
-selection-foreground = c0caf5
+selection-background = 3d59a1
+selection-foreground = d5dbf5
 bold-is-bright    = true
 
 # Normal palette (0-7)
@@ -42,16 +52,16 @@ palette = 3=#e0af68
 palette = 4=#7aa2f7
 palette = 5=#bb9af7
 palette = 6=#7dcfff
-palette = 7=#a9b1d6
+palette = 7=#c0caf5
 # Bright palette (8-15)
-palette = 8=#414868
-palette = 9=#f7768e
-palette = 10=#9ece6a
-palette = 11=#e0af68
-palette = 12=#7aa2f7
+palette = 8=#565f89
+palette = 9=#ff7a93
+palette = 10=#b9f27c
+palette = 11=#ff9e64
+palette = 12=#7da6ff
 palette = 13=#bb9af7
-palette = 14=#7dcfff
-palette = 15=#c0caf5
+palette = 14=#0db9d7
+palette = 15=#d5dbf5
 
 # ── Window ────────────────────────────────────────────────────────────────────
 window-padding-x       = 12
