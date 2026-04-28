@@ -33,6 +33,12 @@ font-codepoint-map = U+F0000-U+FFFFD=Symbols Nerd Font Mono
 # Negative value lowers the maximum icon height to bring them in line with text.
 adjust-icon-height = -20%
 
+# FiraCode's advance width is on the wide side, leaving visible gaps between
+# glyphs at the default cell width. Tighten the cell horizontally so characters
+# sit closer together without overlapping. -5% is a conservative pull-in;
+# go to -8% if it still feels airy.
+adjust-cell-width = -5%
+
 # ── Colours: Tokyo Night Night (contrast-boosted) ─────────────────────────────
 # Foreground lifted from #c0caf5 → #d5dbf5 and palette 8 from #414868 →
 # #565f89 (canonical Tokyo Night comment colour) so dimmed text is legible.
