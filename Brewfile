@@ -50,3 +50,5 @@ brew "zellij"
 
 # ── Casks ─────────────────────────────────────────────────────────────────────
 cask "font-fira-code-nerd-font"
+cask "font-symbols-only-nerd-font"
+cask "ghostty"

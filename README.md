@@ -9,7 +9,7 @@ Personal dotfiles managed with [chezmoi](https://www.chezmoi.io/). Supports **ma
 | Dotfile manager | chezmoi |
 | Shell | Zsh (XDG-clean, no oh-my-zsh) |
 | Prompt | Starship (Tokyo Night Night) |
-| Terminal | Alacritty |
+| Terminal | Ghostty |
 | Multiplexer | Zellij |
 | Editor | Neovim (lazy.nvim, minimal) |
 | Colour theme | Tokyo Night Night |
@@ -87,7 +87,7 @@ dotfiles/
 │   │   │   ├── dot_zshrc          # thin bootstrap; sources conf.d/*
 │   │   │   └── conf.d/            # modular config files sourced alphabetically
 │   │   ├── starship.toml
-│   │   ├── alacritty/
+│   │   ├── ghostty/
 │   │   ├── zellij/
 │   │   ├── nvim/
 │   │   └── git/
@@ -151,7 +151,7 @@ chezmoi apply
 ## Post-Install Checklist
 
 - [ ] `chezmoi diff` is clean (no pending changes)
-- [ ] Alacritty opens, Zellij starts, Starship prompt renders
+- [ ] Ghostty opens, Zellij starts, Starship prompt renders
 - [ ] `gpg --list-secret-keys` shows your signing key
 - [ ] `git commit` produces a signed commit
 - [ ] `time zsh -i -c exit` < 200 ms

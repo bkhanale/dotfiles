@@ -1,0 +1,105 @@
+# Ghostty configuration
+# Theme: Tokyo Night Night
+# Font: FiraCode Nerd Font Mono
+#
+# Reference: https://ghostty.org/docs/config/reference
+
+# ── Font ──────────────────────────────────────────────────────────────────────
+font-family             = FiraCode Nerd Font Mono
+font-size               = 12
+font-style              = Regular
+font-style-bold         = Retina
+font-style-italic       = Light Italic
+font-style-bold-italic  = Bold Italic
+
+# Route Nerd Font icon codepoints to Symbols Nerd Font Mono — its glyphs are
+# designed to fill the cell, so icons render larger and crisper than the
+# patched glyphs inside FiraCode. Applies to starship, eza, zellij, lazygit
+# and anything else that emits Nerd Font codepoints.
+# Requires: `brew install --cask font-symbols-only-nerd-font` (macOS) or
+#           `pacman -S ttf-nerd-fonts-symbols-mono` (Arch).
+font-codepoint-map = U+E000-U+F8FF=Symbols Nerd Font Mono
+font-codepoint-map = U+F0000-U+FFFFD=Symbols Nerd Font Mono
+
+# Symbols Nerd Font Mono renders icons at full cell height, which is too tall.
+# Negative value lowers the maximum icon height to bring them in line with text.
+adjust-icon-height = -20%
+
+# ── Colours: Tokyo Night Night ────────────────────────────────────────────────
+background        = 1a1b26
+foreground        = c0caf5
+cursor-color      = c0caf5
+cursor-text       = 1a1b26
+selection-background = 364a82
+selection-foreground = c0caf5
+bold-is-bright    = true
+
+# Normal palette (0-7)
+palette = 0=#15161e
+palette = 1=#f7768e
+palette = 2=#9ece6a
+palette = 3=#e0af68
+palette = 4=#7aa2f7
+palette = 5=#bb9af7
+palette = 6=#7dcfff
+palette = 7=#a9b1d6
+# Bright palette (8-15)
+palette = 8=#414868
+palette = 9=#f7768e
+palette = 10=#9ece6a
+palette = 11=#e0af68
+palette = 12=#7aa2f7
+palette = 13=#bb9af7
+palette = 14=#7dcfff
+palette = 15=#c0caf5
+
+# ── Window ────────────────────────────────────────────────────────────────────
+window-padding-x       = 12
+window-padding-y       = 10
+window-padding-balance = true
+background-opacity     = 1.0
+{{- if eq .chezmoi.os "darwin" }}
+# NOTE: macos-titlebar-style is a startup-only option — `reload_config`
+# (Cmd+Shift+,) will NOT apply changes. You must fully quit (Cmd+Q) and
+# relaunch Ghostty for this to take effect. Native macOS tabs require this
+# to be `native`, `transparent`, or `tabs` — `hidden` disables tabs entirely.
+macos-titlebar-style   = tabs
+macos-option-as-alt    = true
+{{- else }}
+window-decoration      = true
+{{- end }}
+
+# ── Cursor ────────────────────────────────────────────────────────────────────
+cursor-style       = block
+cursor-style-blink = false
+
+# ── Mouse / selection ─────────────────────────────────────────────────────────
+mouse-hide-while-typing = true
+copy-on-select          = clipboard
+
+# ── Scrollback ────────────────────────────────────────────────────────────────
+scrollback-limit = 10000000
+
+# ── Shell integration ─────────────────────────────────────────────────────────
+shell-integration          = detect
+shell-integration-features = cursor,sudo,title
+
+# ── Misc ──────────────────────────────────────────────────────────────────────
+confirm-close-surface = false
+
+# ── Key bindings ──────────────────────────────────────────────────────────────
+# Shift+Enter → newline (Claude Code and similar)
+keybind = shift+enter=text:\x1b\r
+
+{{- if eq .chezmoi.os "darwin" }}
+
+# Natural text editing (macOS iTerm2-style)
+# Cmd+Backspace → delete to line start (Ctrl+U)
+keybind = super+backspace=text:\x15
+# Cmd+Left → beginning of line (Ctrl+A)
+keybind = super+left=text:\x01
+# Cmd+Right → end of line (Ctrl+E)
+keybind = super+right=text:\x05
+# Cmd+Delete → delete to line end (Ctrl+K)
+keybind = super+delete=text:\x0b
+{{- end }}

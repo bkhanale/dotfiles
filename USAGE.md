@@ -6,7 +6,7 @@ Quick reference for getting the most out of the tools configured in this dotfile
 
 ## Table of Contents
 
-1. [Alacritty — Terminal](#alacritty--terminal)
+1. [Ghostty — Terminal](#ghostty--terminal)
 2. [Zellij — Terminal Multiplexer](#zellij--terminal-multiplexer)
 3. [Neovim — Editor](#neovim--editor)
    - [Leader key & general](#leader-key--general)
@@ -29,30 +29,55 @@ Quick reference for getting the most out of the tools configured in this dotfile
 
 ---
 
-## Alacritty — Terminal
+## Ghostty — Terminal
 
-Alacritty is a GPU-accelerated terminal. It has no built-in tab/pane support — use Zellij for that.
+Ghostty is a fast, native, GPU-accelerated terminal. It has built-in tabs and splits, but this setup keeps **Zellij** as the multiplexer (see below) for portability across SSH sessions.
 
-### Key bindings
+### Key bindings (macOS defaults)
 
 | Binding | Action |
 |---|---|
-| `Cmd+Return` | Spawn a new Alacritty window |
-| `Cmd+N` | Spawn a new Alacritty window |
-| `Cmd+Q` | Quit Alacritty |
-| `Cmd+C` | Copy selection |
-| `Cmd+V` | Paste clipboard |
-| `Cmd+=` | Increase font size |
-| `Cmd+-` | Decrease font size |
-| `Cmd+0` | Reset font size |
+| `Cmd+N` | New window |
+| `Cmd+T` | New tab |
+| `Cmd+W` | Close surface (tab/split/window) |
+| `Cmd+Q` | Quit Ghostty |
+| `Cmd+C` / `Cmd+V` | Copy / paste |
+| `Cmd+=` / `Cmd+-` / `Cmd+0` | Font size up / down / reset |
+| `Cmd+,` | Open config file |
+| `Cmd+Shift+,` | Reload config |
+| `Cmd+D` / `Cmd+Shift+D` | Split right / down |
+| `Cmd+Opt+Arrow` | Move focus between splits |
+| `Cmd+Shift+Enter` | Toggle pane zoom |
 
-Alacritty passes all other key events through to the running process (i.e. Zellij or the shell). Font is **FiraCode Nerd Font Mono**, theme is **Tokyo Night Night**. Scrollback scrolls to 10,000 lines.
+### Natural text editing
+
+| Binding | Sends | Effect |
+|---|---|---|
+| `Cmd+Backspace` | `Ctrl+U` | Delete to start of line |
+| `Cmd+Delete` | `Ctrl+K` | Delete to end of line |
+| `Cmd+Left` | `Ctrl+A` | Jump to start of line |
+| `Cmd+Right` | `Ctrl+E` | Jump to end of line |
+| `Opt+Backspace` | `Esc+DEL` | Delete word backward |
+| `Opt+Left` / `Opt+Right` | `Esc+b` / `Esc+f` | Word-wise cursor motion |
+| `Shift+Enter` | `Esc+CR` | Newline (Claude Code, etc.) |
+
+> `macos-option-as-alt = true` makes Option behave as Alt — required for the Opt-based word bindings to send the right escape sequences.
+
+Font is **FiraCode Nerd Font Mono**, theme is **Tokyo Night Night**. Scrollback retains ~10 MB of output. `copy-on-select = clipboard` — any text you select is automatically copied.
+
+### Useful CLI
+
+| Command | Action |
+|---|---|
+| `ghostty +show-config --default --docs` | Print the full default config with inline docs |
+| `ghostty +list-themes` | List bundled colour themes |
+| `ghostty +list-fonts` | List discovered fonts |
 
 ---
 
 ## Zellij — Terminal Multiplexer
 
-Zellij is the multiplexer that runs inside Alacritty. It handles panes, tabs, and sessions. A status bar is shown at the bottom indicating your current mode and available bindings.
+Zellij is the multiplexer that runs inside Ghostty. It handles panes, tabs, and sessions. A status bar is shown at the bottom indicating your current mode and available bindings.
 
 ### Mode overview
 

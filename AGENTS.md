@@ -143,6 +143,72 @@ Config lives in `home/dot_config/nvim/`. Entry point is `init.lua`. Plugins are 
 
 ---
 
+## Ghostty
+
+Config lives in `home/dot_config/ghostty/config.tmpl` → `~/.config/ghostty/config`. Format is `key = value` per line (NOT TOML), comments start with `#`.
+
+### Verify config keys before writing them — do not guess
+
+The Ghostty website docs are incomplete. Authoritative sources, in order of preference:
+
+```bash
+# Print the full default config with inline doc comments for every key:
+/Applications/Ghostty.app/Contents/MacOS/ghostty +show-config --default --docs
+
+# Print every default keybinding (action → key chord):
+/Applications/Ghostty.app/Contents/MacOS/ghostty +list-keybinds --default
+
+# Validate the current config (catches unknown fields, bad values):
+/Applications/Ghostty.app/Contents/MacOS/ghostty +show-config
+```
+
+If a key isn't in `+show-config --default --docs`, it does not exist. Common mistakes:
+
+- `audible-bell` — does NOT exist. Bell behavior is controlled via `bell-features` (default empty = silent).
+- `dynamic-title` — does NOT exist. Title updates come automatically via `shell-integration-features = title`.
+
+### Startup-only options — reload won't apply them
+
+`reload_config` (default `Cmd+Shift+,`) does NOT pick up changes to certain options. These require a full quit (`Cmd+Q`) and relaunch:
+
+- `macos-titlebar-style`
+- `macos-option-as-alt`
+- `font-family` and other font selection options
+- `shell-integration` (the mode itself; features can reload)
+- `command`
+
+If you change one of these, tell the user to fully quit and reopen.
+
+### macOS native tabs require a titlebar
+
+`Cmd+T` (`new_tab`) silently falls back to opening a new window when no titlebar is rendered. Required: `macos-titlebar-style` must be `native`, `transparent`, or `tabs`. Using `hidden` (or `window-decoration = none`) disables tabs entirely with no warning.
+
+### Default macOS keybinds worth knowing (don't re-bind)
+
+```
+super+t          new_tab
+super+n          new_window
+super+w          close_surface
+super+d          new_split:right
+super+shift+d    new_split:down
+super+shift+,    reload_config
+super+,          open_config
+super+=          increase_font_size
+super+-          decrease_font_size
+super+0          reset_font_size
+super+[ / super+]   previous_tab / next_tab
+super+1..9       goto_tab:N
+super+alt+arrow  goto_split:direction
+```
+
+### Key-binding syntax
+
+- Send raw bytes: `keybind = shift+enter=text:\x1b\r`
+- Bind a built-in action: `keybind = super+grave_accent=toggle_quick_terminal`
+- Modifiers: `super` (Cmd), `alt` (Opt), `ctrl`, `shift`. Use `+` to combine.
+
+---
+
 ## Brewfile
 
 - Do **not** add `tap "homebrew/bundle"` — this tap is deprecated and was removed. `brew bundle` is now built into Homebrew itself.

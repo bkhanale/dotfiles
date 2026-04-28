@@ -29,7 +29,7 @@ theme "tokyo-night-dark"
 keybinds {
     locked {
         // Pane navigation (vim-style only)
-        // NOTE: avoid Alt+<letter> bindings that clash with Alacritty's
+        // NOTE: avoid Alt+<letter> bindings that clash with the terminal's
         // Opt+arrow escape sequences: b (back-word), f (fwd-word), d (del-word)
         bind "Alt h" { MoveFocusOrTab "Left"; }
         bind "Alt l" { MoveFocusOrTab "Right"; }

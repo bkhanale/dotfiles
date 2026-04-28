@@ -42,8 +42,9 @@ tree
 watch
 
 # ── Terminal ──────────────────────────────────────────────────────────────────
-alacritty
+ghostty
 zellij
 
 # ── Fonts (AUR) ───────────────────────────────────────────────────────────────
 ttf-firacode-nerd
+ttf-nerd-fonts-symbols-mono
