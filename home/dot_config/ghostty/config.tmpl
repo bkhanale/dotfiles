@@ -98,7 +98,10 @@ scrollback-limit = 10000000
 
 # ── Shell integration ─────────────────────────────────────────────────────────
 shell-integration          = detect
-shell-integration-features = cursor,sudo,title
+# ssh-terminfo auto-installs xterm-ghostty into the remote's ~/.terminfo on
+# first connection, fixing "unknown terminal type" errors on hosts that don't
+# ship the entry. ssh-env forwards COLORTERM etc. so remotes can detect Ghostty.
+shell-integration-features = cursor,sudo,title,ssh-env,ssh-terminfo
 
 # ── Misc ──────────────────────────────────────────────────────────────────────
 confirm-close-surface = false
