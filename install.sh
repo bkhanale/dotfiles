@@ -214,10 +214,68 @@ install_debian() {
   install_nerd_fonts_user
   install_ghostty_terminfo
   install_neovim_upstream
+  install_eza_upstream
+  install_lazygit_upstream
 
   warn "ghostty and zellij are not packaged for Debian — install them manually:"
   warn "  ghostty: https://ghostty.org/docs/install/binary"
   warn "  zellij : https://zellij.dev/documentation/installation"
+}
+
+# ── Helper: install eza from upstream release (Linux-only) ───────────────────
+# Debian 12 (bookworm) doesn't ship eza in apt — without it, the `ls`/`ll`/`la`
+# aliases in conf.d/aliases.zsh fall back to the bare `ls --color=auto` branch.
+install_eza_upstream() {
+  command -v eza &>/dev/null && { success "eza already installed ($(eza --version 2>&1 | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+' | head -1))"; return; }
+  local target
+  case "$(uname -m)" in
+    x86_64|amd64)  target="x86_64-unknown-linux-musl" ;;   # static, libc-agnostic
+    aarch64|arm64) target="aarch64-unknown-linux-gnu"  ;;  # eza has no arm64 musl build
+    *) warn "Unsupported arch $(uname -m) — install eza manually"; return ;;
+  esac
+  local tmp; tmp="$(mktemp -d)"
+  trap 'rm -rf "$tmp"' RETURN
+  info "Downloading eza_${target}.tar.gz from upstream…"
+  curl -fsSL "https://github.com/eza-community/eza/releases/latest/download/eza_${target}.tar.gz" \
+    -o "$tmp/eza.tar.gz"
+  tar -xzf "$tmp/eza.tar.gz" -C "$tmp"
+  mkdir -p "$HOME/.local/bin"
+  install -m755 "$tmp/eza" "$HOME/.local/bin/eza"
+  success "eza $("$HOME/.local/bin/eza" --version 2>&1 | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+' | head -1) installed"
+}
+
+# ── Helper: install lazygit from upstream release (Linux-only) ───────────────
+# Debian 12 (bookworm) doesn't ship lazygit; the `lg` alias in conf.d/aliases.zsh
+# only attaches when lazygit is on PATH.
+install_lazygit_upstream() {
+  command -v lazygit &>/dev/null && { success "lazygit already installed"; return; }
+  local arch
+  case "$(uname -m)" in
+    x86_64|amd64)  arch="x86_64" ;;
+    aarch64|arm64) arch="arm64"  ;;
+    *) warn "Unsupported arch $(uname -m) — install lazygit manually"; return ;;
+  esac
+  # Capture full body before parsing — `grep -m1 | …` would SIGPIPE the still-
+  # running curl and trip pipefail.
+  local body version
+  if ! body="$(curl -fsSL https://api.github.com/repos/jesseduffield/lazygit/releases/latest)"; then
+    warn "Could not fetch lazygit release metadata — skipping"
+    return
+  fi
+  version="$(printf '%s\n' "$body" | grep -m1 '"tag_name":' | sed -E 's/.*"v?([^"]+)".*/\1/')"
+  if [[ -z "$version" ]]; then
+    warn "Could not parse lazygit tag_name — skipping"
+    return
+  fi
+  local tmp; tmp="$(mktemp -d)"
+  trap 'rm -rf "$tmp"' RETURN
+  info "Downloading lazygit v${version} for linux_${arch}…"
+  curl -fsSL "https://github.com/jesseduffield/lazygit/releases/download/v${version}/lazygit_${version}_linux_${arch}.tar.gz" \
+    -o "$tmp/lazygit.tar.gz"
+  tar -xzf "$tmp/lazygit.tar.gz" -C "$tmp" lazygit
+  mkdir -p "$HOME/.local/bin"
+  install -m755 "$tmp/lazygit" "$HOME/.local/bin/lazygit"
+  success "lazygit v${version} installed"
 }
 
 # ── Helper: install neovim from upstream tarball (Linux-only) ────────────────
