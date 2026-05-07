@@ -117,7 +117,8 @@ home/
 | Zoxide install | `brew install zoxide` | `pacman -S zoxide` | upstream installer → `~/.local/bin` (apt ships buggy v0.4.3 — `cd` recurses infinitely) |
 | Neovim install | Brewfile | `pacman -S neovim` | upstream tarball → `~/.local/nvim/` (apt ships ≤ 0.7.2; we need ≥ 0.11 for `vim.lsp.config` / `vim.lsp.enable`) |
 | Native plugin build deps | Xcode CLT (auto via brew) | `base-devel` (installed unconditionally) | `build-essential` (in packages.debian.txt) — needed by telescope-fzf-native + treesitter |
-| Ghostty / Zellij | Brewfile (Cask + brew) | `pacman -S ghostty zellij` | not packaged — install upstream binaries manually |
+| Zellij install | `brew install zellij` | `pacman -S zellij` | upstream installer → `~/.local/bin` (static musl tarball; not in apt) |
+| Ghostty install | Brewfile cask | `pacman -S ghostty` | not packaged — install manually only if you want Ghostty as a *local* terminal on the box (SSH'd-into VMs don't need it) |
 | `bat` binary name | `bat` | `bat` | `batcat` (install.sh symlinks to `~/.local/bin/bat`) |
 | `fd` binary name | `fd` | `fd` | `fdfind` (install.sh symlinks to `~/.local/bin/fd`) |
 

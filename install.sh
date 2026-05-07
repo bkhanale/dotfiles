@@ -216,10 +216,12 @@ install_debian() {
   install_neovim_upstream
   install_eza_upstream
   install_lazygit_upstream
+  install_zellij_upstream
 
-  warn "ghostty and zellij are not packaged for Debian — install them manually:"
-  warn "  ghostty: https://ghostty.org/docs/install/binary"
-  warn "  zellij : https://zellij.dev/documentation/installation"
+  warn "ghostty is not packaged for Debian — if you want it as a *local*"
+  warn "terminal on this box, install manually: https://ghostty.org/docs/install/binary"
+  warn "(remote SSH'd-into VMs don't need it; the xterm-ghostty terminfo step"
+  warn " above is what makes those sessions work.)"
 }
 
 # ── Helper: install eza from upstream release (Linux-only) ───────────────────
@@ -276,6 +278,27 @@ install_lazygit_upstream() {
   mkdir -p "$HOME/.local/bin"
   install -m755 "$tmp/lazygit" "$HOME/.local/bin/lazygit"
   success "lazygit v${version} installed"
+}
+
+# ── Helper: install zellij from upstream release (Linux-only) ────────────────
+# Not in Debian apt at all (any release). Zellij ships static musl tarballs.
+install_zellij_upstream() {
+  command -v zellij &>/dev/null && { success "zellij already installed"; return; }
+  local arch
+  case "$(uname -m)" in
+    x86_64|amd64)  arch="x86_64-unknown-linux-musl"  ;;
+    aarch64|arm64) arch="aarch64-unknown-linux-musl" ;;
+    *) warn "Unsupported arch $(uname -m) — install zellij manually"; return ;;
+  esac
+  local tmp; tmp="$(mktemp -d)"
+  trap 'rm -rf "$tmp"' RETURN
+  info "Downloading zellij-${arch}.tar.gz from upstream…"
+  curl -fsSL "https://github.com/zellij-org/zellij/releases/latest/download/zellij-${arch}.tar.gz" \
+    -o "$tmp/zellij.tar.gz"
+  tar -xzf "$tmp/zellij.tar.gz" -C "$tmp" zellij
+  mkdir -p "$HOME/.local/bin"
+  install -m755 "$tmp/zellij" "$HOME/.local/bin/zellij"
+  success "zellij $("$HOME/.local/bin/zellij" --version 2>&1 | awk '{print $2}') installed"
 }
 
 # ── Helper: install neovim from upstream tarball (Linux-only) ────────────────

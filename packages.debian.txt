@@ -19,7 +19,10 @@
 #                 ~/.local/nvim/ so the symlinked ~/.local/bin/nvim shadows
 #                 /usr/bin/nvim. (Even Debian 13's nvim may lag.)
 #   - ghostty   : not packaged for Debian (install manually from upstream)
-#   - zellij    : not consistently packaged (install via upstream binary or cargo)
+#                 — only needed if you want Ghostty as a *local* terminal here;
+#                 SSH'd-into VMs don't need it.
+#   - zellij    : not in apt at all; upstream installer drops static musl
+#                 binary into ~/.local/bin.
 #   - Nerd Fonts: download FiraCode + Symbols zips from ryanoasis/nerd-fonts
 #
 # Binary-name notes (Debian renames some tools):
