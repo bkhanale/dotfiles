@@ -11,6 +11,9 @@
 # NOT included here (install separately — see install.sh):
 #   - chezmoi   : install via get.chezmoi.io into ~/.local/bin
 #   - starship  : install via starship.rs/install.sh into ~/.local/bin
+#   - zoxide    : Debian 13 ships v0.4.3 (2020) whose `cd` function recurses
+#                 infinitely — "maximum nested function level reached". Fixed
+#                 in upstream v0.6+; install latest into ~/.local/bin.
 #   - ghostty   : not packaged for Debian (install manually from upstream)
 #   - zellij    : not consistently packaged (install via upstream binary or cargo)
 #   - Nerd Fonts: download FiraCode + Symbols zips from ryanoasis/nerd-fonts
@@ -24,7 +27,6 @@ zsh
 zsh-autosuggestions
 zsh-syntax-highlighting
 direnv
-zoxide
 fzf
 
 # ── Modern CLI ────────────────────────────────────────────────────────────────

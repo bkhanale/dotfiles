@@ -194,6 +194,20 @@ install_debian() {
     success "starship already installed"
   fi
 
+  # zoxide — Debian 13's apt package is v0.4.3 from 2020 with an infinite-
+  # recursion bug in its `cd` function ("maximum nested function level
+  # reached"). Fixed in upstream v0.6+. Install latest into ~/.local/bin
+  # so it shadows /usr/bin/zoxide via the PATH order set in dot_zshenv.
+  local zoxide_bin="$HOME/.local/bin/zoxide"
+  if [[ ! -x "$zoxide_bin" ]] || ! "$zoxide_bin" --version 2>/dev/null | grep -qE 'zoxide 0\.[6-9]|zoxide [1-9]'; then
+    info "Installing zoxide (upstream installer → ~/.local/bin)…"
+    curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh \
+      | bash -s -- --bin-dir "$HOME/.local/bin"
+    success "zoxide installed ($("$zoxide_bin" --version))"
+  else
+    success "zoxide already up-to-date ($("$zoxide_bin" --version))"
+  fi
+
   install_nerd_fonts_user
   install_ghostty_terminfo
 

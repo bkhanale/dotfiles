@@ -114,6 +114,7 @@ home/
 | Font path | managed by Homebrew Cask | system fonts dir (pacman) | `~/.local/share/fonts` (manual zip from ryanoasis/nerd-fonts) |
 | chezmoi install | `brew install chezmoi` | `yay -S chezmoi` | `get.chezmoi.io` installer → `~/.local/bin` |
 | Starship install | `brew install starship` | `pacman -S starship` | `starship.rs/install.sh` → `~/.local/bin` (not in apt) |
+| Zoxide install | `brew install zoxide` | `pacman -S zoxide` | upstream installer → `~/.local/bin` (apt ships buggy v0.4.3 — `cd` recurses infinitely) |
 | Ghostty / Zellij | Brewfile (Cask + brew) | `pacman -S ghostty zellij` | not packaged — install upstream binaries manually |
 | `bat` binary name | `bat` | `bat` | `batcat` (install.sh symlinks to `~/.local/bin/bat`) |
 | `fd` binary name | `fd` | `fd` | `fdfind` (install.sh symlinks to `~/.local/bin/fd`) |
