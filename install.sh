@@ -129,6 +129,7 @@ install_arch() {
   fi
 
   install_ghostty_terminfo
+  install_neovim_upstream  # no-op on current Arch (already >= 0.11)
 }
 
 # ── Debian / Ubuntu ───────────────────────────────────────────────────────────
@@ -212,10 +213,52 @@ install_debian() {
 
   install_nerd_fonts_user
   install_ghostty_terminfo
+  install_neovim_upstream
 
   warn "ghostty and zellij are not packaged for Debian — install them manually:"
   warn "  ghostty: https://ghostty.org/docs/install/binary"
   warn "  zellij : https://zellij.dev/documentation/installation"
+}
+
+# ── Helper: install neovim from upstream tarball (Linux-only) ────────────────
+# Debian 12 ships nvim 0.7.2; our nvim/lua/plugins.lua uses vim.lsp.config and
+# vim.lsp.enable which are 0.11+ APIs. Install upstream tarball into
+# ~/.local/nvim/ and symlink ~/.local/bin/nvim so it shadows /usr/bin/nvim.
+install_neovim_upstream() {
+  # Skip if a >= 0.11 nvim is already on PATH (and it's already our symlink, or
+  # the user installed something newer themselves).
+  if command -v nvim &>/dev/null; then
+    local ver; ver="$(nvim --version | head -1 | awk '{print $2}' | tr -d 'v')"
+    if [[ "$ver" =~ ^([0-9]+)\.([0-9]+) ]]; then
+      local major="${BASH_REMATCH[1]}" minor="${BASH_REMATCH[2]}"
+      if (( major > 0 )) || (( minor >= 11 )); then
+        success "nvim $ver already installed (>= 0.11) — skipping upstream install"
+        return
+      fi
+      info "nvim $ver is too old for our config (need >= 0.11) — installing upstream"
+    fi
+  fi
+
+  local arch
+  case "$(uname -m)" in
+    x86_64|amd64)  arch="x86_64" ;;
+    aarch64|arm64) arch="arm64"  ;;
+    *) warn "Unsupported arch $(uname -m) — install neovim manually"; return ;;
+  esac
+
+  local prefix="$HOME/.local/nvim"
+  local tmp; tmp="$(mktemp -d)"
+  trap 'rm -rf "$tmp"' RETURN
+  info "Downloading nvim-linux-$arch.tar.gz from neovim/neovim releases…"
+  curl -fsSL "https://github.com/neovim/neovim/releases/latest/download/nvim-linux-$arch.tar.gz" \
+    -o "$tmp/nvim.tar.gz"
+  rm -rf "$prefix"
+  mkdir -p "$prefix"
+  tar -xzf "$tmp/nvim.tar.gz" -C "$prefix" --strip-components=1
+
+  mkdir -p "$HOME/.local/bin"
+  ln -sf "$prefix/bin/nvim" "$HOME/.local/bin/nvim"
+  success "nvim $("$HOME/.local/bin/nvim" --version | head -1 | awk '{print $2}') installed at $prefix"
 }
 
 # ── Helper: install ghostty terminfo into ~/.terminfo (Linux-only) ────────────

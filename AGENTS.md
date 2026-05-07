@@ -115,6 +115,8 @@ home/
 | chezmoi install | `brew install chezmoi` | `yay -S chezmoi` | `get.chezmoi.io` installer → `~/.local/bin` |
 | Starship install | `brew install starship` | `pacman -S starship` | `starship.rs/install.sh` → `~/.local/bin` (not in apt) |
 | Zoxide install | `brew install zoxide` | `pacman -S zoxide` | upstream installer → `~/.local/bin` (apt ships buggy v0.4.3 — `cd` recurses infinitely) |
+| Neovim install | Brewfile | `pacman -S neovim` | upstream tarball → `~/.local/nvim/` (apt ships ≤ 0.7.2; we need ≥ 0.11 for `vim.lsp.config` / `vim.lsp.enable`) |
+| Native plugin build deps | Xcode CLT (auto via brew) | `base-devel` (installed unconditionally) | `build-essential` (in packages.debian.txt) — needed by telescope-fzf-native + treesitter |
 | Ghostty / Zellij | Brewfile (Cask + brew) | `pacman -S ghostty zellij` | not packaged — install upstream binaries manually |
 | `bat` binary name | `bat` | `bat` | `batcat` (install.sh symlinks to `~/.local/bin/bat`) |
 | `fd` binary name | `fd` | `fd` | `fdfind` (install.sh symlinks to `~/.local/bin/fd`) |

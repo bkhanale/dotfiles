@@ -14,6 +14,10 @@
 #   - zoxide    : Debian 13 ships v0.4.3 (2020) whose `cd` function recurses
 #                 infinitely — "maximum nested function level reached". Fixed
 #                 in upstream v0.6+; install latest into ~/.local/bin.
+#   - neovim    : Debian 12 ships nvim 0.7.2; our config uses vim.lsp.config /
+#                 vim.lsp.enable (0.11+). Install upstream tarball into
+#                 ~/.local/nvim/ so the symlinked ~/.local/bin/nvim shadows
+#                 /usr/bin/nvim. (Even Debian 13's nvim may lag.)
 #   - ghostty   : not packaged for Debian (install manually from upstream)
 #   - zellij    : not consistently packaged (install via upstream binary or cargo)
 #   - Nerd Fonts: download FiraCode + Symbols zips from ryanoasis/nerd-fonts
@@ -21,6 +25,12 @@
 # Binary-name notes (Debian renames some tools):
 #   - bat → batcat   (install.sh creates a `bat` symlink in ~/.local/bin)
 #   - fd  → fdfind   (install.sh creates an  `fd` symlink in ~/.local/bin)
+
+# ── Build toolchain ──────────────────────────────────────────────────────────
+# Needed by neovim plugins that compile native code on first install:
+#   - telescope-fzf-native.nvim (`build = "make"` → cc + make)
+#   - treesitter parsers (cc when :TSUpdate compiles each grammar)
+build-essential
 
 # ── Shell ─────────────────────────────────────────────────────────────────────
 zsh
@@ -39,9 +49,6 @@ silversearcher-ag
 # ── Data tools ────────────────────────────────────────────────────────────────
 jq
 yq
-
-# ── Editor ────────────────────────────────────────────────────────────────────
-neovim
 
 # ── Git ───────────────────────────────────────────────────────────────────────
 git
