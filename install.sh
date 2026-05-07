@@ -8,8 +8,10 @@
 #   1. Install platform packages (Brewfile / packages.arch.txt / packages.debian.txt)
 #   2. Back up any existing ~/.zshrc, ~/.zshenv, ~/.zlogin, ~/.bash_profile
 #      to <file>.pre-chezmoi.bak (chezmoi will overwrite the originals)
-#   3. Copy ~/.zsh_history into $XDG_STATE_HOME/zsh/history (cp, not mv;
-#      original is left in place)
+#   3. Migrate ~/.zsh_history into $XDG_STATE_HOME/zsh/history. If the new
+#      file doesn't exist, copy. If it does, prepend the old entries (older
+#      first) and concatenate. A sentinel file in the XDG zsh dir blocks
+#      double-merging on re-runs. The original ~/.zsh_history is preserved.
 #   4. Pre-populate ~/.config/chezmoi/chezmoi.toml's [data] block via bash
 #      `read` prompts (chezmoi's promptStringOnce silently fails when invoked
 #      from a script — see AGENTS.md)
@@ -285,21 +287,42 @@ backup_existing_configs() {
   fi
 }
 
-# ── Migrate ~/.zsh_history into XDG state dir (cp, leaves original alone) ─────
+# ── Migrate ~/.zsh_history into XDG state dir ────────────────────────────────
+# - If new doesn't exist: cp old → new.
+# - If new exists: prepend old's entries to new's (old entries are
+#   chronologically older, so they belong first). zsh tolerates duplicates at
+#   read time (HIST_IGNORE_ALL_DUPS in conf.d/keybindings.zsh), so we don't
+#   dedupe here — that would risk dropping commands and require parsing the
+#   extended-history format.
+# A sentinel file in the XDG zsh dir marks the merge as done so re-runs of
+# install.sh don't duplicate entries. The original ~/.zsh_history is never
+# touched; delete it yourself once you're confident.
 migrate_zsh_history() {
   local old="$HOME/.zsh_history"
   local new_dir="${XDG_STATE_HOME:-$HOME/.local/state}/zsh"
   local new="$new_dir/history"
-  if [[ ! -f "$old" ]]; then
+  local sentinel="$new_dir/.zsh_history-migrated"
+
+  [[ -f "$old" ]] || return
+
+  if [[ -f "$sentinel" ]]; then
+    info "~/.zsh_history already migrated (sentinel: $sentinel) — skipping"
     return
   fi
-  if [[ -f "$new" ]]; then
-    info "XDG zsh history already present at $new — leaving both files alone"
-    return
-  fi
+
   mkdir -p "$new_dir"
-  cp -p "$old" "$new"
-  success "Copied $old → $new (original kept; delete it manually when ready)"
+  local old_lines; old_lines=$(wc -l < "$old" | tr -d ' ')
+  if [[ ! -f "$new" ]]; then
+    cp -p "$old" "$new"
+    success "Copied $old → $new ($old_lines lines)"
+  else
+    local before; before=$(wc -l < "$new" | tr -d ' ')
+    cat "$old" "$new" > "$new.merging" && mv "$new.merging" "$new"
+    local after; after=$(wc -l < "$new" | tr -d ' ')
+    success "Merged $old into $new ($old_lines old + $before new = $after lines)"
+  fi
+  : > "$sentinel"
+  info "Original $old left in place; sentinel prevents re-merging on rerun"
 }
 
 # ── Write ~/.config/chezmoi/chezmoi.toml ─────────────────────────────────────
@@ -442,8 +465,9 @@ main() {
   printf "         time zsh -i -c exit  # should be < 200ms\n"
   printf "\n"
   printf "  Backups of pre-existing dotfiles, if any, were left at <file>.pre-chezmoi.bak\n"
-  printf "  Your previous ~/.zsh_history (if any) was copied to \$XDG_STATE_HOME/zsh/history;\n"
-  printf "  the original was left in place — delete it whenever you're confident.\n"
+  printf "  Your previous ~/.zsh_history, if any, was merged into \$XDG_STATE_HOME/zsh/history\n"
+  printf "  (a sentinel file marks the merge so reruns won't duplicate). The original\n"
+  printf "  ~/.zsh_history is left in place — delete it whenever you're confident.\n"
   printf "\n"
 }
 

@@ -298,8 +298,14 @@ gpgconf --kill all   # restart keyboxd and gpg-agent fresh
    so SSH'd-in sessions with `TERM=xterm-ghostty` resolve correctly.
 3. Back up existing `~/.zshrc`, `~/.zshenv`, `~/.zlogin`, `~/.bash_profile` to
    `<file>.pre-chezmoi.bak` (`cp -p`, never `mv` or `rm`)
-4. Copy `~/.zsh_history` → `$XDG_STATE_HOME/zsh/history` if the new path
-   doesn't already exist (the old file is left in place)
+4. Migrate `~/.zsh_history` into `$XDG_STATE_HOME/zsh/history`. If the new
+   file doesn't exist, copy. If it does, **prepend** the old entries (chrono-
+   logically older) and concatenate. A sentinel file
+   (`$XDG_STATE_HOME/zsh/.zsh_history-migrated`) marks the merge as done so
+   re-runs don't double-append. zsh tolerates duplicate entries at read time
+   (`HIST_IGNORE_ALL_DUPS`), so we don't try to dedupe in the merge — that
+   would risk dropping commands and require parsing the extended-history
+   format. The original `~/.zsh_history` is left in place.
 5. Write a minimal `~/.config/chezmoi/chezmoi.toml` (just a `[data]` block)
    via bash `read` prompts
 6. Run `chezmoi init --apply --source=$SCRIPT_DIR`. `init` (not bare `apply`)
