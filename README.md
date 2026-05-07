@@ -1,6 +1,6 @@
 # dotfiles
 
-Personal dotfiles managed with [chezmoi](https://www.chezmoi.io/). Supports **macOS** (Homebrew) and **Arch Linux** (pacman/yay).
+Personal dotfiles managed with [chezmoi](https://www.chezmoi.io/). Supports **macOS** (Homebrew), **Arch Linux** (pacman/yay), and **Debian / Ubuntu** (apt).
 
 ## Stack
 
@@ -38,36 +38,54 @@ yay -S --noconfirm chezmoi
 chezmoi init --apply bkhanale/dotfiles
 ```
 
+### Fresh Debian / Ubuntu machine
+
+```sh
+sudo apt-get update && sudo apt-get install -y curl git
+# install chezmoi into ~/.local/bin
+sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$HOME/.local/bin"
+export PATH="$HOME/.local/bin:$PATH"
+chezmoi init --apply bkhanale/dotfiles
+```
+
+Or, the all-in-one bootstrap (clones the repo, installs apt packages, starship, Nerd Fonts, and applies dotfiles):
+
+```sh
+git clone https://github.com/bkhanale/dotfiles ~/workspace/bkhanale/dotfiles
+bash ~/workspace/bkhanale/dotfiles/install.sh
+```
+
+> Ghostty and Zellij are not packaged for Debian — install them manually from
+> [ghostty.org](https://ghostty.org/docs/install/binary) and
+> [zellij.dev](https://zellij.dev/documentation/installation) if you need them.
+
 ### Already have chezmoi
 
 ```sh
 chezmoi init --apply bkhanale/dotfiles
 ```
 
-### Migrating an existing machine (clean slate)
+### Onto a machine with existing dotfiles
 
-If you have an existing machine with oh-my-zsh, nvm, pyenv, jenv, or rvm, use `migrate.sh` to perform a clean-slate migration:
+`install.sh` is non-destructive. Running it on a machine with an existing
+`~/.zshrc`, `~/.zshenv`, etc. will:
+
+- back each one up to `<file>.pre-chezmoi.bak` before chezmoi overwrites it
+- copy `~/.zsh_history` into `$XDG_STATE_HOME/zsh/history` (the original is
+  left in place — delete it whenever you're confident)
+- leave version managers (nvm, pyenv, jenv, rvm), oh-my-zsh, and any other
+  unrelated tooling completely alone — clean those up yourself when ready
 
 ```sh
 git clone https://github.com/bkhanale/dotfiles ~/workspace/bkhanale/dotfiles
-cd ~/workspace/bkhanale/dotfiles
-bash migrate.sh
+bash ~/workspace/bkhanale/dotfiles/install.sh
 ```
-
-This script:
-1. Installs all Homebrew packages from `Brewfile`
-2. Removes nvm, pyenv, jenv, and rvm (handling root-owned files if needed)
-3. Prompts for name/email/GPG key and writes `~/.config/chezmoi/chezmoi.toml`
-4. Runs `chezmoi apply`
-5. Fixes `~/.gnupg` permissions and restarts GPG daemons
-6. Extracts secrets from your old `~/.zshrc` → writes `~/.config/zsh/secrets.zsh`
-7. Backs up `~/.zshrc` to `~/.zshrc.pre-migration.bak` and removes old configs
 
 ---
 
 ## Prerequisites
 
-- A Nerd Font installed and selected in your terminal (FiraCode Nerd Font Mono recommended — included in Brewfile)
+- A Nerd Font installed and selected in your terminal (FiraCode Nerd Font Mono recommended — installed by `install.sh` on every supported OS)
 - A GPG key if you want signed commits (optional; leave blank when prompted)
 
 ---
@@ -77,14 +95,18 @@ This script:
 ```
 dotfiles/
 ├── Brewfile                 # macOS package manifest (brew bundle)
-├── install.sh               # one-command bootstrap
+├── packages.arch.txt        # Arch Linux package list (yay)
+├── packages.debian.txt      # Debian / Ubuntu package list (apt)
+├── install.sh               # one-command bootstrap (macOS / Arch / Debian)
 ├── home/                    # maps to ~/ via chezmoi
 │   ├── .chezmoi.toml.tmpl   # chezmoi config — prompts for name/email/GPG key once
 │   ├── dot_zshenv           # sets ZDOTDIR, XDG vars
 │   ├── dot_config/
 │   │   ├── zsh/
-│   │   │   ├── dot_zshenv         # empty, bypasses default ~/.zshenv loading
-│   │   │   ├── dot_zshrc          # thin bootstrap; sources conf.d/*
+│   │   │   ├── dot_zshenv         # placeholder; zsh reads ~/.zshenv, not $ZDOTDIR/.zshenv
+│   │   │   ├── dot_zshrc          # thin bootstrap; sources conf.d/* + secrets.zsh + local.zsh
+│   │   │   ├── secrets.zsh.example
+│   │   │   ├── local.zsh.example
 │   │   │   └── conf.d/            # modular config files sourced alphabetically
 │   │   ├── starship.toml
 │   │   ├── ghostty/
@@ -97,24 +119,29 @@ dotfiles/
 
 ---
 
-## Secrets
+## Per-Machine Overrides
 
-Secrets live in `~/.config/zsh/secrets.zsh`, which is **gitignored**. Copy the example to get started:
+Two files live at `~/.config/zsh/` for things that vary between machines.
+Both are **gitignored** AND listed in `home/.chezmoiignore`, so `chezmoi apply`
+will never overwrite them — edit them freely on each machine.
+
+| File | For |
+|---|---|
+| `secrets.zsh` | Tokens, API keys, passwords (e.g. `GITHUB_TOKEN`, `OPENAI_API_KEY`) |
+| `local.zsh`   | Non-secret per-machine config (PATH additions, work-only aliases, env overrides) |
+
+Both are sourced from `dot_zshrc` after `conf.d/*`, so anything you set wins
+over the tracked defaults. Get started by copying the examples:
 
 ```sh
 cp ~/.config/zsh/secrets.zsh.example ~/.config/zsh/secrets.zsh
-# then fill in your real values
-$EDITOR ~/.config/zsh/secrets.zsh
+cp ~/.config/zsh/local.zsh.example   ~/.config/zsh/local.zsh
+chmod 600 ~/.config/zsh/secrets.zsh
+$EDITOR ~/.config/zsh/secrets.zsh ~/.config/zsh/local.zsh
 ```
 
-Expected variables:
-
-```sh
-export CLAUDE_GH_MCP_TOKEN=""
-export VAULT_ADDR=""
-export VAULT_TOKEN=""
-export REQUESTLY_LEGACY_PATH=""
-```
+The example files are intentionally generic — there is no canonical list of
+expected variables. Add whatever your workflow needs.
 
 ---
 
@@ -141,10 +168,9 @@ chezmoi apply
 
 ## Adding a New Machine
 
-1. Install Homebrew (macOS) or ensure `git` + `yay` (Arch).
-2. Run the quick-start commands above.
-3. Copy `~/.config/zsh/secrets.zsh.example` → `secrets.zsh` and fill in values.
-4. Import your GPG key: `gpg --import private-key.asc`
+1. Install the platform package manager — Homebrew (macOS), `git` + `yay` (Arch), or `apt` (Debian / Ubuntu) — then run the quick-start commands above (or `bash install.sh` from a clone).
+2. Copy the per-machine override examples (`secrets.zsh.example` → `secrets.zsh`, `local.zsh.example` → `local.zsh`) and fill in whatever you need.
+3. Import your GPG key: `gpg --import private-key.asc`
 
 ---
 

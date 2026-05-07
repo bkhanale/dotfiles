@@ -24,8 +24,10 @@ font-thicken-strength   = 100
 # designed to fill the cell, so icons render larger and crisper than the
 # patched glyphs inside FiraCode. Applies to starship, eza, zellij, lazygit
 # and anything else that emits Nerd Font codepoints.
-# Requires: `brew install --cask font-symbols-only-nerd-font` (macOS) or
-#           `pacman -S ttf-nerd-fonts-symbols-mono` (Arch).
+# Requires: `brew install --cask font-symbols-only-nerd-font` (macOS),
+#           `pacman -S ttf-nerd-fonts-symbols-mono` (Arch), or the Symbols-only
+#           zip from ryanoasis/nerd-fonts unpacked into ~/.local/share/fonts
+#           (Debian — install.sh does this automatically).
 font-codepoint-map = U+E000-U+F8FF=Symbols Nerd Font Mono
 font-codepoint-map = U+F0000-U+FFFFD=Symbols Nerd Font Mono
 

@@ -43,5 +43,9 @@ fi
 # ── Starship prompt ───────────────────────────────────────────────────────────
 command -v starship &>/dev/null && eval "$(starship init zsh)"
 
-# ── Secrets (gitignored, never committed) ─────────────────────────────────────
+# ── Per-machine overrides (gitignored, chezmoi-ignored) ──────────────────────
+# Sourced last so they win over everything in conf.d/*.
+#   secrets.zsh — tokens, API keys, passwords
+#   local.zsh   — non-secret per-machine config (PATH additions, work aliases)
 [[ -f "$ZDOTDIR/secrets.zsh" ]] && source "$ZDOTDIR/secrets.zsh"
+[[ -f "$ZDOTDIR/local.zsh"   ]] && source "$ZDOTDIR/local.zsh"

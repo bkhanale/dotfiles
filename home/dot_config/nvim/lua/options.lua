@@ -26,8 +26,10 @@ opt.hlsearch   = true
 opt.incsearch  = true
 
 -- ── Files / undo ──────────────────────────────────────────────────────────────
+local cache_root = vim.env.XDG_CACHE_HOME
+                or (vim.env.HOME .. "/.cache")
 opt.undofile   = true
-opt.undodir    = vim.fn.expand("~/.cache/nvim/undo")
+opt.undodir    = cache_root .. "/nvim/undo"
 opt.swapfile   = false
 opt.backup     = false
 opt.updatetime = 300
@@ -49,11 +51,7 @@ opt.lazyredraw  = false  -- false required for nice animations
 opt.timeoutlen  = 300
 
 -- Ensure cache dirs exist
-local cache_dirs = {
-  vim.fn.expand("~/.cache/nvim/undo"),
-  vim.fn.expand("~/.cache/nvim/swap"),
-}
-for _, dir in ipairs(cache_dirs) do
+for _, dir in ipairs({ cache_root .. "/nvim/undo", cache_root .. "/nvim/swap" }) do
   if vim.fn.isdirectory(dir) == 0 then
     vim.fn.mkdir(dir, "p")
   end

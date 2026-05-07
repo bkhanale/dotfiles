@@ -1,7 +1,9 @@
 # .chezmoiignore — files chezmoi should not manage
 
-# Secrets — managed locally, never committed
+# Per-machine overrides — managed locally, never committed.
+# Both files are sourced from dot_zshrc if present and are also in .gitignore.
 .config/zsh/secrets.zsh
+.config/zsh/local.zsh
 
 # macOS junk
 **/.DS_Store

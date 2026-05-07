@@ -1,2 +1,7 @@
 .claude/settings.local.json
 
+# Per-machine overrides — never commit, even if someone creates them
+# inside the chezmoi source tree by accident.
+home/dot_config/zsh/secrets.zsh
+home/dot_config/zsh/local.zsh
+

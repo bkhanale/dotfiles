@@ -1,15 +1,52 @@
 #!/usr/bin/env bash
 # install.sh — one-command machine bootstrap
 # Usage: bash install.sh
+#
+# Supports: macOS (Homebrew), Arch Linux (pacman/yay), Debian/Ubuntu (apt)
+#
+# What it does (non-destructive — never deletes user data):
+#   1. Install platform packages (Brewfile / packages.arch.txt / packages.debian.txt)
+#   2. Back up any existing ~/.zshrc, ~/.zshenv, ~/.zlogin, ~/.bash_profile
+#      to <file>.pre-chezmoi.bak (chezmoi will overwrite the originals)
+#   3. Copy ~/.zsh_history into $XDG_STATE_HOME/zsh/history (cp, not mv;
+#      original is left in place)
+#   4. Pre-populate ~/.config/chezmoi/chezmoi.toml's [data] block via bash
+#      `read` prompts (chezmoi's promptStringOnce silently fails when invoked
+#      from a script — see AGENTS.md)
+#   5. Run `chezmoi init --apply` so chezmoi renders the full chezmoi.toml
+#      from .chezmoi.toml.tmpl (sourceDir + diff/edit/merge) and applies the
+#      dotfiles. promptStringOnce returns our pre-written values without prompting.
+#   6. Fix ~/.gnupg permissions (700 dirs, 600 files) so keyboxd works
 set -euo pipefail
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 info()    { printf "\033[0;34m[INFO]\033[0m  %s\n" "$*"; }
 success() { printf "\033[0;32m[OK]\033[0m    %s\n" "$*"; }
 warn()    { printf "\033[0;33m[WARN]\033[0m  %s\n" "$*"; }
+header()  { printf "\n\033[1;37m━━ %s\033[0m\n" "$*"; }
 error()   { printf "\033[0;31m[ERROR]\033[0m %s\n" "$*" >&2; exit 1; }
 
 OS="$(uname -s)"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Detect Linux distro family (returns: arch | debian | unknown)
+detect_linux_family() {
+  if [[ ! -r /etc/os-release ]]; then
+    echo "unknown"; return
+  fi
+  # shellcheck disable=SC1091
+  . /etc/os-release
+  local id="${ID:-}" id_like="${ID_LIKE:-}"
+  case "$id" in
+    arch|manjaro|endeavouros|garuda|artix)        echo "arch";   return ;;
+    debian|ubuntu|linuxmint|pop|elementary|kali)  echo "debian"; return ;;
+  esac
+  case " $id_like " in
+    *" arch "*)    echo "arch";   return ;;
+    *" debian "*)  echo "debian"; return ;;
+  esac
+  echo "unknown"
+}
 
 # ── macOS ─────────────────────────────────────────────────────────────────────
 install_macos() {
@@ -40,7 +77,6 @@ install_macos() {
   fi
 
   # Brewfile
-  SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
   if [[ -f "$SCRIPT_DIR/Brewfile" ]]; then
     info "Running brew bundle (this may take a while)…"
     brew bundle --file="$SCRIPT_DIR/Brewfile"
@@ -54,14 +90,10 @@ install_macos() {
 install_arch() {
   info "Arch Linux detected"
 
-  # pacman update
   info "Updating package database…"
   sudo pacman -Syu --noconfirm
-
-  # base-devel for AUR
   sudo pacman -S --needed --noconfirm base-devel git curl
 
-  # yay (AUR helper)
   if ! command -v yay &>/dev/null; then
     info "Installing yay…"
     tmp="$(mktemp -d)"
@@ -73,7 +105,6 @@ install_arch() {
     success "yay already installed"
   fi
 
-  # chezmoi
   if ! command -v chezmoi &>/dev/null; then
     info "Installing chezmoi via yay…"
     yay -S --noconfirm chezmoi
@@ -82,8 +113,6 @@ install_arch() {
     success "chezmoi already installed"
   fi
 
-  # Core packages from packages.arch.txt (if present)
-  SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
   if [[ -f "$SCRIPT_DIR/packages.arch.txt" ]]; then
     info "Installing Arch packages…"
     grep -v '^\s*#' "$SCRIPT_DIR/packages.arch.txt" | grep -v '^\s*$' \
@@ -94,43 +123,251 @@ install_arch() {
   fi
 }
 
-# ── Apply dotfiles via chezmoi ────────────────────────────────────────────────
-apply_chezmoi() {
-  info "Applying dotfiles with chezmoi…"
-  if chezmoi data &>/dev/null; then
-    # chezmoi is already initialised — just apply
-    chezmoi apply
+# ── Debian / Ubuntu ───────────────────────────────────────────────────────────
+install_debian() {
+  info "Debian / Ubuntu detected"
+
+  export DEBIAN_FRONTEND=noninteractive
+
+  info "Updating apt index…"
+  sudo apt-get update -y
+  sudo apt-get install -y curl ca-certificates gnupg git
+
+  if [[ -f "$SCRIPT_DIR/packages.debian.txt" ]]; then
+    info "Filtering packages.debian.txt against available apt sources…"
+    local available=() unavailable=()
+    while IFS= read -r pkg; do
+      if apt-cache show "$pkg" >/dev/null 2>&1; then
+        available+=("$pkg")
+      else
+        unavailable+=("$pkg")
+      fi
+    done < <(grep -v '^\s*#' "$SCRIPT_DIR/packages.debian.txt" | grep -v '^\s*$')
+    if (( ${#unavailable[@]} > 0 )); then
+      warn "Not in apt sources, skipping: ${unavailable[*]}"
+      warn "  (likely Debian < 13 or Ubuntu < 24.04 — enable backports or install manually)"
+    fi
+    if (( ${#available[@]} > 0 )); then
+      info "Installing ${#available[@]} apt packages…"
+      sudo apt-get install -y --no-install-recommends "${available[@]}"
+      success "apt packages installed"
+    fi
   else
+    warn "packages.debian.txt not found — skipping core install"
+  fi
+
+  # Debian renames the binaries: bat → batcat, fd → fdfind. Symlink into ~/.local/bin
+  # so our zsh aliases (`alias cat=bat`, `alias find=fd`) and editor configs find them.
+  mkdir -p "$HOME/.local/bin"
+  if command -v batcat &>/dev/null && ! command -v bat &>/dev/null; then
+    ln -sf "$(command -v batcat)" "$HOME/.local/bin/bat"
+    info "Linked batcat → ~/.local/bin/bat"
+  fi
+  if command -v fdfind &>/dev/null && ! command -v fd &>/dev/null; then
+    ln -sf "$(command -v fdfind)" "$HOME/.local/bin/fd"
+    info "Linked fdfind → ~/.local/bin/fd"
+  fi
+
+  # chezmoi — not in Debian stable; install upstream binary into ~/.local/bin
+  if ! command -v chezmoi &>/dev/null; then
+    info "Installing chezmoi (upstream installer → ~/.local/bin)…"
+    sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$HOME/.local/bin"
+    export PATH="$HOME/.local/bin:$PATH"
+    success "chezmoi installed"
+  else
+    success "chezmoi already installed ($(chezmoi --version))"
+  fi
+
+  # starship — not consistently in apt; install upstream
+  if ! command -v starship &>/dev/null; then
+    info "Installing starship (upstream installer → ~/.local/bin)…"
+    curl -fsSL https://starship.rs/install.sh \
+      | sh -s -- --yes --bin-dir "$HOME/.local/bin"
+    success "starship installed"
+  else
+    success "starship already installed"
+  fi
+
+  install_nerd_fonts_user
+
+  warn "ghostty and zellij are not packaged for Debian — install them manually:"
+  warn "  ghostty: https://ghostty.org/docs/install/binary"
+  warn "  zellij : https://zellij.dev/documentation/installation"
+}
+
+# ── Helper: install Nerd Fonts into ~/.local/share/fonts (Linux-only) ─────────
+install_nerd_fonts_user() {
+  local fonts_dir="$HOME/.local/share/fonts"
+  if fc-list 2>/dev/null | grep -qi "FiraCode Nerd Font"; then
+    success "FiraCode Nerd Font already installed"
+    return
+  fi
+  info "Installing FiraCode + Symbols Nerd Fonts into $fonts_dir…"
+  mkdir -p "$fonts_dir"
+  local tmp; tmp="$(mktemp -d)"
+  local base="https://github.com/ryanoasis/nerd-fonts/releases/latest/download"
+  curl -fsSL "$base/FiraCode.zip"             -o "$tmp/FiraCode.zip"
+  curl -fsSL "$base/NerdFontsSymbolsOnly.zip" -o "$tmp/Symbols.zip"
+  unzip -oq "$tmp/FiraCode.zip" -d "$fonts_dir/FiraCode"
+  unzip -oq "$tmp/Symbols.zip"  -d "$fonts_dir/Symbols"
+  rm -rf "$tmp"
+  fc-cache -f "$fonts_dir" >/dev/null
+  success "Nerd Fonts installed"
+}
+
+# ── Back up files chezmoi is about to overwrite (cp, never rm) ────────────────
+# We only touch files chezmoi will write at the same target path. Anything else
+# (oh-my-zsh, nvm, pyenv, …) is left untouched so the user can decide later.
+backup_existing_configs() {
+  header "Backing up existing dotfiles (.pre-chezmoi.bak)"
+  local f backed_up=0
+  for f in "$HOME/.zshrc" "$HOME/.zshenv" "$HOME/.zlogin" "$HOME/.bash_profile"; do
+    # Skip non-existent files and existing symlinks (likely already chezmoi-managed
+    # or a previous install run — re-backing them up would clobber the real backup).
+    [[ -f "$f" && ! -L "$f" ]] || continue
+    local dest="${f}.pre-chezmoi.bak"
+    if [[ -e "$dest" ]]; then
+      info "Backup already exists: $dest (leaving in place)"
+    else
+      cp -p "$f" "$dest"
+      info "Backed up $f → $dest"
+      backed_up=$((backed_up + 1))
+    fi
+  done
+  if [[ $backed_up -eq 0 ]]; then
+    success "No collisions to back up"
+  else
+    success "Backed up $backed_up file(s)"
+  fi
+}
+
+# ── Migrate ~/.zsh_history into XDG state dir (cp, leaves original alone) ─────
+migrate_zsh_history() {
+  local old="$HOME/.zsh_history"
+  local new_dir="${XDG_STATE_HOME:-$HOME/.local/state}/zsh"
+  local new="$new_dir/history"
+  if [[ ! -f "$old" ]]; then
+    return
+  fi
+  if [[ -f "$new" ]]; then
+    info "XDG zsh history already present at $new — leaving both files alone"
+    return
+  fi
+  mkdir -p "$new_dir"
+  cp -p "$old" "$new"
+  success "Copied $old → $new (original kept; delete it manually when ready)"
+}
+
+# ── Write ~/.config/chezmoi/chezmoi.toml ─────────────────────────────────────
+# Bash prompts here instead of chezmoi's promptStringOnce, which silently
+# fails when invoked from a script (documented in AGENTS.md).
+write_chezmoi_config() {
+  local cfg_dir="$HOME/.config/chezmoi"
+  local cfg="$cfg_dir/chezmoi.toml"
+  # POSIX bracket class — \s would only work on GNU grep, not BSD/macOS grep.
+  if [[ -f "$cfg" ]] && grep -q '^[[:space:]]*name[[:space:]]*=' "$cfg" 2>/dev/null; then
+    info "chezmoi config already exists at $cfg — keeping it"
+    return
+  fi
+  header "chezmoi configuration"
+  printf "  Enter your details (used for git config and GPG signing):\n"
+  printf "  Full name: ";                            read -r _name
+  printf "  Email:     ";                            read -r _email
+  printf "  GPG key ID (leave blank to skip): ";     read -r _gpg
+  mkdir -p "$cfg_dir"
+  cat > "$cfg" <<EOF
+[data]
+  name    = "$_name"
+  email   = "$_email"
+  gpgKey  = "$_gpg"
+EOF
+  success "Wrote $cfg"
+}
+
+# ── Apply dotfiles via chezmoi (uses local source if running from a clone) ────
+# We use `chezmoi init --apply` (not just `chezmoi apply`) so chezmoi renders
+# .chezmoi.toml.tmpl and writes a *complete* ~/.config/chezmoi/chezmoi.toml,
+# including sourceDir + diff/edit/merge sections. promptStringOnce reads our
+# pre-written [data] block, so it returns the existing values without prompting.
+apply_chezmoi() {
+  header "Applying dotfiles via chezmoi"
+  if [[ -f "$SCRIPT_DIR/.chezmoiroot" ]]; then
+    # Running from a local clone — use that as the source, no remote clone.
+    chezmoi init --apply --source="$SCRIPT_DIR"
+  else
+    # No local clone available — pull from GitHub.
     chezmoi init --apply bkhanale/dotfiles
   fi
   success "chezmoi apply complete"
 }
 
+# ── Fix ~/.gnupg permissions (gpg refuses to run with loose perms) ───────────
+fix_gnupg_perms() {
+  [[ -d "$HOME/.gnupg" ]] || return
+  info "Fixing ~/.gnupg permissions…"
+  chmod 700 "$HOME/.gnupg"
+  find "$HOME/.gnupg" -type d -exec chmod 700 {} \;
+  find "$HOME/.gnupg" -type f -exec chmod 600 {} \;
+  gpgconf --kill all 2>/dev/null || true
+  success "GPG permissions fixed"
+}
+
 # ── Main ──────────────────────────────────────────────────────────────────────
 main() {
+  header "Step 1 — Install packages"
   case "$OS" in
-    Darwin)  install_macos ;;
-    Linux)   install_arch  ;;
-    *)       error "Unsupported OS: $OS" ;;
+    Darwin)
+      install_macos
+      ;;
+    Linux)
+      family="$(detect_linux_family)"
+      case "$family" in
+        arch)    install_arch   ;;
+        debian)  install_debian ;;
+        *)
+          local detected_id="unknown"
+          if [[ -r /etc/os-release ]]; then
+            # Run in a subshell so sourced vars don't leak.
+            detected_id="$(. /etc/os-release; printf '%s' "${ID:-unknown}")"
+          fi
+          error "Unsupported Linux distro (need arch- or debian-family). /etc/os-release ID=$detected_id"
+          ;;
+      esac
+      ;;
+    *)
+      error "Unsupported OS: $OS"
+      ;;
   esac
 
+  header "Step 2 — Migrate existing user data"
+  backup_existing_configs
+  migrate_zsh_history
+
+  write_chezmoi_config
   apply_chezmoi
+  fix_gnupg_perms
 
   printf "\n"
   success "All done!"
   printf "\n"
   printf "  Next steps:\n"
-  printf "    1. Set up your secrets file:\n"
-  printf "       cp ~/.config/zsh/secrets.zsh.example ~/.config/zsh/secrets.zsh\n"
-  printf "       \$EDITOR ~/.config/zsh/secrets.zsh\n"
+  printf "    1. Set up your per-machine overrides (both gitignored, never\n"
+  printf "       overwritten by chezmoi apply):\n"
+  printf "         cp ~/.config/zsh/secrets.zsh.example ~/.config/zsh/secrets.zsh\n"
+  printf "         cp ~/.config/zsh/local.zsh.example   ~/.config/zsh/local.zsh\n"
+  printf "         \$EDITOR ~/.config/zsh/secrets.zsh ~/.config/zsh/local.zsh\n"
   printf "\n"
   printf "    2. Import your GPG key (if using commit signing):\n"
-  printf "       gpg --import private-key.asc\n"
-  printf "       gpgconf --kill gpg-agent\n"
+  printf "         gpg --import private-key.asc\n"
+  printf "         gpgconf --kill gpg-agent\n"
   printf "\n"
-  printf "    3. Verify with:\n"
-  printf "       chezmoi diff         # should be clean\n"
-  printf "       time zsh -i -c exit  # should be < 200ms\n"
+  printf "    3. Verify:\n"
+  printf "         chezmoi diff         # should be clean\n"
+  printf "         time zsh -i -c exit  # should be < 200ms\n"
+  printf "\n"
+  printf "  Backups of pre-existing dotfiles, if any, were left at <file>.pre-chezmoi.bak\n"
+  printf "  Your previous ~/.zsh_history (if any) was copied to \$XDG_STATE_HOME/zsh/history;\n"
+  printf "  the original was left in place — delete it whenever you're confident.\n"
   printf "\n"
 }
 

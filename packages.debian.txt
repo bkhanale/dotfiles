@@ -1,11 +1,28 @@
-# packages.arch.txt — Arch Linux package list
-# Installed via: yay -S --needed --noconfirm (see install.sh)
+# packages.debian.txt — Debian / Ubuntu package list
+# Installed via install.sh (which filters out anything not available in the
+# current apt sources before calling apt-get install).
+#
+# Verified on: Debian 13 (trixie), Ubuntu 24.04+.
+# On Debian 12 (bookworm) / Ubuntu 22.04 these packages will be skipped
+# automatically with a warning, since they are not in main:
+#   - eza, tealdeer, lazygit
+# Either upgrade the OS, enable backports, or install those manually.
+#
+# NOT included here (install separately — see install.sh):
+#   - chezmoi   : install via get.chezmoi.io into ~/.local/bin
+#   - starship  : install via starship.rs/install.sh into ~/.local/bin
+#   - ghostty   : not packaged for Debian (install manually from upstream)
+#   - zellij    : not consistently packaged (install via upstream binary or cargo)
+#   - Nerd Fonts: download FiraCode + Symbols zips from ryanoasis/nerd-fonts
+#
+# Binary-name notes (Debian renames some tools):
+#   - bat → batcat   (install.sh creates a `bat` symlink in ~/.local/bin)
+#   - fd  → fdfind   (install.sh creates an  `fd` symlink in ~/.local/bin)
 
 # ── Shell ─────────────────────────────────────────────────────────────────────
 zsh
 zsh-autosuggestions
 zsh-syntax-highlighting
-starship
 direnv
 zoxide
 fzf
@@ -13,9 +30,9 @@ fzf
 # ── Modern CLI ────────────────────────────────────────────────────────────────
 eza
 bat
-fd
+fd-find
 ripgrep
-the_silver_searcher
+silversearcher-ag
 
 # ── Data tools ────────────────────────────────────────────────────────────────
 jq
@@ -26,27 +43,20 @@ neovim
 
 # ── Git ───────────────────────────────────────────────────────────────────────
 git
-github-cli
+gh
 git-delta
 lazygit
 
 # ── GPG ───────────────────────────────────────────────────────────────────────
 gnupg
-pinentry
+pinentry-curses
 
 # ── Utilities ─────────────────────────────────────────────────────────────────
-# `watch` ships with procps-ng (preinstalled), so it is intentionally omitted.
+# `watch` ships with procps (preinstalled), so it is intentionally omitted.
 curl
 wget
-unzip
 httpie
-tldr
+tealdeer
 tree
-
-# ── Terminal ──────────────────────────────────────────────────────────────────
-ghostty
-zellij
-
-# ── Fonts (AUR) ───────────────────────────────────────────────────────────────
-ttf-firacode-nerd
-ttf-nerd-fonts-symbols-mono
+unzip
+fontconfig

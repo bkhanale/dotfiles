@@ -51,13 +51,13 @@ Built-in chezmoi data:
 ### chezmoi Data — Critical Note
 
 **Do NOT rely on `promptStringOnce` being called interactively from a bash script.**
-When `chezmoi init` is invoked from inside a bash script (e.g. `migrate.sh`), the prompts often fail silently, leaving `~/.config/chezmoi/chezmoi.toml` empty. Then `chezmoi apply` fails with:
+When `chezmoi init` is invoked from inside a bash script (e.g. `install.sh`), the prompts often fail silently, leaving `~/.config/chezmoi/chezmoi.toml` empty. Then `chezmoi apply` fails with:
 
 ```
 template: ...: map has no entry for key "name"
 ```
 
-**Correct approach**: Write `~/.config/chezmoi/chezmoi.toml` directly in the script using bash `read` prompts, then call `chezmoi apply`:
+**Correct approach** (used by `install.sh:write_chezmoi_config` + `apply_chezmoi`): pre-populate `chezmoi.toml`'s `[data]` block via bash `read`, then run `chezmoi init --apply` so the full template (with `sourceDir`, `[diff]`, `[edit]`, `[merge]`) is rendered. `promptStringOnce` returns the pre-written values without prompting.
 
 ```bash
 mkdir -p ~/.config/chezmoi
@@ -67,7 +67,7 @@ cat > ~/.config/chezmoi/chezmoi.toml <<EOF
   email   = "$_email"
   gpgKey  = "$_gpg"
 EOF
-chezmoi apply --source="$DOTFILES_DIR"
+chezmoi init --apply --source="$SCRIPT_DIR"
 ```
 
 ---
@@ -78,8 +78,10 @@ chezmoi apply --source="$DOTFILES_DIR"
 home/
 ├── dot_zshenv          # ZDOTDIR + XDG env vars — loaded for ALL zsh instances
 └── dot_config/zsh/
-    ├── dot_zshenv      # empty, bypasses default ~/.zshenv loading
+    ├── dot_zshenv      # placeholder (see note below); zsh does NOT source this
     ├── dot_zshrc       # interactive shell bootstrap — thin; sources conf.d/*
+    ├── secrets.zsh.example
+    ├── local.zsh.example
     └── conf.d/         # modular files sourced alphabetically by dot_zshrc
     ├── aliases.zsh
     ├── completions.zsh
@@ -89,27 +91,51 @@ home/
     └── tools.zsh
 ```
 
-- **Never put secrets in tracked files.** Secrets go in `~/.config/zsh/secrets.zsh` (gitignored).
-- **Never hard-code paths** — use XDG variables (`$XDG_CONFIG_HOME`, `$XDG_DATA_HOME`, `$XDG_CACHE_HOME`).
+> **About `$ZDOTDIR/.zshenv`** — zsh's startup order is `/etc/zsh/zshenv` →
+> `$HOME/.zshenv` → (if interactive) `$ZDOTDIR/.zshrc` etc. The
+> `$ZDOTDIR/.zshenv` path is **not** read in this setup because `ZDOTDIR` is
+> set inside `~/.zshenv` (after that file has already been read). The file at
+> `home/dot_config/zsh/dot_zshenv` exists only as documentation; deleting it
+> would change nothing.
+
+- **Never put secrets in tracked files.** Secrets go in `~/.config/zsh/secrets.zsh` (gitignored + chezmoi-ignored).
+- **Per-machine, non-secret config goes in `~/.config/zsh/local.zsh`** — also gitignored + chezmoi-ignored, sourced from `dot_zshrc` after `conf.d/*`.
+- **Never hard-code paths** — use XDG variables (`$XDG_CONFIG_HOME`, `$XDG_DATA_HOME`, `$XDG_CACHE_HOME`, `$XDG_STATE_HOME`).
 - OS-specific logic belongs in `.tmpl` files using chezmoi template guards.
 
 ---
 
 ## Platform Differences
 
-| Concern | macOS | Arch Linux |
-|---|---|---|
-| Package manager | Homebrew (`Brewfile`) | pacman / yay (`packages.arch.txt`) |
-| GPG pinentry | `pinentry-mac` | `pinentry-curses` |
-| Font path | managed by Homebrew Cask | system fonts dir |
-| chezmoi install | `brew install chezmoi` | `yay -S chezmoi` |
+| Concern | macOS | Arch Linux | Debian / Ubuntu |
+|---|---|---|---|
+| Package manager | Homebrew (`Brewfile`) | pacman / yay (`packages.arch.txt`) | apt (`packages.debian.txt`) |
+| GPG pinentry | `pinentry-mac` | `pinentry-curses` | `pinentry-curses` |
+| Font path | managed by Homebrew Cask | system fonts dir (pacman) | `~/.local/share/fonts` (manual zip from ryanoasis/nerd-fonts) |
+| chezmoi install | `brew install chezmoi` | `yay -S chezmoi` | `get.chezmoi.io` installer → `~/.local/bin` |
+| Starship install | `brew install starship` | `pacman -S starship` | `starship.rs/install.sh` → `~/.local/bin` (not in apt) |
+| Ghostty / Zellij | Brewfile (Cask + brew) | `pacman -S ghostty zellij` | not packaged — install upstream binaries manually |
+| `bat` binary name | `bat` | `bat` | `batcat` (install.sh symlinks to `~/.local/bin/bat`) |
+| `fd` binary name | `fd` | `fd` | `fdfind` (install.sh symlinks to `~/.local/bin/fd`) |
+
+### Detecting Linux distro family
+
+`install.sh` routes Linux installs by reading `/etc/os-release`:
+
+- `ID=arch` (and arch-derivatives via `ID_LIKE=arch`) → arch branch
+- `ID=debian` or `ID=ubuntu` (and derivatives via `ID_LIKE=debian`) → debian branch
+
+Templates use `{{ if eq .chezmoi.os "linux" }}` for both — the linux branch values
+(e.g. `/usr/bin/pinentry-curses`, `helper = cache`, `window-decoration = true`)
+are valid on both Arch and Debian. If you ever need to split them, switch to
+`{{ if eq .chezmoi.osRelease.id "debian" }}`.
 
 ---
 
 ## Adding a New Config File
 
 1. Create the file at `home/dot_config/<tool>/<file>` (or `home/dot_config/<tool>/<file>.tmpl` if it needs templating).
-2. If it references secrets, document the expected env var in `home/dot_config/zsh/secrets.zsh.example`.
+2. If it references a secret, document the expected env var in `home/dot_config/zsh/secrets.zsh.example`. If it references non-secret per-machine config, document it in `local.zsh.example`.
 3. If it's macOS/Linux specific, wrap content with `{{- if eq .chezmoi.os "darwin" }}` guards.
 4. Run `chezmoi apply` to verify, then `chezmoi diff` to confirm it's clean.
 
@@ -126,14 +152,29 @@ To add a new Zsh module:
 
 ---
 
-## Secrets Convention
+## Per-Machine Override Files
 
-- Gitignored file: `~/.config/zsh/secrets.zsh`
-- Example template committed: `home/dot_config/zsh/secrets.zsh.example`
-- The file is sourced at the end of `dot_zshrc` if it exists
-- chezmoi ignores it via `home/.chezmoiignore`
+Two parallel files at `~/.config/zsh/`. Both are gitignored AND in
+`home/.chezmoiignore` so `chezmoi apply` will never overwrite them. Both are
+sourced at the end of `dot_zshrc` (after `conf.d/*`) if present, in this order:
 
-**Never** commit real tokens, passwords, or API keys. If you see a secret in a tracked file, remove it immediately and rotate the credential.
+| File | Contents |
+|---|---|
+| `secrets.zsh` | Tokens, API keys, passwords (e.g. `GITHUB_TOKEN`, `OPENAI_API_KEY`) |
+| `local.zsh`   | Non-secret per-machine config — PATH additions, work-only aliases, env overrides |
+
+Each has a corresponding `*.example` template committed to the repo. The
+examples are intentionally generic — there is no canonical list of expected
+variables, since users have wildly different needs.
+
+**Never** commit real tokens, passwords, or API keys. If you see a secret in
+a tracked file, remove it immediately and rotate the credential.
+
+### When adding a new tracked config that depends on an env var
+
+Document the var in `home/dot_config/zsh/secrets.zsh.example` (if secret) or
+`local.zsh.example` (if not). Do **not** add a default value to `conf.d/*` —
+that becomes a baked-in opinion that everyone inherits.
 
 ---
 
@@ -236,7 +277,7 @@ find ~/.gnupg -type f -exec chmod 600 {} \;
 gpgconf --kill all   # restart keyboxd and gpg-agent fresh
 ```
 
-`migrate.sh` does this automatically.
+`install.sh:fix_gnupg_perms` does this automatically.
 
 ### Signing failures
 
@@ -245,19 +286,36 @@ gpgconf --kill all   # restart keyboxd and gpg-agent fresh
 
 ---
 
-## migrate.sh
+## install.sh
 
-`migrate.sh` is the clean-slate migration script for moving an existing machine to this dotfiles setup. It:
+`install.sh` is the single bootstrap entry point for all three OSes. It is
+**non-destructive** — it never deletes anything. Order of operations:
 
-1. Installs Homebrew packages
-2. Removes old version managers — including handling **root-owned files** in `~/.rvm` (passenger gem builds with sudo leave root-owned files; the script uses `sudo rm -rf` when detected)
-3. Writes `~/.config/chezmoi/chezmoi.toml` via interactive bash prompts (not `promptStringOnce`)
-4. Runs `chezmoi apply`
-5. Fixes `~/.gnupg` permissions
-6. Writes `~/.config/zsh/secrets.zsh` by extracting values from the old `~/.zshrc`
-7. Removes old dotfiles (backs up `~/.zshrc` to `~/.zshrc.pre-migration.bak`)
+1. Detect OS / Linux distro family
+2. Install platform packages (Brewfile / packages.arch.txt / packages.debian.txt)
+3. Back up existing `~/.zshrc`, `~/.zshenv`, `~/.zlogin`, `~/.bash_profile` to
+   `<file>.pre-chezmoi.bak` (`cp -p`, never `mv` or `rm`)
+4. Copy `~/.zsh_history` → `$XDG_STATE_HOME/zsh/history` if the new path
+   doesn't already exist (the old file is left in place)
+5. Write a minimal `~/.config/chezmoi/chezmoi.toml` (just a `[data]` block)
+   via bash `read` prompts
+6. Run `chezmoi init --apply --source=$SCRIPT_DIR`. `init` (not bare `apply`)
+   is used so chezmoi renders `home/.chezmoi.toml.tmpl` and writes a
+   *complete* chezmoi.toml — including `sourceDir` and the `[diff]`/`[edit]`
+   /`[merge]` sections. `promptStringOnce` reads our pre-written `[data]`
+   block, so it returns the existing values without prompting.
+7. Fix `~/.gnupg` permissions
 
-Do not change the ordering of steps — the sequence is intentional.
+**Things install.sh deliberately does NOT do:**
+
+- Remove version managers (nvm/pyenv/jenv/rvm), oh-my-zsh, p10k, or any
+  other unrelated user tooling. The user can clean those up themselves once
+  they've confirmed the new setup works.
+- Extract secrets from an old `~/.zshrc`. Users copy `secrets.zsh.example`
+  and `local.zsh.example` and fill in their own values.
+
+If you find yourself wanting to add a removal step, push back — the rule is
+"back up, don't delete."
 
 ---
 

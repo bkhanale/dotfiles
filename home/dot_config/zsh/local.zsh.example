@@ -1,0 +1,18 @@
+# local.zsh.example — copy to local.zsh for per-machine config
+#
+# local.zsh is gitignored AND in home/.chezmoiignore — chezmoi will never
+# overwrite it on `chezmoi apply`, so you can edit it freely on each machine.
+#
+# Usage:
+#   cp ~/.config/zsh/local.zsh.example ~/.config/zsh/local.zsh
+#   $EDITOR ~/.config/zsh/local.zsh
+#
+# Use this file for *non-secret* per-machine config — anything that varies
+# between your laptop, work machine, and servers but isn't a credential.
+# Sourced last in dot_zshrc (after conf.d/*, plugins, and starship init),
+# so PATH changes and aliases here override anything set earlier.
+
+# Examples — replace with your own:
+# export PATH="$HOME/work/bin:$PATH"
+# alias deploy='kubectl --context=staging'
+# export EDITOR='nvim'   # override the default
