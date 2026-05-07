@@ -97,6 +97,7 @@ dotfiles/
 ├── Brewfile                 # macOS package manifest (brew bundle)
 ├── packages.arch.txt        # Arch Linux package list (yay)
 ├── packages.debian.txt      # Debian / Ubuntu package list (apt)
+├── terminfo/ghostty.terminfo # xterm-ghostty terminfo source — compiled by install.sh
 ├── install.sh               # one-command bootstrap (macOS / Arch / Debian)
 ├── home/                    # maps to ~/ via chezmoi
 │   ├── .chezmoi.toml.tmpl   # chezmoi config — prompts for name/email/GPG key once

@@ -17,6 +17,10 @@
 #      from .chezmoi.toml.tmpl (sourceDir + diff/edit/merge) and applies the
 #      dotfiles. promptStringOnce returns our pre-written values without prompting.
 #   6. Fix ~/.gnupg permissions (700 dirs, 600 files) so keyboxd works
+#   7. Offer to chsh the login shell to zsh (interactive prompt; defaults to no)
+#
+# Also done as part of step 1 on Linux: compile terminfo/ghostty.terminfo into
+# ~/.terminfo so SSH'd-in sessions with TERM=xterm-ghostty resolve correctly.
 set -euo pipefail
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
@@ -121,6 +125,8 @@ install_arch() {
   else
     warn "packages.arch.txt not found — skipping package install"
   fi
+
+  install_ghostty_terminfo
 }
 
 # ── Debian / Ubuntu ───────────────────────────────────────────────────────────
@@ -189,10 +195,34 @@ install_debian() {
   fi
 
   install_nerd_fonts_user
+  install_ghostty_terminfo
 
   warn "ghostty and zellij are not packaged for Debian — install them manually:"
   warn "  ghostty: https://ghostty.org/docs/install/binary"
   warn "  zellij : https://zellij.dev/documentation/installation"
+}
+
+# ── Helper: install ghostty terminfo into ~/.terminfo (Linux-only) ────────────
+# Without this, SSH'ing into the box from a Ghostty terminal leaves TERM set to
+# xterm-ghostty with no matching terminfo entry, breaking clear/tput/vim/etc.
+install_ghostty_terminfo() {
+  local src="$SCRIPT_DIR/terminfo/ghostty.terminfo"
+  if [[ ! -f "$src" ]]; then
+    warn "terminfo/ghostty.terminfo not found in repo — skipping"
+    return
+  fi
+  if ! command -v tic &>/dev/null; then
+    warn "tic not available (install ncurses-bin) — skipping ghostty terminfo install"
+    return
+  fi
+  if TERMINFO="$HOME/.terminfo" infocmp xterm-ghostty &>/dev/null; then
+    success "xterm-ghostty terminfo already installed in ~/.terminfo"
+    return
+  fi
+  info "Compiling xterm-ghostty terminfo into ~/.terminfo…"
+  mkdir -p "$HOME/.terminfo"
+  tic -x -o "$HOME/.terminfo" "$src"
+  success "xterm-ghostty terminfo installed"
 }
 
 # ── Helper: install Nerd Fonts into ~/.local/share/fonts (Linux-only) ─────────
@@ -301,6 +331,37 @@ apply_chezmoi() {
   success "chezmoi apply complete"
 }
 
+# ── Offer to change login shell to zsh (interactive, defaults to NO) ─────────
+# We can't do this silently: chsh / sudo prompt for the user's password.
+# If the user accepts, chsh will prompt them; if they decline, we just print
+# the manual command so they can do it later.
+maybe_chsh_to_zsh() {
+  local zsh_path; zsh_path="$(command -v zsh || true)"
+  [[ -n "$zsh_path" ]] || return
+  local current_shell; current_shell="$(getent passwd "$USER" 2>/dev/null | cut -d: -f7)"
+  if [[ "$current_shell" == "$zsh_path" ]]; then
+    success "Login shell is already zsh ($zsh_path)"
+    return
+  fi
+  if [[ ! -t 0 ]]; then
+    warn "Non-interactive run; not prompting for chsh. Run manually:"
+    warn "  chsh -s \"$zsh_path\""
+    return
+  fi
+  printf "\n  Your login shell is %s. Switch to %s now? [y/N] " "$current_shell" "$zsh_path"
+  local reply; read -r reply
+  if [[ "$reply" =~ ^[Yy]$ ]]; then
+    # chsh will prompt for the user's password (per /etc/pam.d/chsh on Debian).
+    if chsh -s "$zsh_path"; then
+      success "Login shell set to $zsh_path — log out and back in to take effect"
+    else
+      warn "chsh failed. Run manually: chsh -s \"$zsh_path\""
+    fi
+  else
+    info "Skipped. Run manually when ready: chsh -s \"$zsh_path\""
+  fi
+}
+
 # ── Fix ~/.gnupg permissions (gpg refuses to run with loose perms) ───────────
 fix_gnupg_perms() {
   [[ -d "$HOME/.gnupg" ]] || return
@@ -346,6 +407,7 @@ main() {
   write_chezmoi_config
   apply_chezmoi
   fix_gnupg_perms
+  maybe_chsh_to_zsh
 
   printf "\n"
   success "All done!"

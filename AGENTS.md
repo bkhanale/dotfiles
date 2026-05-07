@@ -292,7 +292,9 @@ gpgconf --kill all   # restart keyboxd and gpg-agent fresh
 **non-destructive** — it never deletes anything. Order of operations:
 
 1. Detect OS / Linux distro family
-2. Install platform packages (Brewfile / packages.arch.txt / packages.debian.txt)
+2. Install platform packages (Brewfile / packages.arch.txt / packages.debian.txt).
+   On Linux this also compiles `terminfo/ghostty.terminfo` into `~/.terminfo`
+   so SSH'd-in sessions with `TERM=xterm-ghostty` resolve correctly.
 3. Back up existing `~/.zshrc`, `~/.zshenv`, `~/.zlogin`, `~/.bash_profile` to
    `<file>.pre-chezmoi.bak` (`cp -p`, never `mv` or `rm`)
 4. Copy `~/.zsh_history` → `$XDG_STATE_HOME/zsh/history` if the new path
@@ -305,6 +307,9 @@ gpgconf --kill all   # restart keyboxd and gpg-agent fresh
    /`[merge]` sections. `promptStringOnce` reads our pre-written `[data]`
    block, so it returns the existing values without prompting.
 7. Fix `~/.gnupg` permissions
+8. Offer to `chsh -s "$(command -v zsh)"` (interactive prompt; defaults to no).
+   `chsh` itself prompts for the user's password — we can't bypass that
+   (Debian's `/etc/pam.d/chsh` requires it), so this stays interactive.
 
 **Things install.sh deliberately does NOT do:**
 
