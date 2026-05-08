@@ -62,7 +62,14 @@
   "alwaysThinkingEnabled": true,
   "showThinkingSummaries": true,
   "skipDangerousModePermissionPrompt": true,
-  "voiceEnabled": true,
+  "voice": {
+    "enabled": true,
+    "mode": "hold",
+    "autoSubmit": false
+  },
+  "attribution": {
+    "commit": ""
+  },
   "showTurnDuration": true,
   "tui": "fullscreen",
   "awaySummaryEnabled": true,
