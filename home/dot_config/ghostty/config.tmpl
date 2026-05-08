@@ -108,6 +108,11 @@ shell-integration-features = cursor,sudo,title,ssh-env,ssh-terminfo
 # ── Misc ──────────────────────────────────────────────────────────────────────
 confirm-close-surface = false
 
+# Skip the "this paste looks unsafe" confirmation when pasting shell commands
+# with newlines. We trust our clipboard sources and zsh's bracketed-paste mode
+# already shows the pasted text inverted before we hit Enter.
+clipboard-paste-protection = false
+
 # ── Key bindings ──────────────────────────────────────────────────────────────
 # Shift+Enter → newline (Claude Code and similar)
 keybind = shift+enter=text:\x1b\r
