@@ -1,0 +1,158 @@
+{
+  "version": 3,
+  "lines": [
+    [
+      {
+        "id": "10db7274-589d-4364-9005-0729b8ed37bc",
+        "type": "custom-symbol",
+        "customSymbol": "🤖"
+      },
+      {
+        "id": "307972fa-dffd-4a37-8b80-2e25656b1de6",
+        "type": "custom-text",
+        "customText": " "
+      },
+      {
+        "id": "1",
+        "type": "model",
+        "color": "brightBlue",
+        "rawValue": true
+      },
+      {
+        "id": "681766e7-b557-4291-885e-205749655d13",
+        "type": "custom-text",
+        "customText": " ",
+        "color": "white"
+      },
+      {
+        "id": "76c2afbd-a636-484a-a9d0-924a406e4120",
+        "type": "context-bar",
+        "rawValue": true,
+        "metadata": {
+          "display": "slider"
+        },
+        "color": "brightMagenta"
+      }
+    ],
+    [
+      {
+        "id": "180ed599-cebc-40d2-ae15-3a708779966a",
+        "type": "custom-symbol",
+        "customSymbol": "🔋"
+      },
+      {
+        "id": "d951a19b-0a41-4846-a3d7-3f7b244effdd",
+        "type": "custom-symbol",
+        "customSymbol": " "
+      },
+      {
+        "id": "93e267e7-352a-4bf5-8c77-d9f098ebb0b6",
+        "type": "session-usage",
+        "rawValue": true,
+        "metadata": {
+          "display": "slider"
+        },
+        "color": "brightBlue"
+      },
+      {
+        "id": "9c12a5e3-2bbb-4e09-9f0f-e5d7f4ec54c6",
+        "type": "separator"
+      },
+      {
+        "id": "4ee59a67-0afc-4c59-b8e9-b0b7ceedbab9",
+        "type": "reset-timer",
+        "metadata": {
+          "display": "time",
+          "compact": "true"
+        },
+        "rawValue": true,
+        "color": ""
+      },
+      {
+        "id": "c1158c94-ff67-4a84-8bca-7cd66768ecab",
+        "type": "separator"
+      },
+      {
+        "id": "5f2cf472-b6d0-4718-adb7-8746dc6eb5b2",
+        "type": "weekly-usage",
+        "metadata": {
+          "display": "slider"
+        },
+        "rawValue": true
+      },
+      {
+        "id": "61ba044d-5f23-421b-98e7-a813aca0c382",
+        "type": "separator"
+      },
+      {
+        "id": "a2db59f4-e7a5-4ac1-88d1-822acd6342e2",
+        "type": "weekly-reset-timer",
+        "metadata": {
+          "display": "time",
+          "compact": "true",
+          "hours": "true"
+        },
+        "rawValue": true,
+        "color": ""
+      }
+    ],
+    [
+      {
+        "id": "13df4f94-5ce0-4dc1-b266-1f49e8e20e5a",
+        "type": "custom-symbol",
+        "customSymbol": "📁"
+      },
+      {
+        "id": "c6b224b9-c4a9-49ba-815d-882cc55a9f87",
+        "type": "custom-symbol",
+        "customSymbol": " "
+      },
+      {
+        "id": "02dfbeea-b0d8-420b-a72b-5296fde16bf6",
+        "type": "current-working-dir",
+        "metadata": {
+          "fishStyle": "true"
+        },
+        "rawValue": true,
+        "color": "blue"
+      },
+      {
+        "id": "72ce04de-a2c2-41b9-970e-77c8f7f97a08",
+        "type": "separator"
+      },
+      {
+        "id": "5e2ad9e9-999d-433a-9b32-acb54441ed6e",
+        "type": "git-branch",
+        "color": "cyan"
+      },
+      {
+        "id": "a87cf3ee-d9af-484c-aba1-873adb34ff53",
+        "type": "separator"
+      },
+      {
+        "id": "498f9c37-1d8f-4621-8bb2-9b0fe86a9f81",
+        "type": "git-changes",
+        "color": "yellow"
+      }
+    ]
+  ],
+  "flexMode": "full-minus-40",
+  "compactThreshold": 60,
+  "colorLevel": 3,
+  "inheritSeparatorColors": false,
+  "globalBold": false,
+  "minimalistMode": false,
+  "powerline": {
+    "enabled": false,
+    "separators": [
+      ""
+    ],
+    "separatorInvertBackground": [
+      false
+    ],
+    "startCaps": [],
+    "endCaps": [],
+    "autoAlign": false,
+    "continueThemeAcrossLines": false
+  }
+}
