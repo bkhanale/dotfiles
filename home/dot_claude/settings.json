@@ -68,7 +68,8 @@
     "autoSubmit": false
   },
   "attribution": {
-    "commit": ""
+    "commit": "",
+    "pr": ""
   },
   "showTurnDuration": true,
   "tui": "fullscreen",
