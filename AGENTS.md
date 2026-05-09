@@ -188,6 +188,62 @@ Config lives in `home/dot_config/nvim/`. Entry point is `init.lua`. Plugins are 
 
 ---
 
+## Agentic Dev (Claude Code + OpenCode)
+
+Both AI CLIs are first-class in this repo. Their configs are tracked; their
+binaries and runtime state are not.
+
+### Tracked files
+
+| Source path | Target | Purpose |
+|---|---|---|
+| `home/dot_claude/settings.json` | `~/.claude/settings.json` | Claude Code config (permissions, plugins, voice, statusLine) |
+| `home/dot_config/ccstatusline/settings.json` | `~/.config/ccstatusline/settings.json` | Status-line layout for Claude Code (rendered by `npx ccstatusline`) |
+| `home/dot_config/opencode/opencode.json` | `~/.config/opencode/opencode.json` | OpenCode model, MCP servers, agent profiles, instructions list |
+| `home/dot_config/opencode/tui.json` | `~/.config/opencode/tui.json` | OpenCode TUI theme + scroll/diff prefs |
+
+`opencode.json` declares `"instructions": ["AGENTS.md", "CLAUDE.md", ".cursor/rules/*.md"]`,
+so OpenCode picks up the same project-level guidance as Claude Code (which
+auto-loads `CLAUDE.md`). Keep `CLAUDE.md` as a thin `@AGENTS.md` import so
+there is exactly one source of truth.
+
+### NOT tracked (intentionally)
+
+- The `claude` and `opencode` **binaries** — both ship native installers with
+  built-in auto-update. Install once per machine:
+  ```sh
+  curl -fsSL https://claude.ai/install.sh | bash   # → ~/.local/bin/claude
+  curl -fsSL https://opencode.ai/install | bash    # → ~/.opencode/bin/opencode
+  ```
+  PATH is already wired up: `~/.local/bin` in `dot_zshenv`, `~/.opencode/bin`
+  in `conf.d/exports.zsh`.
+- Runtime state under `~/.claude/`: `sessions/`, `projects/`, `history.jsonl`,
+  `file-history/`, `plugins/cache/`, `shell-snapshots/`, `telemetry/`, etc.
+  These regenerate per-machine and would churn `chezmoi diff` constantly.
+- Anthropic / OpenAI API keys — keep them in
+  `~/.config/zsh/secrets.zsh` (gitignored + chezmoi-ignored).
+
+### When editing the configs
+
+- **Claude Code** — `dot_claude/settings.json` follows the schema at
+  `https://json.schemastore.org/claude-code-settings.json` (already pinned via
+  `$schema`). When in doubt about valid keys, check the docs rather than
+  guessing — Claude Code rejects unknown fields silently in some versions.
+- **OpenCode** — `opencode.json` follows `https://opencode.ai/config.json`.
+  Models are `provider/model` strings (e.g. `anthropic/claude-sonnet-4-5`).
+  Agent definitions under `agent.<name>` scope tool permissions per sub-agent
+  (read-only `plan` and `review` agents are pre-defined).
+- **ccstatusline** — schema is the `ccstatusline` npm package; prefer editing
+  via `/statusline` inside Claude Code over hand-rolling JSON.
+
+### Sub-agents and project overrides
+
+Per-project agent rules belong in that project's own `CLAUDE.md` /
+`AGENTS.md` / `.cursor/rules/*.md`, not in this dotfiles repo. The repo-root
+`AGENTS.md` here is for *this* repo only; chezmoi never copies it elsewhere.
+
+---
+
 ## Ghostty
 
 Config lives in `home/dot_config/ghostty/config.tmpl` → `~/.config/ghostty/config`. Format is `key = value` per line (NOT TOML), comments start with `#`.
@@ -300,7 +356,9 @@ gpgconf --kill all   # restart keyboxd and gpg-agent fresh
    On Linux this also compiles `terminfo/ghostty.terminfo` into `~/.terminfo`
    so SSH'd-in sessions with `TERM=xterm-ghostty` resolve correctly.
 3. Back up existing `~/.zshrc`, `~/.zshenv`, `~/.zlogin`, `~/.bash_profile` to
-   `<file>.pre-chezmoi.bak` (`cp -p`, never `mv` or `rm`)
+   `<file>.pre-chezmoi.bak` (`cp -p`, never `mv` or `rm`).
+   **Skipped on re-runs** when `~/.config/chezmoi/chezmoi.toml` already
+   exists — backing up chezmoi-managed files would just stamp useless copies.
 4. Migrate `~/.zsh_history` into `$XDG_STATE_HOME/zsh/history`. If the new
    file doesn't exist, copy. If it does, **prepend** the old entries (chrono-
    logically older) and concatenate. A sentinel file
@@ -309,17 +367,51 @@ gpgconf --kill all   # restart keyboxd and gpg-agent fresh
    (`HIST_IGNORE_ALL_DUPS`), so we don't try to dedupe in the merge — that
    would risk dropping commands and require parsing the extended-history
    format. The original `~/.zsh_history` is left in place.
-5. Write a minimal `~/.config/chezmoi/chezmoi.toml` (just a `[data]` block)
-   via bash `read` prompts
-6. Run `chezmoi init --apply --source=$SCRIPT_DIR`. `init` (not bare `apply`)
-   is used so chezmoi renders `home/.chezmoi.toml.tmpl` and writes a
+5. Write a minimal `~/.config/chezmoi/chezmoi.toml` (just a `[data]` block).
+   Three modes:
+   - **Interactive** (tty stdin): bash `read` prompts for name/email/GPG.
+   - **Non-interactive** (env): `CHEZMOI_NAME`, `CHEZMOI_EMAIL`,
+     `CHEZMOI_GPG_KEY` (last one optional/blank).
+   - **Non-interactive without env vars**: errors loudly. Previously this
+     mode silently exited (closed stdin → `read` returns 1 → `set -e`),
+     which is what made `ssh host 'bash install.sh'` skip everything.
+6. Run `chezmoi init --apply --force --source=$SCRIPT_DIR`. `init` (not bare
+   `apply`) is used so chezmoi renders `home/.chezmoi.toml.tmpl` and writes a
    *complete* chezmoi.toml — including `sourceDir` and the `[diff]`/`[edit]`
    /`[merge]` sections. `promptStringOnce` reads our pre-written `[data]`
-   block, so it returns the existing values without prompting.
+   block, so it returns the existing values without prompting. `--force`
+   makes apply non-interactive: chezmoi won't prompt before overwriting
+   destination files that diverge from source (e.g. someone running
+   `git config --global --add safe.directory /opt/foo` adds a `[safe]` block
+   to `~/.config/git/config` outside chezmoi). install.sh is a bootstrap, so
+   it enforces source state — push local edits back to source before re-running.
 7. Fix `~/.gnupg` permissions
 8. Offer to `chsh -s "$(command -v zsh)"` (interactive prompt; defaults to no).
    `chsh` itself prompts for the user's password — we can't bypass that
-   (Debian's `/etc/pam.d/chsh` requires it), so this stays interactive.
+   (Debian's `/etc/pam.d/chsh` requires it), so this stays interactive. Skipped
+   in non-tty runs (warning printed instead). For automation, run
+   `sudo chsh -s "$(command -v zsh)" "$USER"` separately if you have NOPASSWD
+   sudo or a cached sudo timestamp.
+
+### Idempotency / re-runs
+
+`install.sh` is safe to re-run. Each step short-circuits when its work is
+already done: package managers report "already installed", `backup_existing_configs`
+returns early once chezmoi.toml exists, `migrate_zsh_history` keys off a
+sentinel file, `write_chezmoi_config` keeps an existing config, and
+`apply_chezmoi` uses `--force` so a re-run can't get stuck on a TTY prompt.
+
+### Common pitfalls (fixed; here as land-mine markers)
+
+- **Bare `return` after `[[ ]] || ...`** — under `set -e`, `return` with no
+  argument propagates the failed test's exit status (1), aborting the calling
+  function and main. Always write `return 0` when the early-exit is the
+  intended success path.
+- **`read -r` against closed stdin** — returns 1, `set -e` aborts silently.
+  Always guard with `[[ -t 0 ]]` or accept env vars instead.
+- **`chezmoi init --apply` without `--force` in non-tty mode** — chezmoi
+  prompts ("file has changed since chezmoi last wrote it?") and fails
+  ("could not open a new TTY") if any destination diverges from source.
 
 **Things install.sh deliberately does NOT do:**
 

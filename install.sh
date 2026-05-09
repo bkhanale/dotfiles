@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 # install.sh — one-command machine bootstrap
-# Usage: bash install.sh
+# Usage:
+#   bash install.sh                     # interactive (prompts for name/email/GPG)
+#   ssh -t host 'bash install.sh'       # interactive over SSH (allocates a tty)
+#   CHEZMOI_NAME='Your Name' \
+#     CHEZMOI_EMAIL='you@example.com' \
+#     CHEZMOI_GPG_KEY='KEYID_OR_EMPTY' \
+#     bash install.sh                   # non-interactive (env-driven)
 #
 # Supports: macOS (Homebrew), Arch Linux (pacman/yay), Debian/Ubuntu (apt)
 #
@@ -390,6 +396,13 @@ install_nerd_fonts_user() {
 # (oh-my-zsh, nvm, pyenv, …) is left untouched so the user can decide later.
 backup_existing_configs() {
   header "Backing up existing dotfiles (.pre-chezmoi.bak)"
+  # Skip on re-runs: if chezmoi.toml already exists, the files at these target
+  # paths are chezmoi-managed (or absent) — backing them up would just stamp a
+  # useless copy of our own dotfiles next to them.
+  if [[ -f "$HOME/.config/chezmoi/chezmoi.toml" ]]; then
+    success "chezmoi already configured — nothing to back up (re-run)"
+    return
+  fi
   local f backed_up=0
   for f in "$HOME/.zshrc" "$HOME/.zshenv" "$HOME/.zlogin" "$HOME/.bash_profile"; do
     # Skip non-existent files and existing symlinks (likely already chezmoi-managed
@@ -427,7 +440,9 @@ migrate_zsh_history() {
   local new="$new_dir/history"
   local sentinel="$new_dir/.zsh_history-migrated"
 
-  [[ -f "$old" ]] || return
+  # `return` (bare) propagates the [[ ]] failure exit code; under `set -e`
+  # that aborts main(). Be explicit.
+  [[ -f "$old" ]] || return 0
 
   if [[ -f "$sentinel" ]]; then
     info "~/.zsh_history already migrated (sentinel: $sentinel) — skipping"
@@ -452,6 +467,11 @@ migrate_zsh_history() {
 # ── Write ~/.config/chezmoi/chezmoi.toml ─────────────────────────────────────
 # Bash prompts here instead of chezmoi's promptStringOnce, which silently
 # fails when invoked from a script (documented in AGENTS.md).
+#
+# Non-interactive runs (e.g. `ssh host 'bash install.sh'` without -t) can
+# pre-seed values via env vars — otherwise we error with a clear message,
+# since `read -r` against a closed stdin returns failure and `set -e` would
+# abort the script silently before chezmoi apply / chsh ever run.
 write_chezmoi_config() {
   local cfg_dir="$HOME/.config/chezmoi"
   local cfg="$cfg_dir/chezmoi.toml"
@@ -460,11 +480,30 @@ write_chezmoi_config() {
     info "chezmoi config already exists at $cfg — keeping it"
     return
   fi
-  header "chezmoi configuration"
-  printf "  Enter your details (used for git config and GPG signing):\n"
-  printf "  Full name: ";                            read -r _name
-  printf "  Email:     ";                            read -r _email
-  printf "  GPG key ID (leave blank to skip): ";     read -r _gpg
+
+  local _name="${CHEZMOI_NAME:-}" _email="${CHEZMOI_EMAIL:-}" _gpg="${CHEZMOI_GPG_KEY:-}"
+
+  if [[ -n "$_name" || -n "$_email" || -n "$_gpg" ]]; then
+    header "chezmoi configuration (from env)"
+    info "Using CHEZMOI_NAME / CHEZMOI_EMAIL / CHEZMOI_GPG_KEY"
+    [[ -n "$_name" ]]  || error "CHEZMOI_NAME is required when running non-interactively"
+    [[ -n "$_email" ]] || error "CHEZMOI_EMAIL is required when running non-interactively"
+  elif [[ -t 0 ]]; then
+    header "chezmoi configuration"
+    printf "  Enter your details (used for git config and GPG signing):\n"
+    printf "  Full name: ";                            read -r _name
+    printf "  Email:     ";                            read -r _email
+    printf "  GPG key ID (leave blank to skip): ";     read -r _gpg
+  else
+    error "Non-interactive run with no chezmoi config to seed.
+       Re-run with stdin attached (e.g. \`ssh -t host 'bash install.sh'\`)
+       OR set env vars:
+         CHEZMOI_NAME='Your Name' \\
+         CHEZMOI_EMAIL='you@example.com' \\
+         CHEZMOI_GPG_KEY='KEYID_OR_EMPTY' \\
+         bash install.sh"
+  fi
+
   mkdir -p "$cfg_dir"
   cat > "$cfg" <<EOF
 [data]
@@ -480,14 +519,20 @@ EOF
 # .chezmoi.toml.tmpl and writes a *complete* ~/.config/chezmoi/chezmoi.toml,
 # including sourceDir + diff/edit/merge sections. promptStringOnce reads our
 # pre-written [data] block, so it returns the existing values without prompting.
+#
+# `--force` makes apply non-interactive: chezmoi won't prompt before
+# overwriting destination files that diverge from the source (e.g. a
+# user-added `[safe] directory` line in ~/.config/git/config). install.sh is
+# a bootstrap, so we want it to enforce source state — any local edits
+# should have been pushed to source before re-running.
 apply_chezmoi() {
   header "Applying dotfiles via chezmoi"
   if [[ -f "$SCRIPT_DIR/.chezmoiroot" ]]; then
     # Running from a local clone — use that as the source, no remote clone.
-    chezmoi init --apply --source="$SCRIPT_DIR"
+    chezmoi init --apply --force --source="$SCRIPT_DIR"
   else
     # No local clone available — pull from GitHub.
-    chezmoi init --apply bkhanale/dotfiles
+    chezmoi init --apply --force bkhanale/dotfiles
   fi
   success "chezmoi apply complete"
 }
@@ -498,7 +543,7 @@ apply_chezmoi() {
 # the manual command so they can do it later.
 maybe_chsh_to_zsh() {
   local zsh_path; zsh_path="$(command -v zsh || true)"
-  [[ -n "$zsh_path" ]] || return
+  [[ -n "$zsh_path" ]] || return 0
   local current_shell; current_shell="$(getent passwd "$USER" 2>/dev/null | cut -d: -f7)"
   if [[ "$current_shell" == "$zsh_path" ]]; then
     success "Login shell is already zsh ($zsh_path)"
@@ -525,7 +570,7 @@ maybe_chsh_to_zsh() {
 
 # ── Fix ~/.gnupg permissions (gpg refuses to run with loose perms) ───────────
 fix_gnupg_perms() {
-  [[ -d "$HOME/.gnupg" ]] || return
+  [[ -d "$HOME/.gnupg" ]] || return 0
   info "Fixing ~/.gnupg permissions…"
   chmod 700 "$HOME/.gnupg"
   find "$HOME/.gnupg" -type d -exec chmod 700 {} \;

@@ -12,6 +12,7 @@ Personal dotfiles managed with [chezmoi](https://www.chezmoi.io/). Supports **ma
 | Terminal | Ghostty |
 | Multiplexer | Zellij |
 | Editor | Neovim (lazy.nvim, minimal) |
+| AI coding agents | Claude Code + OpenCode (configs tracked, CLIs self-installed) |
 | Colour theme | Tokyo Night Night |
 | Font | FiraCode Nerd Font Mono |
 
@@ -54,6 +55,19 @@ Or, the all-in-one bootstrap (clones the repo, installs apt packages, starship, 
 git clone https://github.com/bkhanale/dotfiles ~/workspace/bkhanale/dotfiles
 bash ~/workspace/bkhanale/dotfiles/install.sh
 ```
+
+For headless / SSH bootstrap (no tty), pre-seed the chezmoi data via env vars:
+
+```sh
+ssh host 'git clone https://github.com/bkhanale/dotfiles ~/workspace/bkhanale/dotfiles && \
+  CHEZMOI_NAME="Your Name" \
+  CHEZMOI_EMAIL="you@example.com" \
+  CHEZMOI_GPG_KEY="" \
+  bash ~/workspace/bkhanale/dotfiles/install.sh'
+```
+
+(`chsh` still needs a password and is skipped in non-tty mode — run
+`sudo chsh -s "$(command -v zsh)" "$USER"` afterwards.)
 
 > Ghostty and Zellij are not packaged for Debian — install them manually from
 > [ghostty.org](https://ghostty.org/docs/install/binary) and
@@ -113,9 +127,47 @@ dotfiles/
 │   │   ├── ghostty/
 │   │   ├── zellij/
 │   │   ├── nvim/
-│   │   └── git/
+│   │   ├── git/
+│   │   ├── opencode/        # OpenCode config (opencode.json, tui.json)
+│   │   └── ccstatusline/    # Claude Code status-line config
+│   ├── dot_claude/          # Claude Code settings → ~/.claude/settings.json
 │   └── dot_gnupg/
 └── AGENTS.md                # instructions for AI coding agents
+```
+
+---
+
+## Agentic Dev (Claude Code + OpenCode)
+
+Both CLIs are configured to read the repo-root `AGENTS.md` (and `CLAUDE.md`,
+which just imports `AGENTS.md`) so any project-level conventions apply
+uniformly across the two agents.
+
+| Tool | Source | Target |
+|---|---|---|
+| Claude Code | `home/dot_claude/settings.json` | `~/.claude/settings.json` |
+| Claude statusline | `home/dot_config/ccstatusline/settings.json` | `~/.config/ccstatusline/settings.json` |
+| OpenCode (config) | `home/dot_config/opencode/opencode.json` | `~/.config/opencode/opencode.json` |
+| OpenCode (TUI) | `home/dot_config/opencode/tui.json` | `~/.config/opencode/tui.json` |
+
+### What this repo does NOT manage
+
+- The `claude` and `opencode` binaries themselves — both ship native installers
+  with built-in auto-update (`claude`: `~/.local/bin/claude`, `opencode`:
+  `~/.opencode/bin/opencode`). PATH for both is set in
+  `dot_zshenv` / `conf.d/exports.zsh`.
+- Session state, plugin caches, history, projects/, sessions/ under
+  `~/.claude/` — runtime data, never committed.
+- Per-project `CLAUDE.md` / `AGENTS.md` — those live in each project repo.
+
+To install the CLIs on a fresh machine:
+
+```sh
+# Claude Code (macOS / Linux)
+curl -fsSL https://claude.ai/install.sh | bash
+
+# OpenCode (macOS / Linux)
+curl -fsSL https://opencode.ai/install | bash
 ```
 
 ---
