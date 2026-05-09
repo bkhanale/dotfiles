@@ -45,6 +45,9 @@ export OPENSSL_PREFIX="$HOME/.local/openssl-1.1"
 # ── Nginx ─────────────────────────────────────────────────────────────────────
 [[ -d "/opt/nginx/sbin" ]] && export PATH="/opt/nginx/sbin:$PATH"
 
+# ── opencode ──────────────────────────────────────────────────────────────────
+[[ -d "$HOME/.opencode/bin" ]] && export PATH="$HOME/.opencode/bin:$PATH"
+
 # ── Vault ─────────────────────────────────────────────────────────────────────
 # VAULT_ADDR, VAULT_TOKEN, and other secrets are set in secrets.zsh
 
