@@ -17,3 +17,13 @@ hide_full_access_warning = true
 
 [tui]
 theme = "tokyonight"
+# Defaults are ["model-with-reasoning", "current-dir", "activity"]; we add
+# git-branch and context-remaining. Items omit themselves when their data is
+# unavailable, so this list is safe outside git repos / before turns start.
+status_line = [
+  "model-with-reasoning",
+  "current-dir",
+  "git-branch",
+  "context-remaining",
+  "activity",
+]
