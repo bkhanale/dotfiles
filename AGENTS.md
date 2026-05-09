@@ -188,10 +188,10 @@ Config lives in `home/dot_config/nvim/`. Entry point is `init.lua`. Plugins are 
 
 ---
 
-## Agentic Dev (Claude Code + OpenCode)
+## Agentic Dev (Claude Code + OpenCode + Codex)
 
-Both AI CLIs are first-class in this repo. Their configs are tracked; their
-binaries and runtime state are not.
+All three AI CLIs are first-class in this repo. Their configs are tracked;
+their binaries and runtime state are not.
 
 ### Tracked files
 
@@ -201,27 +201,35 @@ binaries and runtime state are not.
 | `home/dot_config/ccstatusline/settings.json` | `~/.config/ccstatusline/settings.json` | Status-line layout for Claude Code (rendered by `npx ccstatusline`) |
 | `home/dot_config/opencode/opencode.json` | `~/.config/opencode/opencode.json` | OpenCode model, MCP servers, agent profiles, instructions list |
 | `home/dot_config/opencode/tui.json` | `~/.config/opencode/tui.json` | OpenCode TUI theme + scroll/diff prefs |
+| `home/dot_codex/private_config.toml` | `~/.codex/config.toml` (mode 0600) | Codex CLI config (approvals, sandbox, reasoning, TUI theme) |
 
 `opencode.json` declares `"instructions": ["AGENTS.md", "CLAUDE.md", ".cursor/rules/*.md"]`,
 so OpenCode picks up the same project-level guidance as Claude Code (which
-auto-loads `CLAUDE.md`). Keep `CLAUDE.md` as a thin `@AGENTS.md` import so
-there is exactly one source of truth.
+auto-loads `CLAUDE.md`). Codex auto-loads `AGENTS.md` from the project root
+(see `project_doc_fallback_filenames` in the Codex config schema). Keep
+`CLAUDE.md` as a thin `@AGENTS.md` import so there is exactly one source of
+truth.
 
 ### NOT tracked (intentionally)
 
-- The `claude` and `opencode` **binaries** — both ship native installers with
-  built-in auto-update. Install once per machine:
+- The `claude`, `opencode`, and `codex` **binaries** — all three ship native
+  installers with built-in auto-update. Install once per machine:
   ```sh
   curl -fsSL https://claude.ai/install.sh | bash   # → ~/.local/bin/claude
   curl -fsSL https://opencode.ai/install | bash    # → ~/.opencode/bin/opencode
+  brew install codex                               # macOS; or `npm i -g @openai/codex`
   ```
   PATH is already wired up: `~/.local/bin` in `dot_zshenv`, `~/.opencode/bin`
-  in `conf.d/exports.zsh`.
-- Runtime state under `~/.claude/`: `sessions/`, `projects/`, `history.jsonl`,
-  `file-history/`, `plugins/cache/`, `shell-snapshots/`, `telemetry/`, etc.
-  These regenerate per-machine and would churn `chezmoi diff` constantly.
+  in `conf.d/exports.zsh`. `codex` lands in Homebrew's bin (already on PATH).
+- Runtime state under `~/.claude/` and `~/.codex/`: `sessions/`, `projects/`,
+  `history.jsonl`, `file-history/`, `plugins/cache/`, `shell-snapshots/`,
+  `telemetry/`, `auth.json`, `logs_*.sqlite*`, `state_*.sqlite*`,
+  `models_cache.json`, `memories/`, etc. These regenerate per-machine and
+  would churn `chezmoi diff` constantly. Only the single tracked config file
+  per tool is managed; chezmoi leaves siblings alone.
 - Anthropic / OpenAI API keys — keep them in
-  `~/.config/zsh/secrets.zsh` (gitignored + chezmoi-ignored).
+  `~/.config/zsh/secrets.zsh` (gitignored + chezmoi-ignored). Codex's
+  ChatGPT-login credentials live in `~/.codex/auth.json` (also untracked).
 
 ### When editing the configs
 
@@ -233,6 +241,14 @@ there is exactly one source of truth.
   Models are `provider/model` strings (e.g. `anthropic/claude-sonnet-4-5`).
   Agent definitions under `agent.<name>` scope tool permissions per sub-agent
   (read-only `plan` and `review` agents are pre-defined).
+- **Codex** — `dot_codex/private_config.toml` follows
+  `https://developers.openai.com/codex/config-schema.json` (pinned via the
+  `#:schema` line). Reference: <https://developers.openai.com/codex/config>.
+  Codex writes runtime state (`projects.<path>.trust_level`,
+  `tui.model_availability_nux.*`, etc.) back into `~/.codex/config.toml` over
+  time — those keys are intentionally NOT in the tracked file. If
+  `chezmoi diff` shows them after a session, run `chezmoi apply --force` to
+  drop them; do not promote them upstream.
 - **ccstatusline** — schema is the `ccstatusline` npm package; prefer editing
   via `/statusline` inside Claude Code over hand-rolling JSON.
 

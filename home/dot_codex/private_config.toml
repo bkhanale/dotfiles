@@ -1,0 +1,19 @@
+#:schema https://developers.openai.com/codex/config-schema.json
+
+# Sandbox / approvals — mirrors Claude Code's bypassPermissions stance.
+approval_policy = "never"
+sandbox_mode = "danger-full-access"
+
+# Reasoning — matches Claude's effortLevel = "high" + alwaysThinkingEnabled.
+model_reasoning_effort = "high"
+model_reasoning_summary = "detailed"
+
+# Disable the auto co-author trailer; matches the repo's no-Co-Authored-By rule.
+commit_attribution = ""
+
+# Acknowledge the full-access warning so it doesn't reappear on every session.
+[notice]
+hide_full_access_warning = true
+
+[tui]
+theme = "tokyonight"
