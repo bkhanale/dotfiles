@@ -47,7 +47,6 @@
   },
   "enabledPlugins": {
     "typescript-lsp@claude-plugins-official": true,
-    "beads@beads-marketplace": true,
     "chrome-devtools-mcp@chrome-devtools-plugins": true
   },
   "extraKnownMarketplaces": {
@@ -73,6 +72,7 @@
   },
   "showTurnDuration": true,
   "tui": "fullscreen",
+  "editorMode": "vim",
   "awaySummaryEnabled": true,
   "cleanupPeriodDays": 90,
   "enableAllProjectMcpServers": false,
