@@ -15,8 +15,23 @@ commit_attribution = ""
 [notice]
 hide_full_access_warning = true
 
+# History — Codex keeps a JSONL transcript per session. Bytes-based cap is the
+# Codex analogue of Claude's cleanupPeriodDays = 90: prune the oldest entries
+# when the file exceeds the limit. save-all keeps every turn (default).
+[history]
+persistence = "save-all"
+max_bytes   = 10485760   # 10 MB
+
 [tui]
 theme = "tokyonight"
+# Match Claude's editorMode = "vim" — composer opens in vim normal mode.
+vim_mode_default = true
+# Match Claude's awaySummaryEnabled — ring the terminal bell / OSC9 when a
+# turn finishes while the window is unfocused.
+notifications = true
+notification_condition = "unfocused"
+# Apply tokyonight colours to status-line items (defaults to plain text).
+status_line_use_colors = true
 # Defaults are ["model-with-reasoning", "current-dir", "activity"]; we add
 # git-branch and context-remaining. Items omit themselves when their data is
 # unavailable, so this list is safe outside git repos / before turns start.
@@ -27,3 +42,20 @@ status_line = [
   "context-remaining",
   "run-state",
 ]
+
+# ── Profiles ─────────────────────────────────────────────────────────────────
+# Mirrors OpenCode's agent.plan / agent.review. Activate with:
+#   codex --profile plan
+#   codex --profile review
+# Both inherit the top-level danger-full-access + never-approval stance so they
+# don't fight the bypass-all-permissions posture shared with Claude/OpenCode.
+
+[profiles.plan]
+sandbox_mode           = "danger-full-access"
+approval_policy        = "never"
+model_reasoning_effort = "high"
+
+[profiles.review]
+sandbox_mode           = "danger-full-access"
+approval_policy        = "never"
+model_reasoning_effort = "high"
