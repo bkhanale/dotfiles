@@ -3,7 +3,9 @@
 
 "$schema" = 'https://starship.rs/config-schema.json'
 
-command_timeout = 1000
+# Caps how long any single module may block the prompt. Kept tight so a slow
+# git/cloud call renders blank rather than stalling a new shell.
+command_timeout = 500
 
 format = """
 $os\
@@ -159,8 +161,11 @@ staged     = "󰐗 ${count} "
 renamed    = "󰑕 ${count} "
 deleted    = "󰍷 ${count} "
 
+# Disabled: shells out to `git diff` every prompt (~1.2s wall on this machine,
+# stalled on filesystem I/O) just to show +added/-deleted line counts. Purely
+# decorative; git_status already shows what changed. This was the top prompt cost.
 [git_metrics]
-disabled          = false
+disabled          = true
 added_style       = "bold green"
 deleted_style     = "bold red"
 format            = "([+$added]($added_style) )([-$deleted]($deleted_style) )"
@@ -221,7 +226,11 @@ symbol = "󱘗 "
 style  = "bold orange"
 format = "[$symbol($version)]($style) "
 
+# Disabled: rendering $version shells out to `node --version` on every prompt.
+# With nvm, that node binary is slow to spin up and trips starship's
+# command_timeout ("Executing command node timed out"), stalling new shells.
 [nodejs]
+disabled     = true
 symbol       = "󰎙 "
 style        = "bold green"
 format       = "[$symbol($version)]($style) "
