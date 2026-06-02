@@ -1,5 +1,10 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "cleanupPeriodDays": 90,
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
   "permissions": {
     "allow": [
       "Bash(echo *)",
@@ -45,6 +50,13 @@
       "~/workspace"
     ]
   },
+  "enableAllProjectMcpServers": false,
+  "statusLine": {
+    "type": "command",
+    "command": "ccstatusline",
+    "padding": 0,
+    "refreshInterval": 10
+  },
   "enabledPlugins": {
     "typescript-lsp@claude-plugins-official": true,
     "chrome-devtools-mcp@chrome-devtools-plugins": true
@@ -57,29 +69,17 @@
       }
     }
   },
-  "effortLevel": "high",
   "alwaysThinkingEnabled": true,
-  "showThinkingSummaries": true,
-  "skipDangerousModePermissionPrompt": true,
+  "effortLevel": "high",
+  "awaySummaryEnabled": true,
+  "tui": "fullscreen",
   "voice": {
     "enabled": true,
     "mode": "hold",
     "autoSubmit": false
   },
-  "attribution": {
-    "commit": "",
-    "pr": ""
-  },
-  "showTurnDuration": true,
-  "tui": "fullscreen",
+  "showThinkingSummaries": true,
+  "skipDangerousModePermissionPrompt": true,
   "editorMode": "vim",
-  "awaySummaryEnabled": true,
-  "cleanupPeriodDays": 90,
-  "enableAllProjectMcpServers": false,
-  "statusLine": {
-    "type": "command",
-    "command": "ccstatusline",
-    "padding": 0,
-    "refreshInterval": 10
-  }
+  "showTurnDuration": true
 }
