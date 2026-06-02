@@ -37,6 +37,9 @@ brew "lazygit"
 brew "gnupg"
 brew "pinentry-mac"
 
+# ── Secrets vault ─────────────────────────────────────────────────────────────
+brew "pass"          # passwordstore.org — GPG-encrypted local secrets
+
 # ── Networking / utilities ────────────────────────────────────────────────────
 brew "curl"
 brew "wget"

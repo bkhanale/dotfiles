@@ -362,6 +362,75 @@ gpgconf --kill all   # restart keyboxd and gpg-agent fresh
 
 ---
 
+## pass — Secrets Vault
+
+[pass](https://www.passwordstore.org/) (password-store) is the local secrets
+vault. It is in all three package lists and initialized by
+`home/run_init-password-store.sh.tmpl` on `chezmoi apply` (a plain `run_`
+script, not `run_once_` — on a fresh machine the first apply runs before the
+GPG key exists, so it must be able to retry; every guard exits 0 fast).
+
+### Key model: one GPG key per device, store encrypted to all of them
+
+- Each machine generates its own GPG key (`gpg --full-gen-key`,
+  ECC/Curve25519). **Private keys never leave the device they were created
+  on** — only public keys move between machines.
+- The key ID is what chezmoi prompts for as `gpgKey`; it doubles as the git
+  `signingkey` (`dot_config/git/config.tmpl`) and the pass identity. Add each
+  device's public key to GitHub (multiple signing keys per account are fine).
+- The store's `.gpg-id` lists every device's key; pass encrypts each secret
+  to all of them. **Enroll a new device**: generate its key → export the
+  *public* key → import + trust it on an existing device →
+  `pass init KEY_A KEY_B ...` (re-encrypts the whole store) → `pass git push`
+  → new device clones/pulls and can decrypt with its own key.
+- **Lost/compromised device**: re-run `pass init` with the remaining key IDs,
+  rotate any secrets that device had accessed, delete its key from GitHub.
+
+### Store location & sync
+
+- The store stays at the default `~/.password-store`. Deliberately NOT
+  relocated via `PASSWORD_STORE_DIR`: that var would only be set in zsh
+  startup files, and AI agents often run plain `bash`, which would silently
+  look at the default path anyway. This is a documented exception to the
+  "use XDG variables" rule.
+- The store is its own git repo, synced independently. Never nest it inside
+  this dotfiles repo — its `.gpg` blobs would churn here, and the repos have
+  different audiences.
+- **No GitHub required — and none is used.** A remote is only needed for
+  multi-device sync, and a self-hosted bare repo over SSH works fine:
+  `ssh <box> git init --bare '~/password-store.git'` then
+  `pass git remote add origin <box>:password-store.git`. Secret *contents*
+  are GPG ciphertext, but entry *names* are plaintext file paths — metadata
+  that should not sit on a third-party host.
+
+### AI agent access
+
+- Agents read secrets with `pass show <path>` — plain stdout, no daemon.
+  gpg-agent caching (`default-cache-ttl 3600` in
+  `private_dot_gnupg/private_gpg-agent.conf.tmpl`) makes this non-interactive
+  after the first pinentry unlock of a session.
+- Convention: secrets agents may read live under `ai/`
+  (e.g. `pass show ai/github-token`); human-only secrets live elsewhere
+  (e.g. `personal/`). Note: `dot_claude/settings.json` currently sets
+  `defaultMode: bypassPermissions`, which makes allowlist scoping moot — if
+  you ever tighten the mode, allowlist only `Bash(pass show ai/*)`.
+- chezmoi templates can also pull secrets at apply time via the built-in
+  `pass` template function (`{{ pass "ai/example" }}` inside a `.tmpl` file)
+  — useful for rendering `private_` config files that need an embedded token.
+
+### Shell startup pattern: one entry, one gpg spawn
+
+Env vars exported in every shell live in a single multiline entry,
+`env/shell`, containing `export FOO=...` lines; `secrets.zsh` evals it with
+one direct `gpg -dq` call (~130ms). Do NOT add one `pass show` per variable —
+each spawn costs ~190ms at every shell startup (measured: 3 vars = ~570ms via
+`pass show` vs ~150ms via the single-entry eval). Rotate/edit with
+`pass edit env/shell`. On-demand secrets that don't need to be in every
+shell's env get individual `ai/`/`personal/` entries instead — see
+`secrets.zsh.example`.
+
+---
+
 ## install.sh
 
 `install.sh` is the single bootstrap entry point for all three OSes. It is

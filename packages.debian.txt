@@ -63,6 +63,9 @@ lazygit
 gnupg
 pinentry-curses
 
+# ── Secrets vault ─────────────────────────────────────────────────────────────
+pass
+
 # ── Utilities ─────────────────────────────────────────────────────────────────
 # `watch` ships with procps (preinstalled), so it is intentionally omitted.
 curl
