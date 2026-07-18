@@ -1,0 +1,20 @@
+{
+  "$schema": "https://raw.githubusercontent.com/manaflow-ai/cmux/main/web/data/cmux.schema.json",
+  "schemaVersion": 1,
+
+  // cmux app-behavior config (JSONC). Terminal look & feel — font, Tokyo Night
+  // colours, scrollback, keybinds — is NOT here: cmux reads ~/.config/ghostty/config
+  // for that (managed by dot_config/ghostty/config.tmpl). Only settings with no
+  // Ghostty equivalent live here. Reload both with: cmux reload-config
+  "app": {
+    "appearance": "dark",           // match the dark Tokyo Night terminal, not the OS
+    "warnBeforeClosingTab": false,  // mirrors Ghostty confirm-close-surface = false
+    "sendAnonymousTelemetry": false
+  },
+  "terminal": {
+    "copyOnSelect": true            // mirrors Ghostty copy-on-select (cmux defaults off)
+  },
+  "sidebarAppearance": {
+    "matchTerminalBackground": true // sidebar tints to the Tokyo Night background
+  }
+}

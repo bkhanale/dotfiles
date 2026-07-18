@@ -52,6 +52,7 @@ brew "watch"
 brew "zellij"
 
 # ── Casks ─────────────────────────────────────────────────────────────────────
+cask "cmux"          # Ghostty-based terminal for AI coding agents (macOS 14+)
 cask "font-fira-code-nerd-font"
 cask "font-symbols-only-nerd-font"
 cask "ghostty"

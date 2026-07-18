@@ -326,6 +326,70 @@ super+alt+arrow  goto_split:direction
 
 ---
 
+## cmux
+
+[cmux](https://cmux.com/docs) is a **macOS-only** (14+) Ghostty-*based* terminal
+and workspace manager for AI coding agents, installed as a Homebrew cask
+(`cask "cmux"`, auto-updating). It runs *alongside* Ghostty — it is not a
+replacement.
+
+### It shares Ghostty's config — do NOT duplicate terminal settings
+
+cmux embeds Ghostty and reads the **same** `~/.config/ghostty/config` that
+standalone Ghostty uses (managed by `dot_config/ghostty/config.tmpl`). So all
+terminal look & feel — font, Tokyo Night colours, scrollback, shell integration,
+and keybinds (`shift+enter`, the Cmd+arrow natural-editing binds) — is already
+"ported" for free. **Never copy those into `cmux.json`.** Ghostty's own guidance,
+printed by `cmux --help`: *"prefer Ghostty config for terminal behavior Ghostty
+already supports."* A few Ghostty window keys (`macos-titlebar-style`,
+`window-decoration`) have no effect inside cmux since it draws its own chrome —
+harmless, and they still apply to standalone Ghostty.
+
+### cmux.json — cmux-only app behavior
+
+`home/dot_config/cmux/cmux.json` → `~/.config/cmux/cmux.json`. Format is **JSONC**
+(JSON with comments + trailing commas). It holds only settings with no Ghostty
+equivalent (appearance, sidebar, notifications, browser, app shortcuts,
+workspaces). The tracked file is a deliberately thin "faithful port" — only the
+handful of settings that mirror the Ghostty config or keep cmux visually
+consistent:
+
+| Ghostty pref | cmux.json key |
+|---|---|
+| `copy-on-select` | `terminal.copyOnSelect: true` |
+| `confirm-close-surface = false` | `app.warnBeforeClosingTab: false` |
+| dark Tokyo Night theme | `app.appearance: "dark"` + `sidebarAppearance.matchTerminalBackground: true` |
+
+Everything else stays at cmux defaults. `sendAnonymousTelemetry` is set to
+`false`.
+
+### macOS-only
+
+cmux does not exist on Linux, so `.config/cmux/cmux.json` is excluded off darwin
+via a `{{ if ne .chezmoi.os "darwin" }}` guard in `home/.chezmoiignore` (rather
+than an OS `.tmpl` guard, which would still write an empty file on Linux).
+
+### Editing & verifying — do not guess keys
+
+- cmux auto-creates a fully-commented `cmux.json` template on first launch when
+  the file is missing, and does **not** write runtime/Settings-window state back
+  into it (those live in the app store + a legacy `settings.json`). So the
+  tracked file stays authoritative and `chezmoi diff` stays clean — unlike Codex.
+- The installed template at `~/.config/cmux/cmux.json` is the authoritative,
+  version-matched list of every key and default (regenerate by removing it and
+  relaunching cmux). The JSON schema is at
+  `https://raw.githubusercontent.com/manaflow-ai/cmux/main/web/data/cmux.schema.json`.
+- Validate with `cmux config doctor` (or `cmux config validate`). Reload without
+  an app restart with `cmux reload-config` — it reloads BOTH `cmux.json` and the
+  Ghostty config.
+- cmux shortcuts (`shortcuts.bindings` in `cmux.json`) are **app-level actions
+  only** — they cannot send raw bytes to the shell. Terminal keybinds like
+  `shift+enter=text:...` must stay in the Ghostty config.
+- Before hand-editing an existing `cmux.json`, back it up to a timestamped `.bak`
+  (cmux's own guidance).
+
+---
+
 ## Brewfile
 
 - Do **not** add `tap "homebrew/bundle"` — this tap is deprecated and was removed. `brew bundle` is now built into Homebrew itself.

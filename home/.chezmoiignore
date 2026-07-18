@@ -12,3 +12,8 @@
 **/*.swp
 **/*.swo
 **/*~
+
+{{- if ne .chezmoi.os "darwin" }}
+# cmux is macOS-only (14+) — never manage its config off macOS
+.config/cmux/cmux.json
+{{- end }}
