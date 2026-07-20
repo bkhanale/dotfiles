@@ -7,8 +7,9 @@
   // for that (managed by dot_config/ghostty/config.tmpl). Only settings with no
   // Ghostty equivalent live here. Reload both with: cmux reload-config
   "app": {
-    "appearance": "dark",           // match the dark Tokyo Night terminal, not the OS
-    "warnBeforeClosingTab": false,  // mirrors Ghostty confirm-close-surface = false
+    "appearance": "dark",             // match the dark Tokyo Night terminal, not the OS
+    "warnBeforeClosingTab": false,    // mirrors Ghostty confirm-close-surface = false
+    "reorderOnNotification": false,   // don't reshuffle sidebar workspaces on notification
     "sendAnonymousTelemetry": false
   },
   "terminal": {

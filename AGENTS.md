@@ -360,8 +360,10 @@ consistent:
 | `confirm-close-surface = false` | `app.warnBeforeClosingTab: false` |
 | dark Tokyo Night theme | `app.appearance: "dark"` + `sidebarAppearance.matchTerminalBackground: true` |
 
-Everything else stays at cmux defaults. `sendAnonymousTelemetry` is set to
-`false`.
+Everything else stays at cmux defaults, except two personal-preference
+toggles: `sendAnonymousTelemetry` and `reorderOnNotification` are both set to
+`false` (the latter stops the sidebar reshuffling workspaces to the top when
+they get a notification).
 
 ### macOS-only
 
