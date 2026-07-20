@@ -197,7 +197,11 @@ their binaries and runtime state are not.
 
 | Source path | Target | Purpose |
 |---|---|---|
-| `home/dot_claude/settings.json.tmpl` | `~/.claude/settings.json` | Claude Code config (permissions, plugins, voice, statusLine) |
+| `home/dot_claude/settings.json.tmpl` | `~/.claude/settings.json` | Claude Code config (permissions, plugins, voice, statusLine, hooks); templated home-dir hook paths |
+| `home/dot_claude/skills/notify/` | `~/.claude/skills/notify/` | `notify` skill — phone push via ntfy (agent-invoked) |
+| `home/dot_claude/skills/sentry-cli/` | `~/.claude/skills/sentry-cli/` | `sentry-cli` reference skill (generic Sentry CLI docs) |
+| `home/dot_claude/hooks/executable_ntfy-notification.sh` | `~/.claude/hooks/ntfy-notification.sh` | Notification-hook ntfy safety net (pairs with `notify`) |
+| `home/dot_claude/keybindings.json` | `~/.claude/keybindings.json` | Claude Code key bindings |
 | `home/dot_config/ccstatusline/settings.json` | `~/.config/ccstatusline/settings.json` | Status-line layout for Claude Code (rendered by `npx ccstatusline`) |
 | `home/dot_config/opencode/opencode.json` | `~/.config/opencode/opencode.json` | OpenCode model, MCP servers, agent profiles, instructions list |
 | `home/dot_config/opencode/tui.json` | `~/.config/opencode/tui.json` | OpenCode TUI theme + scroll/diff prefs |
@@ -209,6 +213,26 @@ auto-loads `CLAUDE.md`). Codex auto-loads `AGENTS.md` from the project root
 (see `project_doc_fallback_filenames` in the Codex config schema). Keep
 `CLAUDE.md` as a thin `@AGENTS.md` import so there is exactly one source of
 truth.
+
+### Claude user-scoped config: only the generic slice is tracked here
+
+`dot_claude/` tracks only the **generic, publishable** Claude Code content —
+the `notify` + `sentry-cli` skills, the `ntfy-notification.sh` hook,
+`keybindings.json`, and `settings.json.tmpl`. **Confidential, work-scoped
+content** (work-specific skills, agents + agent-memory, a work `Stop` hook, and
+per-project memory) is deliberately NOT in this public repo — it lives in a
+separate **local-only** git repo that symlinks itself into `~/.claude/` via its
+own `apply.sh`. This repo (public) and that store (private) coexist in the same
+`~/.claude/{skills,hooks}/` directories, which is why nothing here uses
+chezmoi's `exact_` prefix — that would delete the unmanaged symlinks.
+
+`settings.json.tmpl` wires two hooks whose scripts have different owners:
+`Notification` → `ntfy-notification.sh` (tracked here) and `SessionStart` →
+`session-task-awareness.sh` (owned by the separate `defer` repo and symlinked
+into `~/.claude/hooks/`, alongside the `defer`/`tasks` skills). On a machine
+that has this repo but not `defer`, the `SessionStart` script is absent and
+Claude Code logs a non-fatal error each session start until `defer` is set up.
+Hook paths use `{{ .chezmoi.homeDir }}` so they stay correct across machines.
 
 ### NOT tracked (intentionally)
 
