@@ -197,7 +197,7 @@ their binaries and runtime state are not.
 
 | Source path | Target | Purpose |
 |---|---|---|
-| `home/dot_claude/settings.json` | `~/.claude/settings.json` | Claude Code config (permissions, plugins, voice, statusLine) |
+| `home/dot_claude/settings.json.tmpl` | `~/.claude/settings.json` | Claude Code config (permissions, plugins, voice, statusLine) |
 | `home/dot_config/ccstatusline/settings.json` | `~/.config/ccstatusline/settings.json` | Status-line layout for Claude Code (rendered by `npx ccstatusline`) |
 | `home/dot_config/opencode/opencode.json` | `~/.config/opencode/opencode.json` | OpenCode model, MCP servers, agent profiles, instructions list |
 | `home/dot_config/opencode/tui.json` | `~/.config/opencode/tui.json` | OpenCode TUI theme + scroll/diff prefs |
