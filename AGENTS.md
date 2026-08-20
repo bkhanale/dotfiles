@@ -226,13 +226,15 @@ own `apply.sh`. This repo (public) and that store (private) coexist in the same
 `~/.claude/{skills,hooks}/` directories, which is why nothing here uses
 chezmoi's `exact_` prefix — that would delete the unmanaged symlinks.
 
-`settings.json.tmpl` wires two hooks whose scripts have different owners:
-`Notification` → `ntfy-notification.sh` (tracked here) and `SessionStart` →
-`session-task-awareness.sh` (owned by the separate `defer` repo and symlinked
-into `~/.claude/hooks/`, alongside the `defer`/`tasks` skills). On a machine
-that has this repo but not `defer`, the `SessionStart` script is absent and
-Claude Code logs a non-fatal error each session start until `defer` is set up.
-Hook paths use `{{ .chezmoi.homeDir }}` so they stay correct across machines.
+`settings.json.tmpl` wires exactly one hook: `Notification` →
+`ntfy-notification.sh` (tracked here). Its path uses `{{ .chezmoi.homeDir }}`
+so it stays correct across machines. Work-scoped hooks (a work `Stop` hook,
+`SessionStart`/`PreCompact` task-file and memory-review hooks, etc.) are
+deliberately NOT wired in this public template — since `settings.json` is a
+single chezmoi-managed file, embedding that wiring would leak private-repo
+script names here and a `chezmoi apply` would clobber whatever the private
+store patched in. If the separate `defer` store wants those hooks active, it
+owns both the scripts and their wiring in `~/.claude/settings.json` itself.
 
 ### NOT tracked (intentionally)
 

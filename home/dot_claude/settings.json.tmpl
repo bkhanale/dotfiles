@@ -50,6 +50,7 @@
       "~/workspace"
     ]
   },
+  "model": "claude-opus-4-8",
   "enableAllProjectMcpServers": false,
   "statusLine": {
     "type": "command",
@@ -72,7 +73,7 @@
     }
   },
   "alwaysThinkingEnabled": true,
-  "effortLevel": "xhigh",
+  "effortLevel": "high",
   "awaySummaryEnabled": true,
   "tui": "fullscreen",
   "voice": {
@@ -83,8 +84,10 @@
   "voiceEnabled": true,
   "showThinkingSummaries": true,
   "skipDangerousModePermissionPrompt": true,
+  "skipWorkflowUsageWarning": true,
   "editorMode": "vim",
   "showTurnDuration": true,
+  "outputStyle": "Concise",
   "hooks": {
     "Notification": [
       {
@@ -93,17 +96,6 @@
             "type": "command",
             "command": "{{ .chezmoi.homeDir }}/.claude/hooks/ntfy-notification.sh",
             "timeout": 15
-          }
-        ]
-      }
-    ],
-    "SessionStart": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "{{ .chezmoi.homeDir }}/.claude/hooks/session-task-awareness.sh",
-            "timeout": 10
           }
         ]
       }
