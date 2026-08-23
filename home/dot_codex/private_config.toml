@@ -4,12 +4,29 @@
 approval_policy = "never"
 sandbox_mode = "danger-full-access"
 
+# Keep hosted web search unrestricted explicitly instead of relying on the
+# implicit full-access default.
+web_search = "live"
+
 # Reasoning — matches Claude's effortLevel = "high" + alwaysThinkingEnabled.
 model_reasoning_effort = "high"
 model_reasoning_summary = "detailed"
 
 # Disable the auto co-author trailer; matches the repo's no-Co-Authored-By rule.
 commit_attribution = ""
+
+# Apps/connectors have approval controls separate from shell approvals.
+[apps._default]
+enabled = true
+default_tools_approval_mode = "approve"
+destructive_enabled = true
+open_world_enabled = true
+
+# MCP servers have independent approval defaults; approve every Kite tool,
+# including tools added by the server in the future.
+[mcp_servers.kite]
+url = "https://mcp.kite.trade/mcp"
+default_tools_approval_mode = "approve"
 
 # Acknowledge the full-access warning so it doesn't reappear on every session.
 [notice]
@@ -44,18 +61,5 @@ status_line = [
 ]
 
 # ── Profiles ─────────────────────────────────────────────────────────────────
-# Mirrors OpenCode's agent.plan / agent.review. Activate with:
-#   codex --profile plan
-#   codex --profile review
-# Both inherit the top-level danger-full-access + never-approval stance so they
-# don't fight the bypass-all-permissions posture shared with Claude/OpenCode.
-
-[profiles.plan]
-sandbox_mode           = "danger-full-access"
-approval_policy        = "never"
-model_reasoning_effort = "high"
-
-[profiles.review]
-sandbox_mode           = "danger-full-access"
-approval_policy        = "never"
-model_reasoning_effort = "high"
+# Profiles are separate sibling files in Codex 0.134.0 and later. Use
+# `codex --profile plan` or `codex --profile review` to activate them.

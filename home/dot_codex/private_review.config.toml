@@ -1,0 +1,4 @@
+#:schema https://developers.openai.com/codex/config-schema.json
+
+# Base sandbox and approval settings are inherited from config.toml.
+model_reasoning_effort = "high"
