@@ -4,20 +4,12 @@
   "small_model": "anthropic/claude-haiku-4-5",
   "share": "manual",
   "autoupdate": true,
-  "username": "bkhanale",
   "permission": {
     "bash": "allow",
     "edit": "allow",
     "write": "allow",
     "webfetch": "allow",
     "*": "allow"
-  },
-  "mcp": {
-    "chrome-devtools": {
-      "type": "local",
-      "command": ["npx", "-y", "chrome-devtools-mcp@latest"],
-      "enabled": true
-    }
   },
   "provider": {
     "anthropic": {

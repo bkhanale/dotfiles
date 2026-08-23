@@ -1,6 +1,6 @@
 #:schema https://developers.openai.com/codex/config-schema.json
 
-# Sandbox / approvals — mirrors Claude Code's bypassPermissions stance.
+# Sandbox / approvals.
 approval_policy = "never"
 sandbox_mode = "danger-full-access"
 
@@ -8,7 +8,7 @@ sandbox_mode = "danger-full-access"
 # implicit full-access default.
 web_search = "live"
 
-# Reasoning — matches Claude's effortLevel = "high" + alwaysThinkingEnabled.
+# Reasoning.
 model_reasoning_effort = "high"
 model_reasoning_summary = "detailed"
 
@@ -19,29 +19,23 @@ default_tools_approval_mode = "approve"
 destructive_enabled = true
 open_world_enabled = true
 
-# MCP servers have independent approval defaults; approve every Kite tool,
-# including tools added by the server in the future.
-[mcp_servers.kite]
-url = "https://mcp.kite.trade/mcp"
-default_tools_approval_mode = "approve"
-
 # Acknowledge the full-access warning so it doesn't reappear on every session.
 [notice]
 hide_full_access_warning = true
 
 # History — Codex keeps a JSONL transcript per session. Bytes-based cap is the
-# Codex analogue of Claude's cleanupPeriodDays = 90: prune the oldest entries
-# when the file exceeds the limit. save-all keeps every turn (default).
+# oldest entries when the file exceeds the limit. save-all keeps every turn
+# (default).
 [history]
 persistence = "save-all"
 max_bytes   = 10485760   # 10 MB
 
 [tui]
 theme = "tokyonight"
-# Match Claude's editorMode = "vim" — composer opens in vim normal mode.
+# Open the composer in vim normal mode.
 vim_mode_default = true
-# Match Claude's awaySummaryEnabled — ring the terminal bell / OSC9 when a
-# turn finishes while the window is unfocused.
+# Ring the terminal bell / OSC9 when a turn finishes while the window is
+# unfocused.
 notifications = true
 notification_condition = "unfocused"
 # Apply tokyonight colours to status-line items (defaults to plain text).

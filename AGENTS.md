@@ -197,13 +197,10 @@ their binaries and runtime state are not.
 
 | Source path | Target | Purpose |
 |---|---|---|
-| `home/dot_claude/settings.json.tmpl` | `~/.claude/settings.json` | Claude Code config (permissions, plugins, voice, statusLine, hooks); templated home-dir hook paths |
-| `home/dot_claude/skills/notify/` | `~/.claude/skills/notify/` | `notify` skill — phone push via ntfy (agent-invoked) |
-| `home/dot_claude/skills/sentry-cli/` | `~/.claude/skills/sentry-cli/` | `sentry-cli` reference skill (generic Sentry CLI docs) |
-| `home/dot_claude/hooks/executable_ntfy-notification.sh` | `~/.claude/hooks/ntfy-notification.sh` | Notification-hook ntfy safety net (pairs with `notify`) |
+| `home/dot_claude/settings.json` | `~/.claude/settings.json` | Claude Code base config (permissions, voice, status line, and TUI preferences) |
 | `home/dot_claude/keybindings.json` | `~/.claude/keybindings.json` | Claude Code key bindings |
 | `home/dot_config/ccstatusline/settings.json` | `~/.config/ccstatusline/settings.json` | Status-line layout for Claude Code (rendered by `npx ccstatusline`) |
-| `home/dot_config/opencode/opencode.json` | `~/.config/opencode/opencode.json` | OpenCode model, MCP servers, agent profiles, instructions list |
+| `home/dot_config/opencode/opencode.json` | `~/.config/opencode/opencode.json` | OpenCode model, agent profiles, and instructions list |
 | `home/dot_config/opencode/tui.json` | `~/.config/opencode/tui.json` | OpenCode TUI theme + scroll/diff prefs |
 | `home/dot_codex/private_config.toml` | `~/.codex/config.toml` (mode 0600) | Codex CLI config (approvals, sandbox, reasoning, TUI theme) |
 | `home/dot_codex/private_plan.config.toml` | `~/.codex/plan.config.toml` (mode 0600) | Codex `plan` profile layer |
@@ -216,27 +213,12 @@ auto-loads `CLAUDE.md`). Codex auto-loads `AGENTS.md` from the project root
 `CLAUDE.md` as a thin `@AGENTS.md` import so there is exactly one source of
 truth.
 
-### Claude user-scoped config: only the generic slice is tracked here
+### Agent extensions are local-only
 
-`dot_claude/` tracks only the **generic, publishable** Claude Code content —
-the `notify` + `sentry-cli` skills, the `ntfy-notification.sh` hook,
-`keybindings.json`, and `settings.json.tmpl`. **Confidential, work-scoped
-content** (work-specific skills, agents + agent-memory, a work `Stop` hook, and
-per-project memory) is deliberately NOT in this public repo — it lives in a
-separate **local-only** git repo that symlinks itself into `~/.claude/` via its
-own `apply.sh`. This repo (public) and that store (private) coexist in the same
-`~/.claude/{skills,hooks}/` directories, which is why nothing here uses
-chezmoi's `exact_` prefix — that would delete the unmanaged symlinks.
-
-`settings.json.tmpl` wires exactly one hook: `Notification` →
-`ntfy-notification.sh` (tracked here). Its path uses `{{ .chezmoi.homeDir }}`
-so it stays correct across machines. Work-scoped hooks (a work `Stop` hook,
-`SessionStart`/`PreCompact` task-file and memory-review hooks, etc.) are
-deliberately NOT wired in this public template — since `settings.json` is a
-single chezmoi-managed file, embedding that wiring would leak private-repo
-script names here and a `chezmoi apply` would clobber whatever the private
-store patched in. If the separate `defer` store wants those hooks active, it
-owns both the scripts and their wiring in `~/.claude/settings.json` itself.
+Keep Claude hooks, skills, plugins, and marketplaces out of this repository.
+They are user-, project-, or service-specific and should be configured locally.
+Likewise, do not commit MCP server definitions for Codex or OpenCode; endpoints,
+tool approvals, and credentials belong in machine-local configuration.
 
 ### NOT tracked (intentionally)
 
@@ -261,7 +243,7 @@ owns both the scripts and their wiring in `~/.claude/settings.json` itself.
 
 ### When editing the configs
 
-- **Claude Code** — `dot_claude/settings.json.tmpl` follows the schema at
+- **Claude Code** — `dot_claude/settings.json` follows the schema at
   `https://json.schemastore.org/claude-code-settings.json` (already pinned via
   `$schema`). When in doubt about valid keys, check the docs rather than
   guessing — Claude Code rejects unknown fields silently in some versions.
@@ -279,9 +261,20 @@ owns both the scripts and their wiring in `~/.claude/settings.json` itself.
   drop them; do not promote them upstream.
 - **ccstatusline** — schema is the `ccstatusline` npm package; prefer editing
   the layout via `/statusline` inside Claude Code over hand-rolling JSON. Keep
-  the renderer command in `settings.json.tmpl` pinned to an exact package
+  the renderer command in `settings.json` pinned to an exact package
   version so fresh machines work without an untracked global install; bump the
   version deliberately after reviewing a release.
+
+### Portability and publication
+
+- Do not commit personal names, usernames, private hostnames, fixed repository
+  owners, organization names, or service endpoints.
+- Project aliases, legacy dependency paths, work tooling, and other
+  machine-specific non-secret settings belong in `~/.config/zsh/local.zsh`.
+- Secrets and credentials belong in `~/.config/zsh/secrets.zsh` or the local
+  password store, never in tracked files.
+- Keep examples generic by using placeholders such as `your-github-user`,
+  `example.com`, and `my-project`.
 
 ### Sub-agents and project overrides
 

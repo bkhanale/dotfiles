@@ -80,7 +80,3 @@ if command -v docker &>/dev/null; then
   alias dc='docker compose'
 fi
 alias cz='chezmoi'
-
-# ── Project aliases ───────────────────────────────────────────────────────────
-[[ -x "$HOME/workspace/bkhanale/scripts/dist/cli" ]] \
-  && alias scli="$HOME/workspace/bkhanale/scripts/dist/cli"

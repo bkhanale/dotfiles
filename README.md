@@ -1,6 +1,6 @@
 # dotfiles
 
-Personal dotfiles managed with [chezmoi](https://www.chezmoi.io/). Supports **macOS** (Homebrew), **Arch Linux** (pacman/yay), and **Debian / Ubuntu** (apt).
+Cross-platform dotfiles managed with [chezmoi](https://www.chezmoi.io/). Supports **macOS** (Homebrew), **Arch Linux** (pacman/yay), and **Debian / Ubuntu** (apt).
 
 ## Stack
 
@@ -20,12 +20,14 @@ Personal dotfiles managed with [chezmoi](https://www.chezmoi.io/). Supports **ma
 
 ## Quick Start
 
+Replace `your-github-user` with the owner of your fork.
+
 ### Fresh macOS machine
 
 ```sh
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 brew install chezmoi
-chezmoi init --apply bkhanale/dotfiles
+chezmoi init --apply your-github-user/dotfiles
 ```
 
 ### Fresh Arch Linux machine
@@ -36,7 +38,7 @@ sudo pacman -Syu --noconfirm git base-devel
 git clone https://aur.archlinux.org/yay.git /tmp/yay && cd /tmp/yay && makepkg -si --noconfirm
 # install chezmoi
 yay -S --noconfirm chezmoi
-chezmoi init --apply bkhanale/dotfiles
+chezmoi init --apply your-github-user/dotfiles
 ```
 
 ### Fresh Debian / Ubuntu machine
@@ -46,24 +48,24 @@ sudo apt-get update && sudo apt-get install -y curl git
 # install chezmoi into ~/.local/bin
 sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$HOME/.local/bin"
 export PATH="$HOME/.local/bin:$PATH"
-chezmoi init --apply bkhanale/dotfiles
+chezmoi init --apply your-github-user/dotfiles
 ```
 
 Or, the all-in-one bootstrap (clones the repo, installs apt packages, starship, Nerd Fonts, and applies dotfiles):
 
 ```sh
-git clone https://github.com/bkhanale/dotfiles ~/workspace/bkhanale/dotfiles
-bash ~/workspace/bkhanale/dotfiles/install.sh
+git clone https://github.com/your-github-user/dotfiles "$HOME/.local/share/dotfiles"
+bash "$HOME/.local/share/dotfiles/install.sh"
 ```
 
 For headless / SSH bootstrap (no tty), pre-seed the chezmoi data via env vars:
 
 ```sh
-ssh host 'git clone https://github.com/bkhanale/dotfiles ~/workspace/bkhanale/dotfiles && \
+ssh host 'git clone https://github.com/your-github-user/dotfiles "$HOME/.local/share/dotfiles" && \
   CHEZMOI_NAME="Your Name" \
   CHEZMOI_EMAIL="you@example.com" \
   CHEZMOI_GPG_KEY="" \
-  bash ~/workspace/bkhanale/dotfiles/install.sh'
+  bash "$HOME/.local/share/dotfiles/install.sh"'
 ```
 
 (`chsh` still needs a password and is skipped in non-tty mode — run
@@ -76,7 +78,7 @@ ssh host 'git clone https://github.com/bkhanale/dotfiles ~/workspace/bkhanale/do
 ### Already have chezmoi
 
 ```sh
-chezmoi init --apply bkhanale/dotfiles
+chezmoi init --apply your-github-user/dotfiles
 ```
 
 ### Onto a machine with existing dotfiles
@@ -91,8 +93,8 @@ chezmoi init --apply bkhanale/dotfiles
   unrelated tooling completely alone — clean those up yourself when ready
 
 ```sh
-git clone https://github.com/bkhanale/dotfiles ~/workspace/bkhanale/dotfiles
-bash ~/workspace/bkhanale/dotfiles/install.sh
+git clone https://github.com/your-github-user/dotfiles "$HOME/.local/share/dotfiles"
+bash "$HOME/.local/share/dotfiles/install.sh"
 ```
 
 ---
@@ -130,7 +132,7 @@ dotfiles/
 │   │   ├── git/
 │   │   ├── opencode/        # OpenCode config (opencode.json, tui.json)
 │   │   └── ccstatusline/    # Claude Code status-line config
-│   ├── dot_claude/          # Claude Code settings, keybindings, hooks, and skills
+│   ├── dot_claude/          # Claude Code base settings and keybindings
 │   ├── dot_codex/           # Codex config + plan/review profiles → ~/.codex/
 │   └── dot_gnupg/
 ├── AGENTS.md                # shared project instructions (Codex reads directly)
@@ -147,9 +149,8 @@ its instructions list.
 
 | Tool | Source | Target |
 |---|---|---|
-| Claude Code | `home/dot_claude/settings.json.tmpl` | `~/.claude/settings.json` |
+| Claude Code | `home/dot_claude/settings.json` | `~/.claude/settings.json` |
 | Claude keybindings | `home/dot_claude/keybindings.json` | `~/.claude/keybindings.json` |
-| Claude hooks and skills | `home/dot_claude/{hooks,skills}/` | `~/.claude/{hooks,skills}/` |
 | Claude statusline | `home/dot_config/ccstatusline/settings.json` | `~/.config/ccstatusline/settings.json` |
 | OpenCode (config) | `home/dot_config/opencode/opencode.json` | `~/.config/opencode/opencode.json` |
 | OpenCode (TUI) | `home/dot_config/opencode/tui.json` | `~/.config/opencode/tui.json` |
@@ -163,6 +164,9 @@ its instructions list.
   `dot_zshenv` / `conf.d/exports.zsh`.
 - Session state, credentials, plugin caches, history, and project/session data
   under `~/.claude/` and `~/.codex/` — runtime data, never committed.
+- User- or service-specific Claude hooks, skills, plugins, and marketplaces.
+- MCP server definitions for Codex or OpenCode. Configure integrations locally
+  on each machine instead of committing endpoints or credentials.
 - Per-project `CLAUDE.md` / `AGENTS.md` — those live in each project repo.
 
 To install the CLIs on a fresh machine:

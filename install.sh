@@ -514,7 +514,7 @@ EOF
   success "Wrote $cfg"
 }
 
-# ── Apply dotfiles via chezmoi (uses local source if running from a clone) ────
+# ── Apply dotfiles via chezmoi ─────────────────────────────────────────────────
 # We use `chezmoi init --apply` (not just `chezmoi apply`) so chezmoi renders
 # .chezmoi.toml.tmpl and writes a *complete* ~/.config/chezmoi/chezmoi.toml,
 # including sourceDir + diff/edit/merge sections. promptStringOnce reads our
@@ -527,13 +527,9 @@ EOF
 # should have been pushed to source before re-running.
 apply_chezmoi() {
   header "Applying dotfiles via chezmoi"
-  if [[ -f "$SCRIPT_DIR/.chezmoiroot" ]]; then
-    # Running from a local clone — use that as the source, no remote clone.
-    chezmoi init --apply --force --source="$SCRIPT_DIR"
-  else
-    # No local clone available — pull from GitHub.
-    chezmoi init --apply --force bkhanale/dotfiles
-  fi
+  [[ -f "$SCRIPT_DIR/.chezmoiroot" ]] \
+    || error "install.sh must be run from the dotfiles repository root"
+  chezmoi init --apply --force --source="$SCRIPT_DIR"
   success "chezmoi apply complete"
 }
 

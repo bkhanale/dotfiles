@@ -5,3 +5,8 @@ CLAUDE.local.md
 # inside the chezmoi source tree by accident.
 home/dot_config/zsh/secrets.zsh
 home/dot_config/zsh/local.zsh
+
+# Claude extensions are machine/user-specific. Keep only base settings and
+# keybindings in this repository.
+home/dot_claude/hooks/
+home/dot_claude/skills/

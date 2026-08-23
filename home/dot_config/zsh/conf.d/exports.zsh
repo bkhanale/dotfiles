@@ -26,30 +26,8 @@ export LC_ALL='en_US.UTF-8'
 # Set NODE_OPTIONS per-project via .env / direnv instead of globally
 # export NODE_OPTIONS='--max-old-space-size=8192'
 
-# ── OpenSSL ───────────────────────────────────────────────────────────────────
-# Using local OpenSSL 1.1 build (required for some older dependencies)
-export OPENSSL_PREFIX="$HOME/.local/openssl-1.1"
-
-# ── MySQL (macOS Homebrew) ────────────────────────────────────────────────────
-[[ -d "/opt/homebrew/opt/mysql@8.0/bin" ]] \
-  && export PATH="/opt/homebrew/opt/mysql@8.0/bin:$PATH"
-
-# ── PostgreSQL (macOS Homebrew) ───────────────────────────────────────────────
-[[ -d "/opt/homebrew/opt/postgresql@18/bin" ]] \
-  && export PATH="/opt/homebrew/opt/postgresql@18/bin:$PATH"
-
-# ── libpq (macOS Homebrew) ───────────────────────────────────────────────────
-[[ -d "/opt/homebrew/opt/libpq/bin" ]] \
-  && export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
-
-# ── Nginx ─────────────────────────────────────────────────────────────────────
-[[ -d "/opt/nginx/sbin" ]] && export PATH="/opt/nginx/sbin:$PATH"
-
 # ── opencode ──────────────────────────────────────────────────────────────────
 [[ -d "$HOME/.opencode/bin" ]] && export PATH="$HOME/.opencode/bin:$PATH"
-
-# ── Vault ─────────────────────────────────────────────────────────────────────
-# VAULT_ADDR, VAULT_TOKEN, and other secrets are set in secrets.zsh
 
 # ── GPG ───────────────────────────────────────────────────────────────────────
 export GPG_TTY="$(tty)"

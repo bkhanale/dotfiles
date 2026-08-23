@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "cleanupPeriodDays": 90,
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
+  "permissions": {
+    "defaultMode": "bypassPermissions"
+  },
+  "model": "claude-opus-4-8",
+  "statusLine": {
+    "type": "command",
+    "command": "npx -y ccstatusline@2.2.27",
+    "padding": 0,
+    "refreshInterval": 10
+  },
+  "alwaysThinkingEnabled": true,
+  "effortLevel": "high",
+  "awaySummaryEnabled": true,
+  "tui": "fullscreen",
+  "voice": {
+    "enabled": true,
+    "mode": "hold",
+    "autoSubmit": false
+  },
+  "voiceEnabled": true,
+  "showThinkingSummaries": true,
+  "skipDangerousModePermissionPrompt": true,
+  "skipWorkflowUsageWarning": true,
+  "editorMode": "vim",
+  "showTurnDuration": true,
+  "outputStyle": "Concise"
+}
