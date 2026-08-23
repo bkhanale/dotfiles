@@ -180,6 +180,9 @@ curl -fsSL https://opencode.ai/install | bash
 
 # Codex (macOS / Linux)
 curl -fsSL https://chatgpt.com/codex/install.sh | sh
+
+# Claude Code status-line renderer
+npm install -g ccstatusline
 ```
 
 ---

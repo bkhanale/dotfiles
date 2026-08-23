@@ -25,7 +25,7 @@ brew "jq"
 brew "yq"
 
 # ── Agent tooling ─────────────────────────────────────────────────────────────
-# Provides npx for the pinned Claude Code status-line renderer.
+# Runtime and package manager for the globally installed ccstatusline renderer.
 brew "node"
 
 # ── Editor ────────────────────────────────────────────────────────────────────

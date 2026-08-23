@@ -199,7 +199,7 @@ their binaries and runtime state are not.
 |---|---|---|
 | `home/dot_claude/settings.json` | `~/.claude/settings.json` | Claude Code base config (permissions, voice, status line, and TUI preferences) |
 | `home/dot_claude/keybindings.json` | `~/.claude/keybindings.json` | Claude Code key bindings |
-| `home/dot_config/ccstatusline/settings.json` | `~/.config/ccstatusline/settings.json` | Status-line layout for Claude Code (rendered by `npx ccstatusline`) |
+| `home/dot_config/ccstatusline/settings.json` | `~/.config/ccstatusline/settings.json` | Status-line layout for Claude Code (rendered by the global `ccstatusline` executable) |
 | `home/dot_config/opencode/opencode.json` | `~/.config/opencode/opencode.json` | OpenCode model, agent profiles, and instructions list |
 | `home/dot_config/opencode/tui.json` | `~/.config/opencode/tui.json` | OpenCode TUI theme + scroll/diff prefs |
 | `home/dot_codex/private_config.toml` | `~/.codex/config.toml` (mode 0600) | Codex CLI config (approvals, sandbox, reasoning, TUI theme) |
@@ -260,10 +260,9 @@ tool approvals, and credentials belong in machine-local configuration.
   `chezmoi diff` shows them after a session, run `chezmoi apply --force` to
   drop them; do not promote them upstream.
 - **ccstatusline** — schema is the `ccstatusline` npm package; prefer editing
-  the layout via `/statusline` inside Claude Code over hand-rolling JSON. Keep
-  the renderer command in `settings.json` pinned to an exact package
-  version so fresh machines work without an untracked global install; bump the
-  version deliberately after reviewing a release.
+  the layout via `/statusline` inside Claude Code over hand-rolling JSON. The
+  renderer command in `settings.json` uses the globally installed
+  `ccstatusline` executable; install or update that package separately with npm.
 
 ### Portability and publication
 
