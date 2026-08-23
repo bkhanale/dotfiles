@@ -24,6 +24,10 @@ brew "the_silver_searcher"  # ag
 brew "jq"
 brew "yq"
 
+# ── Agent tooling ─────────────────────────────────────────────────────────────
+# Provides npx for the pinned Claude Code status-line renderer.
+brew "node"
+
 # ── Editor ────────────────────────────────────────────────────────────────────
 brew "neovim"
 

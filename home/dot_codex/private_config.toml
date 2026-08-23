@@ -12,9 +12,6 @@ web_search = "live"
 model_reasoning_effort = "high"
 model_reasoning_summary = "detailed"
 
-# Disable the auto co-author trailer; matches the repo's no-Co-Authored-By rule.
-commit_attribution = ""
-
 # Apps/connectors have approval controls separate from shell approvals.
 [apps._default]
 enabled = true

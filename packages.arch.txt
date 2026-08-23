@@ -21,6 +21,11 @@ the_silver_searcher
 jq
 yq
 
+# ── Agent tooling ─────────────────────────────────────────────────────────────
+# Provides npx for the pinned Claude Code status-line renderer.
+nodejs
+npm
+
 # ── Editor ────────────────────────────────────────────────────────────────────
 neovim
 

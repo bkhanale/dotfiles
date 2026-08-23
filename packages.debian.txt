@@ -53,6 +53,11 @@ silversearcher-ag
 jq
 yq
 
+# ── Agent tooling ─────────────────────────────────────────────────────────────
+# Provides npx for the pinned Claude Code status-line renderer.
+nodejs
+npm
+
 # ── Git ───────────────────────────────────────────────────────────────────────
 git
 gh

@@ -45,8 +45,8 @@ printf 'Deploy %s to prod?\nTests: green\nMigrations: 2 pending' "$branch" \
 
 - Not for routine progress or anything he doesn't need to act on.
 - Don't re-ping for the same ask — send once, then wait for his response.
-- The Notification hook already auto-pings when Claude Code is idle-waiting on
-  input or needs permission; use this skill for richer, intentional asks on top.
+- The Notification hook already auto-pings on permission prompts; use this skill
+  for richer, intentional asks and other blocking decisions.
 
 ## Notes
 

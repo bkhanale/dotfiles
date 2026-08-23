@@ -206,6 +206,8 @@ their binaries and runtime state are not.
 | `home/dot_config/opencode/opencode.json` | `~/.config/opencode/opencode.json` | OpenCode model, MCP servers, agent profiles, instructions list |
 | `home/dot_config/opencode/tui.json` | `~/.config/opencode/tui.json` | OpenCode TUI theme + scroll/diff prefs |
 | `home/dot_codex/private_config.toml` | `~/.codex/config.toml` (mode 0600) | Codex CLI config (approvals, sandbox, reasoning, TUI theme) |
+| `home/dot_codex/private_plan.config.toml` | `~/.codex/plan.config.toml` (mode 0600) | Codex `plan` profile layer |
+| `home/dot_codex/private_review.config.toml` | `~/.codex/review.config.toml` (mode 0600) | Codex `review` profile layer |
 
 `opencode.json` declares `"instructions": ["AGENTS.md", "CLAUDE.md", ".cursor/rules/*.md"]`,
 so OpenCode picks up the same project-level guidance as Claude Code (which
@@ -243,23 +245,23 @@ owns both the scripts and their wiring in `~/.claude/settings.json` itself.
   ```sh
   curl -fsSL https://claude.ai/install.sh | bash   # → ~/.local/bin/claude
   curl -fsSL https://opencode.ai/install | bash    # → ~/.opencode/bin/opencode
-  brew install codex                               # macOS; or `npm i -g @openai/codex`
+  curl -fsSL https://chatgpt.com/codex/install.sh | sh  # → ~/.local/bin/codex
   ```
   PATH is already wired up: `~/.local/bin` in `dot_zshenv`, `~/.opencode/bin`
-  in `conf.d/exports.zsh`. `codex` lands in Homebrew's bin (already on PATH).
+  in `conf.d/exports.zsh`.
 - Runtime state under `~/.claude/` and `~/.codex/`: `sessions/`, `projects/`,
   `history.jsonl`, `file-history/`, `plugins/cache/`, `shell-snapshots/`,
   `telemetry/`, `auth.json`, `logs_*.sqlite*`, `state_*.sqlite*`,
   `models_cache.json`, `memories/`, etc. These regenerate per-machine and
-  would churn `chezmoi diff` constantly. Only the single tracked config file
-  per tool is managed; chezmoi leaves siblings alone.
+  would churn `chezmoi diff` constantly. Only the tracked config files listed
+  above are managed; chezmoi leaves siblings alone.
 - Anthropic / OpenAI API keys — keep them in
   `~/.config/zsh/secrets.zsh` (gitignored + chezmoi-ignored). Codex's
   ChatGPT-login credentials live in `~/.codex/auth.json` (also untracked).
 
 ### When editing the configs
 
-- **Claude Code** — `dot_claude/settings.json` follows the schema at
+- **Claude Code** — `dot_claude/settings.json.tmpl` follows the schema at
   `https://json.schemastore.org/claude-code-settings.json` (already pinned via
   `$schema`). When in doubt about valid keys, check the docs rather than
   guessing — Claude Code rejects unknown fields silently in some versions.
@@ -276,7 +278,10 @@ owns both the scripts and their wiring in `~/.claude/settings.json` itself.
   `chezmoi diff` shows them after a session, run `chezmoi apply --force` to
   drop them; do not promote them upstream.
 - **ccstatusline** — schema is the `ccstatusline` npm package; prefer editing
-  via `/statusline` inside Claude Code over hand-rolling JSON.
+  the layout via `/statusline` inside Claude Code over hand-rolling JSON. Keep
+  the renderer command in `settings.json.tmpl` pinned to an exact package
+  version so fresh machines work without an untracked global install; bump the
+  version deliberately after reviewing a release.
 
 ### Sub-agents and project overrides
 

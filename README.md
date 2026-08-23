@@ -12,7 +12,7 @@ Personal dotfiles managed with [chezmoi](https://www.chezmoi.io/). Supports **ma
 | Terminal | Ghostty |
 | Multiplexer | Zellij |
 | Editor | Neovim (lazy.nvim, minimal) |
-| AI coding agents | Claude Code + OpenCode (configs tracked, CLIs self-installed) |
+| AI coding agents | Claude Code + OpenCode + Codex (configs tracked, CLIs self-installed) |
 | Colour theme | Tokyo Night Night |
 | Font | FiraCode Nerd Font Mono |
 
@@ -130,34 +130,39 @@ dotfiles/
 │   │   ├── git/
 │   │   ├── opencode/        # OpenCode config (opencode.json, tui.json)
 │   │   └── ccstatusline/    # Claude Code status-line config
-│   ├── dot_claude/          # Claude Code settings → ~/.claude/settings.json
+│   ├── dot_claude/          # Claude Code settings, keybindings, hooks, and skills
+│   ├── dot_codex/           # Codex config + plan/review profiles → ~/.codex/
 │   └── dot_gnupg/
-└── AGENTS.md                # instructions for AI coding agents
+├── AGENTS.md                # shared project instructions (Codex reads directly)
+└── CLAUDE.md                # thin @AGENTS.md import for Claude Code
 ```
 
 ---
 
-## Agentic Dev (Claude Code + OpenCode)
+## Agentic Dev (Claude Code + OpenCode + Codex)
 
-Both CLIs are configured to read the repo-root `AGENTS.md` (and `CLAUDE.md`,
-which just imports `AGENTS.md`) so any project-level conventions apply
-uniformly across the two agents.
+All three CLIs receive the same repo-root guidance: Codex reads `AGENTS.md`,
+Claude Code reads the thin `CLAUDE.md` import, and OpenCode declares both in
+its instructions list.
 
 | Tool | Source | Target |
 |---|---|---|
-| Claude Code | `home/dot_claude/settings.json` | `~/.claude/settings.json` |
+| Claude Code | `home/dot_claude/settings.json.tmpl` | `~/.claude/settings.json` |
+| Claude keybindings | `home/dot_claude/keybindings.json` | `~/.claude/keybindings.json` |
+| Claude hooks and skills | `home/dot_claude/{hooks,skills}/` | `~/.claude/{hooks,skills}/` |
 | Claude statusline | `home/dot_config/ccstatusline/settings.json` | `~/.config/ccstatusline/settings.json` |
 | OpenCode (config) | `home/dot_config/opencode/opencode.json` | `~/.config/opencode/opencode.json` |
 | OpenCode (TUI) | `home/dot_config/opencode/tui.json` | `~/.config/opencode/tui.json` |
+| Codex | `home/dot_codex/private_config.toml` | `~/.codex/config.toml` |
+| Codex profiles | `home/dot_codex/private_{plan,review}.config.toml` | `~/.codex/{plan,review}.config.toml` |
 
 ### What this repo does NOT manage
 
-- The `claude` and `opencode` binaries themselves — both ship native installers
-  with built-in auto-update (`claude`: `~/.local/bin/claude`, `opencode`:
-  `~/.opencode/bin/opencode`). PATH for both is set in
+- The `claude`, `opencode`, and `codex` binaries themselves — all three ship
+  installers with built-in auto-update. PATH for Claude Code and OpenCode is set in
   `dot_zshenv` / `conf.d/exports.zsh`.
-- Session state, plugin caches, history, projects/, sessions/ under
-  `~/.claude/` — runtime data, never committed.
+- Session state, credentials, plugin caches, history, and project/session data
+  under `~/.claude/` and `~/.codex/` — runtime data, never committed.
 - Per-project `CLAUDE.md` / `AGENTS.md` — those live in each project repo.
 
 To install the CLIs on a fresh machine:
@@ -168,6 +173,9 @@ curl -fsSL https://claude.ai/install.sh | bash
 
 # OpenCode (macOS / Linux)
 curl -fsSL https://opencode.ai/install | bash
+
+# Codex (macOS / Linux)
+curl -fsSL https://chatgpt.com/codex/install.sh | sh
 ```
 
 ---
