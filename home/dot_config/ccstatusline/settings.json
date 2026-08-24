@@ -3,16 +3,6 @@
   "lines": [
     [
       {
-        "id": "10db7274-589d-4364-9005-0729b8ed37bc",
-        "type": "custom-symbol",
-        "customSymbol": "🤖"
-      },
-      {
-        "id": "307972fa-dffd-4a37-8b80-2e25656b1de6",
-        "type": "custom-text",
-        "customText": " "
-      },
-      {
         "id": "1",
         "type": "model",
         "color": "brightBlue",
@@ -21,59 +11,94 @@
       {
         "id": "681766e7-b557-4291-885e-205749655d13",
         "type": "custom-text",
-        "customText": " ",
+        "color": "white",
+        "customText": " ("
+      },
+      {
+        "id": "cdbfb595-1966-4f09-ba90-a23f4c826023",
+        "type": "thinking-effort",
+        "rawValue": true,
         "color": "white"
       },
       {
-        "id": "76c2afbd-a636-484a-a9d0-924a406e4120",
-        "type": "context-bar",
+        "id": "969bdb82-466b-471f-bd01-ceda407b905b",
+        "type": "custom-text",
+        "color": "white",
+        "customText": ")"
+      },
+      {
+        "id": "14b9af71-a32a-4814-83cb-78123298cd51",
+        "type": "separator"
+      },
+      {
+        "id": "d2e1cd88-af72-4c37-b6c6-4e2439dac3ec",
+        "type": "context-length",
         "rawValue": true,
-        "metadata": {
-          "display": "slider"
-        },
         "color": "brightMagenta"
+      },
+      {
+        "id": "2dc3f7ee-2fee-40d4-9f33-6b767ebe981c",
+        "type": "custom-text",
+        "customText": " / ",
+        "color": "white"
+      },
+      {
+        "id": "8a0ef97c-a631-440e-adcb-b9ef19be3bf5",
+        "type": "context-window",
+        "rawValue": true,
+        "color": "brightMagenta"
+      },
+      {
+        "id": "7039bdb0-836c-4640-b626-6206262fc3c8",
+        "type": "separator"
+      },
+      {
+        "id": "41a3b4e4-7ba9-4684-b365-b6181f392ba2",
+        "type": "cache-timer",
+        "rawValue": true,
+        "color": "white"
+      },
+      {
+        "id": "1e5d544c-6232-4c39-8c3c-54ce60662cb6",
+        "type": "separator"
+      },
+      {
+        "id": "2d0a1f6b-f8d0-4585-8c42-588c58b94a32",
+        "type": "session-cost",
+        "rawValue": true,
+        "color": "yellow"
       }
     ],
     [
       {
-        "id": "180ed599-cebc-40d2-ae15-3a708779966a",
-        "type": "custom-symbol",
-        "customSymbol": "🔋"
-      },
-      {
-        "id": "d951a19b-0a41-4846-a3d7-3f7b244effdd",
-        "type": "custom-symbol",
-        "customSymbol": " "
-      },
-      {
-        "id": "93e267e7-352a-4bf5-8c77-d9f098ebb0b6",
+        "id": "6065fb32-f361-438d-bd15-d50e13b3b878",
         "type": "session-usage",
-        "rawValue": true,
         "metadata": {
           "display": "slider"
         },
-        "color": "brightBlue"
+        "rawValue": true
       },
       {
-        "id": "9c12a5e3-2bbb-4e09-9f0f-e5d7f4ec54c6",
-        "type": "separator"
+        "id": "47d123ce-2c37-4609-bc4f-3a85d721372f",
+        "type": "custom-text",
+        "customText": " ("
       },
       {
-        "id": "4ee59a67-0afc-4c59-b8e9-b0b7ceedbab9",
+        "id": "3d4831ea-8bfb-437d-89ce-407112c69f15",
         "type": "reset-timer",
-        "metadata": {
-          "display": "time",
-          "compact": "true"
-        },
-        "rawValue": true,
-        "color": ""
+        "rawValue": true
       },
       {
-        "id": "c1158c94-ff67-4a84-8bca-7cd66768ecab",
+        "id": "f545dbc3-0fee-42eb-be80-6313c9f23b0f",
+        "type": "custom-text",
+        "customText": ")"
+      },
+      {
+        "id": "4102b699-7c4c-496a-a332-34092ef46f91",
         "type": "separator"
       },
       {
-        "id": "5f2cf472-b6d0-4718-adb7-8746dc6eb5b2",
+        "id": "dc88098a-5ee9-45ee-bf95-71601eac9f2b",
         "type": "weekly-usage",
         "metadata": {
           "display": "slider"
@@ -81,40 +106,33 @@
         "rawValue": true
       },
       {
-        "id": "61ba044d-5f23-421b-98e7-a813aca0c382",
-        "type": "separator"
+        "id": "f24ab4e2-ef53-4175-af54-693610cd97ba",
+        "type": "custom-text",
+        "customText": " ("
       },
       {
-        "id": "a2db59f4-e7a5-4ac1-88d1-822acd6342e2",
+        "id": "0d1dd6d8-abff-463d-8d74-6c7053d85cd5",
         "type": "weekly-reset-timer",
-        "metadata": {
-          "display": "time",
-          "compact": "true",
-          "hours": "true"
-        },
         "rawValue": true,
-        "color": ""
+        "metadata": {
+          "compact": "true"
+        }
+      },
+      {
+        "id": "2dd14112-3cc7-4955-b01e-2d8a69bc1424",
+        "type": "custom-text",
+        "customText": ")"
       }
     ],
     [
       {
-        "id": "13df4f94-5ce0-4dc1-b266-1f49e8e20e5a",
-        "type": "custom-symbol",
-        "customSymbol": "📁"
-      },
-      {
-        "id": "c6b224b9-c4a9-49ba-815d-882cc55a9f87",
-        "type": "custom-symbol",
-        "customSymbol": " "
-      },
-      {
         "id": "02dfbeea-b0d8-420b-a72b-5296fde16bf6",
         "type": "current-working-dir",
-        "metadata": {
-          "fishStyle": "true"
-        },
+        "color": "blue",
         "rawValue": true,
-        "color": "blue"
+        "metadata": {
+          "segments": "1"
+        }
       },
       {
         "id": "72ce04de-a2c2-41b9-970e-77c8f7f97a08",
@@ -139,8 +157,10 @@
   "flexMode": "full-minus-40",
   "compactThreshold": 60,
   "colorLevel": 3,
+  "defaultPaddingSide": "both",
   "inheritSeparatorColors": false,
   "globalBold": false,
+  "gitCacheTtlSeconds": 5,
   "minimalistMode": false,
   "powerline": {
     "enabled": false,
