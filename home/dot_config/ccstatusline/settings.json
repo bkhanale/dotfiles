@@ -17,8 +17,8 @@
       {
         "id": "cdbfb595-1966-4f09-ba90-a23f4c826023",
         "type": "thinking-effort",
-        "rawValue": true,
-        "color": "white"
+        "color": "white",
+        "rawValue": true
       },
       {
         "id": "969bdb82-466b-471f-bd01-ceda407b905b",
@@ -33,20 +33,20 @@
       {
         "id": "d2e1cd88-af72-4c37-b6c6-4e2439dac3ec",
         "type": "context-length",
-        "rawValue": true,
-        "color": "brightMagenta"
+        "color": "brightMagenta",
+        "rawValue": true
       },
       {
         "id": "2dc3f7ee-2fee-40d4-9f33-6b767ebe981c",
         "type": "custom-text",
-        "customText": " / ",
-        "color": "white"
+        "color": "white",
+        "customText": " / "
       },
       {
         "id": "8a0ef97c-a631-440e-adcb-b9ef19be3bf5",
         "type": "context-window",
-        "rawValue": true,
-        "color": "brightMagenta"
+        "color": "brightMagenta",
+        "rawValue": true
       },
       {
         "id": "7039bdb0-836c-4640-b626-6206262fc3c8",
@@ -55,8 +55,11 @@
       {
         "id": "41a3b4e4-7ba9-4684-b365-b6181f392ba2",
         "type": "cache-timer",
+        "color": "white",
         "rawValue": true,
-        "color": "white"
+        "metadata": {
+          "ttlSeconds": "3600"
+        }
       },
       {
         "id": "1e5d544c-6232-4c39-8c3c-54ce60662cb6",
@@ -65,18 +68,18 @@
       {
         "id": "2d0a1f6b-f8d0-4585-8c42-588c58b94a32",
         "type": "session-cost",
-        "rawValue": true,
-        "color": "yellow"
+        "color": "yellow",
+        "rawValue": true
       }
     ],
     [
       {
         "id": "6065fb32-f361-438d-bd15-d50e13b3b878",
         "type": "session-usage",
+        "rawValue": true,
         "metadata": {
           "display": "slider"
-        },
-        "rawValue": true
+        }
       },
       {
         "id": "47d123ce-2c37-4609-bc4f-3a85d721372f",
@@ -100,10 +103,10 @@
       {
         "id": "dc88098a-5ee9-45ee-bf95-71601eac9f2b",
         "type": "weekly-usage",
+        "rawValue": true,
         "metadata": {
           "display": "slider"
-        },
-        "rawValue": true
+        }
       },
       {
         "id": "f24ab4e2-ef53-4175-af54-693610cd97ba",
