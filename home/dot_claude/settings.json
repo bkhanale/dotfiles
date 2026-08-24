@@ -9,14 +9,38 @@
     "defaultMode": "bypassPermissions"
   },
   "model": "claude-opus-4-8",
+  "skillOverrides": {
+    "cmux-architecture": "off",
+    "cmux-backend": "off",
+    "cmux-billing": "off",
+    "cmux-browser": "off",
+    "cmux-custom-sidebar": "off",
+    "cmux-customization": "off",
+    "cmux-debugging": "off",
+    "cmux-dev-workflow": "off",
+    "cmux-diagnostics": "off",
+    "cmux-ghostty": "off",
+    "cmux-keyboard-shortcuts": "off",
+    "cmux-localization": "off",
+    "cmux-markdown": "off",
+    "cmux-release": "off",
+    "cmux-settings": "off",
+    "cmux-shared-behavior": "off",
+    "cmux-socket-policy": "off",
+    "cmux-testing": "off"
+  },
   "statusLine": {
     "type": "command",
     "command": "ccstatusline",
     "padding": 0,
     "refreshInterval": 10
   },
+  "enabledPlugins": {
+    "frontend-design@claude-plugins-official": true,
+    "typescript-lsp@claude-plugins-official": true
+  },
+  "outputStyle": "Concise",
   "alwaysThinkingEnabled": true,
-  "autoMemoryEnabled": false,
   "effortLevel": "high",
   "awaySummaryEnabled": true,
   "tui": "fullscreen",
@@ -25,11 +49,11 @@
     "mode": "hold",
     "autoSubmit": false
   },
-  "voiceEnabled": true,
+  "autoMemoryEnabled": false,
   "showThinkingSummaries": true,
   "skipDangerousModePermissionPrompt": true,
   "skipWorkflowUsageWarning": true,
   "editorMode": "vim",
   "showTurnDuration": true,
-  "outputStyle": "Concise"
+  "voiceEnabled": true
 }
