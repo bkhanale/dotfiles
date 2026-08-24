@@ -16,6 +16,7 @@
     "refreshInterval": 10
   },
   "alwaysThinkingEnabled": true,
+  "autoMemoryEnabled": false,
   "effortLevel": "high",
   "awaySummaryEnabled": true,
   "tui": "fullscreen",
