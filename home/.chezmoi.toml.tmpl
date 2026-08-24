@@ -10,7 +10,9 @@ sourceDir = {{ .chezmoi.sourceDir | quote }}
   gpgKey  = {{ $gpgKey | quote }}
 
 [diff]
-  pager = "bat --plain"
+  command = "delta"
+  args    = ["{{ "{{" }} .Destination {{ "}}" }}", "{{ "{{" }} .Target {{ "}}" }}"]
+  pager   = "delta"
 
 [edit]
   command = "nvim"

@@ -445,7 +445,7 @@ migrate_zsh_history() {
   [[ -f "$old" ]] || return 0
 
   if [[ -f "$sentinel" ]]; then
-    info "~/.zsh_history already migrated (sentinel: $sentinel) — skipping"
+    info "\$HOME/.zsh_history already migrated (sentinel: $sentinel) — skipping"
     return
   fi
 
@@ -591,6 +591,7 @@ main() {
           local detected_id="unknown"
           if [[ -r /etc/os-release ]]; then
             # Run in a subshell so sourced vars don't leak.
+            # shellcheck source=/dev/null
             detected_id="$(. /etc/os-release; printf '%s' "${ID:-unknown}")"
           fi
           error "Unsupported Linux distro (need arch- or debian-family). /etc/os-release ID=$detected_id"

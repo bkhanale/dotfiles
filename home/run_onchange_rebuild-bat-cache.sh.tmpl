@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# Rebuild bat's theme cache so custom .tmTheme files are recognized.
+#
+# run_onchange_ (not run_once_): the hash line below embeds the theme file's
+# content, so editing the theme changes this script and re-triggers the rebuild.
+# A plain run_once_ would fire exactly once and never pick up theme edits.
+#
+# tokyonight_night.tmTheme hash: {{ include "dot_config/bat/themes/tokyonight_night.tmTheme" | sha256sum }}
+if command -v bat >/dev/null 2>&1; then
+  bat cache --build
+elif command -v batcat >/dev/null 2>&1; then
+  batcat cache --build
+fi

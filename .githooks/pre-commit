@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# Pre-commit lint hook. Enable once with:
+#   git config core.hooksPath .githooks
+#
+# Runs shellcheck on staged shell scripts. Template scripts (*.tmpl) are
+# skipped — they contain Go template syntax shellcheck can't parse.
+set -euo pipefail
+
+if ! command -v shellcheck >/dev/null 2>&1; then
+  echo "pre-commit: shellcheck not installed — skipping lint" >&2
+  exit 0
+fi
+
+# Staged, non-deleted files ending in .sh (but not .sh.tmpl).
+mapfile -t files < <(
+  git diff --cached --name-only --diff-filter=ACM -z \
+    | tr '\0' '\n' \
+    | grep -E '\.sh$' || true
+)
+
+[[ ${#files[@]} -eq 0 ]] && exit 0
+
+echo "pre-commit: shellcheck ${files[*]}"
+shellcheck "${files[@]}"

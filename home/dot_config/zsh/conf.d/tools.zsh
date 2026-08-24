@@ -24,7 +24,16 @@ if command -v fzf &>/dev/null; then
 fi
 
 # ── gh (GitHub CLI) completion ────────────────────────────────────────────────
-command -v gh &>/dev/null && eval "$(gh completion -s zsh)"
+# `gh completion` spawns a full process (~160ms) on every shell. Cache its
+# output and regenerate only when the gh binary is newer than the cache.
+if command -v gh &>/dev/null; then
+  _gh_cache="$XDG_CACHE_HOME/zsh/gh-completion.zsh"
+  if [[ ! -r "$_gh_cache" || "$(command -v gh)" -nt "$_gh_cache" ]]; then
+    gh completion -s zsh >| "$_gh_cache"
+  fi
+  source "$_gh_cache"
+  unset _gh_cache
+fi
 
 # ── nvm (Node version manager) ────────────────────────────────────────────────
 export NVM_DIR="$HOME/.nvm"
