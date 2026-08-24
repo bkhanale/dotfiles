@@ -140,8 +140,9 @@ sessions with `TERM=xterm-ghostty`.
   git repo, synced independently — never nest inside this repo.
 - Key model: one GPG key per device; private keys never leave their device; store
   encrypted to all devices' keys (`.gpg-id`). `gpgKey` doubles as git signingkey
-  and pass identity. Init on apply via `run_init-password-store.sh.tmpl` (a `run_`,
-  not `run_once_`, so it retries before the key exists; every guard exits 0 fast).
+  and pass identity. Init via `install.sh` (`init_password_store`); safe to
+  re-run. Not a chezmoi `run_` script — those show in `chezmoi diff` on every
+  apply. If the key isn't imported yet, run `pass init <gpgKey>` afterward.
 - Agent access: `pass show ai/<name>` (agent-readable convention `ai/`; human-only
   elsewhere). Every-shell env vars live in one `env/shell` entry that `secrets.zsh`
   evals with a single `gpg -dq` — do NOT add one `pass show` per var (~190ms each
