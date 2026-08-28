@@ -51,6 +51,12 @@ httpie
 tldr
 tree
 
+# ── Remote access ─────────────────────────────────────────────────────────────
+# mosh: roaming-friendly SSH replacement — survives IP changes, sleep/wake and
+# flaky links. Run zellij inside it for persistent sessions. Needs UDP
+# 60000-61000 reachable.
+mosh
+
 # ── Terminal ──────────────────────────────────────────────────────────────────
 ghostty
 zellij

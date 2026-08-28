@@ -51,6 +51,7 @@ brew "httpie"
 brew "tldr"
 brew "tree"
 brew "watch"
+brew "mosh"          # roaming-friendly SSH — survives IP changes / flaky links
 
 # ── Multiplexer ───────────────────────────────────────────────────────────────
 brew "zellij"

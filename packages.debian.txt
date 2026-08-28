@@ -71,6 +71,12 @@ pinentry-curses
 # ── Secrets vault ─────────────────────────────────────────────────────────────
 pass
 
+# ── Remote access ─────────────────────────────────────────────────────────────
+# mosh: roaming-friendly SSH replacement — survives IP changes, sleep/wake and
+# flaky links (e.g. reaching this box from a tablet on cellular). Run zellij
+# inside it for persistent sessions. Needs UDP 60000-61000 reachable.
+mosh
+
 # ── Utilities ─────────────────────────────────────────────────────────────────
 # `watch` ships with procps (preinstalled), so it is intentionally omitted.
 curl
