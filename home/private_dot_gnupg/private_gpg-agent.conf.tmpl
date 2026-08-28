@@ -2,8 +2,12 @@
 # Managed by chezmoi — do not edit directly.
 # GPG agent configuration with platform-specific pinentry.
 
-default-cache-ttl 3600
-max-cache-ttl 86400
+# Cache the passphrase for the life of the agent (~400 days) so it is entered
+# at most once per boot, not re-prompted hourly. On macOS pinentry-mac can also
+# persist it in the Keychain (tick "Save in Keychain") for zero prompts across
+# reboots; Linux re-prompts once after each agent restart.
+default-cache-ttl 34560000
+max-cache-ttl 34560000
 
 {{- if eq .chezmoi.os "darwin" }}
 pinentry-program /opt/homebrew/bin/pinentry-mac
