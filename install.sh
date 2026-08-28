@@ -242,7 +242,10 @@ install_eza_upstream() {
     *) warn "Unsupported arch $(uname -m) — install eza manually"; return ;;
   esac
   local tmp; tmp="$(mktemp -d)"
-  trap 'rm -rf "$tmp"' RETURN
+  # RETURN traps use a single global slot (no `set -o functrace` here), so this
+  # stays armed and re-fires when the *caller* returns too — guard on ${tmp:-}
+  # so that later firing is a no-op instead of a `set -u` abort (line-142 bug).
+  trap 'if [[ -n "${tmp:-}" ]]; then rm -rf "$tmp"; fi' RETURN
   info "Downloading eza_${target}.tar.gz from upstream…"
   curl -fsSL "https://github.com/eza-community/eza/releases/latest/download/eza_${target}.tar.gz" \
     -o "$tmp/eza.tar.gz"
@@ -276,7 +279,10 @@ install_lazygit_upstream() {
     return
   fi
   local tmp; tmp="$(mktemp -d)"
-  trap 'rm -rf "$tmp"' RETURN
+  # RETURN traps use a single global slot (no `set -o functrace` here), so this
+  # stays armed and re-fires when the *caller* returns too — guard on ${tmp:-}
+  # so that later firing is a no-op instead of a `set -u` abort (line-142 bug).
+  trap 'if [[ -n "${tmp:-}" ]]; then rm -rf "$tmp"; fi' RETURN
   info "Downloading lazygit v${version} for linux_${arch}…"
   curl -fsSL "https://github.com/jesseduffield/lazygit/releases/download/v${version}/lazygit_${version}_linux_${arch}.tar.gz" \
     -o "$tmp/lazygit.tar.gz"
@@ -297,7 +303,10 @@ install_zellij_upstream() {
     *) warn "Unsupported arch $(uname -m) — install zellij manually"; return ;;
   esac
   local tmp; tmp="$(mktemp -d)"
-  trap 'rm -rf "$tmp"' RETURN
+  # RETURN traps use a single global slot (no `set -o functrace` here), so this
+  # stays armed and re-fires when the *caller* returns too — guard on ${tmp:-}
+  # so that later firing is a no-op instead of a `set -u` abort (line-142 bug).
+  trap 'if [[ -n "${tmp:-}" ]]; then rm -rf "$tmp"; fi' RETURN
   info "Downloading zellij-${arch}.tar.gz from upstream…"
   curl -fsSL "https://github.com/zellij-org/zellij/releases/latest/download/zellij-${arch}.tar.gz" \
     -o "$tmp/zellij.tar.gz"
@@ -335,7 +344,10 @@ install_neovim_upstream() {
 
   local prefix="$HOME/.local/nvim"
   local tmp; tmp="$(mktemp -d)"
-  trap 'rm -rf "$tmp"' RETURN
+  # RETURN traps use a single global slot (no `set -o functrace` here), so this
+  # stays armed and re-fires when the *caller* returns too — guard on ${tmp:-}
+  # so that later firing is a no-op instead of a `set -u` abort (line-142 bug).
+  trap 'if [[ -n "${tmp:-}" ]]; then rm -rf "$tmp"; fi' RETURN
   info "Downloading nvim-linux-$arch.tar.gz from neovim/neovim releases…"
   curl -fsSL "https://github.com/neovim/neovim/releases/latest/download/nvim-linux-$arch.tar.gz" \
     -o "$tmp/nvim.tar.gz"
