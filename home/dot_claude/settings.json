@@ -33,7 +33,7 @@
   "showThinkingSummaries": true,
   "skipDangerousModePermissionPrompt": true,
   "skipWorkflowUsageWarning": true,
-  "editorMode": "vim",
+  "editorMode": "normal",
   "showTurnDuration": true,
   "voiceEnabled": true
 }

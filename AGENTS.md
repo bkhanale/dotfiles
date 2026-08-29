@@ -170,7 +170,8 @@ or extract secrets from old configs. Don't add a removal step — back up, don't
 
 ## Conventions
 
-- Git commits: do NOT add `Co-Authored-By` trailers.
+- Git commits: use Conventional Commits only; do NOT add `Co-Authored-By`
+  trailers.
 - Shell scripts: `shellcheck`-clean. A local pre-commit hook (`.githooks/pre-commit`,
   enable with `git config core.hooksPath .githooks`) lints staged `*.sh`.
 - Portability: no personal names, usernames, private hostnames, org names, or

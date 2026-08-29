@@ -32,8 +32,8 @@ max_bytes   = 10485760   # 10 MB
 
 [tui]
 theme = "tokyonight"
-# Open the composer in vim normal mode.
-vim_mode_default = true
+# Start the composer with standard input editing.
+vim_mode_default = false
 # Ring the terminal bell / OSC9 when a turn finishes while the window is
 # unfocused.
 notifications = true
