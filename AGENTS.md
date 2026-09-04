@@ -89,7 +89,8 @@ sessions with `TERM=xterm-ghostty`.
 - Schemas (validate against, don't guess keys — some silently reject unknown
   fields): Claude `json.schemastore.org/claude-code-settings.json`; OpenCode
   `opencode.ai/config.json` (models are `provider/model`); Codex
-  `developers.openai.com/codex/config-schema.json`.
+  `developers.openai.com/codex/config-schema.json`; Antigravity CLI
+  `antigravity.google/docs/cli/settings/` (reference: `antigravity.google/docs/cli/reference/`).
 - **Runtime-key pitfall (Codex & Antigravity):** Codex writes `projects.*.trust_level`
   and `tui.*` back into `~/.codex/config.toml`; Antigravity CLI writes
   `trustedWorkspaces` back into `~/.gemini/antigravity-cli/settings.json`.

@@ -1,15 +1,13 @@
 {
-  "model": "gemini-3.8-flash-high",
-  "effort": "high",
-  "agentMode": "default",
-  "toolPermission": "always-proceed",
   "artifactReviewPolicy": "always-proceed",
   "colorScheme": "tokyo night",
-  "editorMode": "normal",
+  "effort": "high",
   "enableTelemetry": false,
+  "model": "gemini-3.8-flash-high",
   "statusLine": {
-    "command": "ccstatusline",
-    "stack_with_default": false
+    "type": "command",
+    "command": "ccstatusline"
   },
+  "toolPermission": "always-proceed",
   "useTerminalCursor": true
 }
