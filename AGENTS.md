@@ -69,29 +69,35 @@ Package sources: macOS `Brewfile`, Arch `packages.arch.txt`, Debian/Ubuntu
 Debian also compiles `terminfo/ghostty.terminfo` into `~/.terminfo` for SSH
 sessions with `TERM=xterm-ghostty`.
 
-## AI coding agents (Claude Code + OpenCode + Codex)
+## AI coding agents (Claude Code + OpenCode + Codex + Antigravity CLI)
 
 - Tracked configs: `dot_claude/settings.json` (+`keybindings.json`),
   `dot_config/ccstatusline/settings.json`, `dot_config/opencode/{opencode,tui}.json`,
-  `dot_codex/private_{config,plan.config,review.config}.toml`.
-- One source of truth: `CLAUDE.md` is a thin `@AGENTS.md` import. OpenCode lists
-  `AGENTS.md`/`CLAUDE.md` in `instructions`; Codex auto-loads `AGENTS.md`.
-- **Not tracked (intentional):** the `claude`/`opencode`/`codex` binaries
-  (self-updating installers) and all runtime state under `~/.claude`/`~/.codex`
-  (sessions, projects, history, caches, `auth.json`). API keys live in
-  `secrets.zsh`; Codex login in `~/.codex/auth.json`.
-- **Local-only, never commit:** Claude hooks/skills/plugins/marketplaces
-  (gitignored: `home/dot_claude/hooks/`, `home/dot_claude/skills/`) and MCP
-  server definitions for any agent. Skills/rules are managed in a separate repo.
+  `dot_codex/private_{config,plan.config,review.config}.toml`,
+  `dot_gemini/antigravity-cli/settings.json`.
+- One source of truth: `CLAUDE.md` and `GEMINI.md` are thin `@AGENTS.md` imports.
+  OpenCode lists `AGENTS.md`/`CLAUDE.md` in `instructions`; Codex and Antigravity
+  CLI auto-load `AGENTS.md`.
+- **Not tracked (intentional):** the `claude`/`opencode`/`codex`/`agy` binaries
+  (self-updating installers) and all runtime state under `~/.claude`/`~/.codex`/
+  `~/.gemini/antigravity-cli` (sessions, conversations, projects, history,
+  caches, `auth.json`, tokens). API keys live in `secrets.zsh`; Codex login in
+  `~/.codex/auth.json`.
+- **Local-only, never commit:** Claude and Antigravity hooks/skills/plugins/marketplaces
+  (gitignored: `home/dot_claude/{hooks,skills}/`, `home/dot_gemini/antigravity-cli/{hooks,skills}/`)
+  and MCP server definitions for any agent. Skills/rules are managed in a separate repo.
 - Schemas (validate against, don't guess keys — some silently reject unknown
   fields): Claude `json.schemastore.org/claude-code-settings.json`; OpenCode
   `opencode.ai/config.json` (models are `provider/model`); Codex
   `developers.openai.com/codex/config-schema.json`.
-- **Codex pitfall:** it writes runtime keys (`projects.*.trust_level`,
-  `tui.*`) back into `~/.codex/config.toml`. Those are NOT tracked — if
-  `chezmoi diff` shows them, run `chezmoi apply --force`; don't promote upstream.
-- ccstatusline: prefer `/statusline` in Claude Code over hand-editing JSON;
+- **Runtime-key pitfall (Codex & Antigravity):** Codex writes `projects.*.trust_level`
+  and `tui.*` back into `~/.codex/config.toml`; Antigravity CLI writes
+  `trustedWorkspaces` back into `~/.gemini/antigravity-cli/settings.json`.
+  Those are NOT tracked — if `chezmoi diff` shows them, run `chezmoi apply --force`;
+  don't promote upstream.
+- ccstatusline: configured in Claude Code and Antigravity CLI statusline;
   renderer uses the global `ccstatusline` executable (npm-installed separately).
+
 
 ## Ghostty
 

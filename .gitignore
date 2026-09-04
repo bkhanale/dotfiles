@@ -10,3 +10,12 @@ home/dot_config/zsh/local.zsh
 # keybindings in this repository.
 home/dot_claude/hooks/
 home/dot_claude/skills/
+
+# Antigravity CLI extensions and runtime state are machine/user-specific.
+home/dot_gemini/antigravity-cli/hooks/
+home/dot_gemini/antigravity-cli/skills/
+home/dot_gemini/antigravity-cli/history.jsonl
+home/dot_gemini/antigravity-cli/cache/
+home/dot_gemini/antigravity-cli/conversations/
+GEMINI.local.md
+

@@ -12,7 +12,7 @@ Cross-platform dotfiles managed with [chezmoi](https://www.chezmoi.io/). Support
 | Terminal | Ghostty |
 | Multiplexer | Zellij |
 | Editor | Neovim (lazy.nvim, minimal) |
-| AI coding agents | Claude Code + OpenCode + Codex (configs tracked, CLIs self-installed) |
+| AI coding agents | Claude Code + OpenCode + Codex + Antigravity CLI (configs tracked, CLIs self-installed) |
 | Colour theme | Tokyo Night Night |
 | Font | FiraCode Nerd Font Mono |
 
@@ -134,17 +134,20 @@ dotfiles/
 │   │   └── ccstatusline/    # Claude Code status-line config
 │   ├── dot_claude/          # Claude Code base settings and keybindings
 │   ├── dot_codex/           # Codex config + plan/review profiles → ~/.codex/
+│   ├── dot_gemini/          # Antigravity CLI base settings → ~/.gemini/
 │   └── dot_gnupg/
-├── AGENTS.md                # shared project instructions (Codex reads directly)
-└── CLAUDE.md                # thin @AGENTS.md import for Claude Code
+├── AGENTS.md                # shared project instructions (Codex and Antigravity read directly)
+├── CLAUDE.md                # thin @AGENTS.md import for Claude Code
+└── GEMINI.md                # thin @AGENTS.md import for Antigravity CLI
 ```
 
 ---
 
-## Agentic Dev (Claude Code + OpenCode + Codex)
+## Agentic Dev (Claude Code + OpenCode + Codex + Antigravity CLI)
 
-All three CLIs receive the same repo-root guidance: Codex reads `AGENTS.md`,
-Claude Code reads the thin `CLAUDE.md` import, and OpenCode declares both in
+All CLIs receive the same repo-root guidance: Codex and Antigravity CLI read
+`AGENTS.md`, Claude Code reads the thin `CLAUDE.md` import, `GEMINI.md` provides
+the equivalent thin import for Antigravity, and OpenCode declares `AGENTS.md` in
 its instructions list.
 
 | Tool | Source | Target |
@@ -156,18 +159,19 @@ its instructions list.
 | OpenCode (TUI) | `home/dot_config/opencode/tui.json` | `~/.config/opencode/tui.json` |
 | Codex | `home/dot_codex/private_config.toml` | `~/.codex/config.toml` |
 | Codex profiles | `home/dot_codex/private_{plan,review}.config.toml` | `~/.codex/{plan,review}.config.toml` |
+| Antigravity CLI | `home/dot_gemini/antigravity-cli/settings.json` | `~/.gemini/antigravity-cli/settings.json` |
 
 ### What this repo does NOT manage
 
-- The `claude`, `opencode`, and `codex` binaries themselves — all three ship
-  installers with built-in auto-update. PATH for Claude Code and OpenCode is set in
-  `dot_zshenv` / `conf.d/exports.zsh`.
+- The `claude`, `opencode`, `codex`, and `agy` binaries themselves — all ship
+  installers with built-in auto-update. PATH for Claude Code, OpenCode, and
+  Antigravity CLI is set in `dot_zshenv` / `conf.d/exports.zsh`.
 - Session state, credentials, plugin caches, history, and project/session data
-  under `~/.claude/` and `~/.codex/` — runtime data, never committed.
-- User- or service-specific Claude hooks, skills, plugins, and marketplaces.
-- MCP server definitions for Codex or OpenCode. Configure integrations locally
+  under `~/.claude/`, `~/.codex/`, and `~/.gemini/antigravity-cli/` — runtime data, never committed.
+- User- or service-specific Claude / Antigravity hooks, skills, plugins, and marketplaces.
+- MCP server definitions for any agent. Configure integrations locally
   on each machine instead of committing endpoints or credentials.
-- Per-project `CLAUDE.md` / `AGENTS.md` — those live in each project repo.
+- Per-project `CLAUDE.md` / `GEMINI.md` / `AGENTS.md` — those live in each project repo.
 
 To install the CLIs on a fresh machine:
 
@@ -181,7 +185,10 @@ curl -fsSL https://opencode.ai/install | bash
 # Codex (macOS / Linux)
 curl -fsSL https://chatgpt.com/codex/install.sh | sh
 
-# Claude Code status-line renderer
+# Antigravity CLI (macOS / Linux)
+curl -fsSL https://antigravity.google/install.sh | bash
+
+# Status-line renderer (Claude Code & Antigravity CLI)
 npm install -g ccstatusline
 ```
 
