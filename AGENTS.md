@@ -96,8 +96,9 @@ sessions with `TERM=xterm-ghostty`.
   `trustedWorkspaces` back into `~/.gemini/antigravity-cli/settings.json`.
   Those are NOT tracked — if `chezmoi diff` shows them, run `chezmoi apply --force`;
   don't promote upstream.
-- ccstatusline: configured in Claude Code and Antigravity CLI statusline;
-  renderer uses the global `ccstatusline` executable (npm-installed separately).
+- ccstatusline: configured in Claude Code statusline; renderer uses the global
+  `ccstatusline` executable (npm-installed separately). Antigravity CLI uses its
+  own built-in native statusline.
 
 
 ## Ghostty

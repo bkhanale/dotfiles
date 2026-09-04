@@ -4,10 +4,6 @@
   "effort": "high",
   "enableTelemetry": false,
   "model": "gemini-3.8-flash-high",
-  "statusLine": {
-    "type": "command",
-    "command": "ccstatusline"
-  },
   "toolPermission": "always-proceed",
   "useTerminalCursor": true
 }
