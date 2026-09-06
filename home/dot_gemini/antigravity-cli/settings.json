@@ -3,7 +3,7 @@
   "colorScheme": "tokyo night",
   "effort": "high",
   "enableTelemetry": false,
-  "model": "gemini-3.8-flash-high",
+  "model": "Gemini 3.8 Flash (High)",
   "toolPermission": "always-proceed",
   "useTerminalCursor": true
 }
