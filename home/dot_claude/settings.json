@@ -35,5 +35,8 @@
   "skipWorkflowUsageWarning": true,
   "editorMode": "normal",
   "showTurnDuration": true,
-  "voiceEnabled": true
+  "voiceEnabled": true,
+  "spinnerTipsEnabled": false,
+  "askUserQuestionTimeout": "10m",
+  "teammateDefaultModel": "opus"
 }
