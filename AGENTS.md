@@ -61,6 +61,7 @@ Package sources: macOS `Brewfile`, Arch `packages.arch.txt`, Debian/Ubuntu
 | pinentry | pinentry-mac | pinentry-curses | pinentry-curses |
 | chezmoi/starship/zoxide/zellij | brew | pacman | upstream installer → `~/.local/bin` (apt versions too old/buggy) |
 | neovim | brew | pacman | upstream tarball `~/.local/nvim` (need ≥0.11 for `vim.lsp.config`) |
+| gh / nodejs | brew | pacman | vendor apt repos: GitHub CLI, NodeSource LTS (bundles npm; never list Debian `npm`) |
 | `bat`/`fd` binary | `bat`/`fd` | `bat`/`fd` | `batcat`/`fdfind` (install.sh symlinks to `~/.local/bin`) |
 | native build deps | Xcode CLT | base-devel | build-essential |
 | ghostty | brew cask | pacman | not packaged (install manually only if local terminal wanted) |

@@ -25,6 +25,11 @@
 #                 binary into ~/.local/bin.
 #   - Nerd Fonts: download FiraCode + Symbols zips from ryanoasis/nerd-fonts
 #
+# Vendor apt repos (install.sh adds them before installing this list):
+#   - gh        : GitHub's apt repo (cli.github.com). Debian's gh lags far behind.
+#   - nodejs    : NodeSource, current LTS. It bundles npm and conflicts with
+#                 Debian's separate npm package, so npm is not listed here.
+#
 # Binary-name notes (Debian renames some tools):
 #   - bat → batcat   (install.sh creates a `bat` symlink in ~/.local/bin)
 #   - fd  → fdfind   (install.sh creates an  `fd` symlink in ~/.local/bin)
@@ -55,8 +60,8 @@ yq
 
 # ── Agent tooling ─────────────────────────────────────────────────────────────
 # Runtime and package manager for the globally installed ccstatusline renderer.
+# From NodeSource (npm included); see the vendor repo note above.
 nodejs
-npm
 
 # ── Git ───────────────────────────────────────────────────────────────────────
 git

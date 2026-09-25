@@ -148,6 +148,8 @@ install_debian() {
   sudo apt-get update -y
   sudo apt-get install -y curl ca-certificates gnupg git
 
+  add_debian_vendor_repos
+
   if [[ -f "$SCRIPT_DIR/packages.debian.txt" ]]; then
     info "Filtering packages.debian.txt against available apt sources…"
     local available=() unavailable=()
@@ -228,6 +230,41 @@ install_debian() {
   warn "terminal on this box, install manually: https://ghostty.org/docs/install/binary"
   warn "(remote SSH'd-into VMs don't need it; the xterm-ghostty terminfo step"
   warn " above is what makes those sessions work.)"
+}
+
+# ── Helper: add vendor apt repos (Debian/Ubuntu) ─────────────────────────────
+# Debian's gh and nodejs lag far behind upstream. GitHub's apt repo tracks gh
+# releases; NodeSource tracks the current Node LTS and bundles npm (it conflicts
+# with Debian's separate npm package, so packages.debian.txt omits npm). Both
+# then stay current through plain `apt upgrade`.
+add_debian_vendor_repos() {
+  local gh_key=/etc/apt/keyrings/githubcli-archive-keyring.gpg
+  local gh_list=/etc/apt/sources.list.d/github-cli.list
+  if [[ -f "$gh_list" ]]; then
+    success "GitHub CLI apt repo already configured"
+  else
+    info "Adding GitHub CLI apt repo…"
+    sudo install -d -m 755 /etc/apt/keyrings
+    curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
+      | sudo tee "$gh_key" >/dev/null
+    sudo chmod go+r "$gh_key"
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=$gh_key] https://cli.github.com/packages stable main" \
+      | sudo tee "$gh_list" >/dev/null
+    success "GitHub CLI apt repo added"
+  fi
+
+  if [[ -f /etc/apt/sources.list.d/nodesource.sources ]]; then
+    success "NodeSource apt repo already configured"
+  else
+    info "Adding NodeSource (Node LTS) apt repo…"
+    local setup; setup="$(mktemp)"
+    curl -fsSL https://deb.nodesource.com/setup_lts.x -o "$setup"
+    sudo bash "$setup"
+    rm -f "$setup"
+    success "NodeSource apt repo added"
+  fi
+
+  sudo apt-get update -y
 }
 
 # ── Helper: install eza from upstream release (Linux-only) ───────────────────
