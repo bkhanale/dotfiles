@@ -225,6 +225,7 @@ install_debian() {
   install_eza_upstream
   install_lazygit_upstream
   install_zellij_upstream
+  install_nvm_upstream
 
   warn "ghostty is not packaged for Debian — if you want it as a *local*"
   warn "terminal on this box, install manually: https://ghostty.org/docs/install/binary"
@@ -265,6 +266,35 @@ add_debian_vendor_repos() {
   fi
 
   sudo apt-get update -y
+}
+
+# ── Helper: install nvm from upstream (Linux-only) ───────────────────────────
+# conf.d/tools.zsh sources $HOME/.nvm/nvm.sh. PROFILE=/dev/null stops the
+# installer from appending its loader to the chezmoi-managed .zshrc.
+# GIT_CONFIG_GLOBAL=/dev/null bypasses our https-to-ssh `insteadOf` rewrite,
+# so the clone works on re-runs before an SSH key is registered with GitHub.
+install_nvm_upstream() {
+  local nvm_dir="$HOME/.nvm"
+  if [[ -s "$nvm_dir/nvm.sh" ]]; then
+    success "nvm already installed"
+    return
+  fi
+  # Capture full body before parsing (see install_lazygit_upstream).
+  local body tag
+  if ! body="$(curl -fsSL https://api.github.com/repos/nvm-sh/nvm/releases/latest)"; then
+    warn "Could not fetch nvm release metadata; skipping"
+    return
+  fi
+  tag="$(printf '%s\n' "$body" | grep -m1 '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')"
+  if [[ -z "$tag" ]]; then
+    warn "Could not parse nvm tag_name; skipping"
+    return
+  fi
+  info "Installing nvm $tag into $nvm_dir…"
+  mkdir -p "$nvm_dir"   # the installer refuses a set-but-missing NVM_DIR
+  curl -fsSL "https://raw.githubusercontent.com/nvm-sh/nvm/$tag/install.sh" \
+    | NVM_DIR="$nvm_dir" PROFILE=/dev/null GIT_CONFIG_GLOBAL=/dev/null bash
+  success "nvm $tag installed"
 }
 
 # ── Helper: install eza from upstream release (Linux-only) ───────────────────

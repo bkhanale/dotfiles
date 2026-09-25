@@ -24,6 +24,7 @@
 #   - zellij    : not in apt at all; upstream installer drops static musl
 #                 binary into ~/.local/bin.
 #   - Nerd Fonts: download FiraCode + Symbols zips from ryanoasis/nerd-fonts
+#   - nvm       : upstream installer into ~/.nvm (conf.d/tools.zsh loads it)
 #
 # Vendor apt repos (install.sh adds them before installing this list):
 #   - gh        : GitHub's apt repo (cli.github.com). Debian's gh lags far behind.
