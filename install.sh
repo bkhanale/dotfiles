@@ -646,6 +646,15 @@ maybe_chsh_to_zsh() {
 # ── Fix ~/.gnupg permissions (gpg refuses to run with loose perms) ───────────
 fix_gnupg_perms() {
   [[ -d "$HOME/.gnupg" ]] || return 0
+  # Only touch (and restart the agent) when something is off: killing
+  # gpg-agent drops the cached passphrase, forcing a re-prompt. find also
+  # tests ~/.gnupg itself. public-keys.d is exempt: GnuPG resets it to 750
+  # whenever its daemons restart, so checking it would re-fire every run.
+  if [[ -z "$(find "$HOME/.gnupg" \( \( -type d ! -perm 700 ! -path "$HOME/.gnupg/public-keys.d" \) \
+      -o \( -type f ! -perm 600 \) \) -print -quit)" ]]; then
+    success "GPG permissions already correct"
+    return 0
+  fi
   info "Fixing ~/.gnupg permissions…"
   chmod 700 "$HOME/.gnupg"
   find "$HOME/.gnupg" -type d -exec chmod 700 {} \;
