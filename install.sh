@@ -210,7 +210,7 @@ install_debian() {
   # reached"). Fixed in upstream v0.6+. Install latest into ~/.local/bin
   # so it shadows /usr/bin/zoxide via the PATH order set in dot_zshenv.
   local zoxide_bin="$HOME/.local/bin/zoxide"
-  if [[ ! -x "$zoxide_bin" ]] || ! "$zoxide_bin" --version 2>/dev/null | grep -qE 'zoxide 0\.[6-9]|zoxide [1-9]'; then
+  if [[ ! -x "$zoxide_bin" ]] || ! "$zoxide_bin" --version 2>/dev/null | grep -qE 'zoxide (0\.([6-9]|[1-9][0-9])|[1-9])'; then
     info "Installing zoxide (upstream installer → ~/.local/bin)…"
     curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh \
       | bash -s -- --bin-dir "$HOME/.local/bin"
