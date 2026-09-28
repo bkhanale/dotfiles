@@ -20,7 +20,7 @@
   },
   "outputStyle": "Concise",
   "alwaysThinkingEnabled": true,
-  "effortLevel": "high",
+  "effortLevel": "medium",
   "awaySummaryEnabled": true,
   "tui": "fullscreen",
   "voice": {
@@ -36,6 +36,6 @@
   "showTurnDuration": true,
   "voiceEnabled": true,
   "spinnerTipsEnabled": false,
-  "askUserQuestionTimeout": "10m",
+  "feedbackDrafts": "off",
   "teammateDefaultModel": "opus"
 }
