@@ -1,19 +1,14 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "model": "anthropic/claude-sonnet-4-5",
-  "small_model": "anthropic/claude-haiku-4-5",
   "share": "manual",
-  "autoupdate": true,
-  "permission": {
-    "bash": "allow",
-    "edit": "allow",
-    "write": "allow",
-    "webfetch": "allow",
-    "*": "allow"
-  },
-  "provider": {
+  "update": "auto",
+  "permissions": [
+    { "action": "*", "resource": "*", "effect": "allow" }
+  ],
+  "providers": {
     "anthropic": {
-      "options": {
+      "settings": {
         "timeout": 600000,
         "chunkTimeout": 30000,
         "setCacheKey": true
@@ -25,23 +20,24 @@
     "CLAUDE.md",
     ".cursor/rules/*.md"
   ],
-  "agent": {
+  "agents": {
     "plan": {
       "description": "Read-only architect that produces implementation plans without modifying files",
       "model": "anthropic/claude-sonnet-4-5",
-      "tools": {
-        "write": false,
-        "edit": false,
-        "bash": false
-      }
+      "permissions": [
+        { "action": "edit", "resource": "*", "effect": "deny" },
+        { "action": "shell", "resource": "*", "effect": "deny" }
+      ]
     },
     "review": {
       "description": "Read-only code reviewer for the current branch",
       "model": "anthropic/claude-sonnet-4-5",
-      "tools": {
-        "write": false,
-        "edit": false
-      }
+      "permissions": [
+        { "action": "edit", "resource": "*", "effect": "deny" }
+      ]
+    },
+    "title": {
+      "model": "anthropic/claude-haiku-4-5"
     }
   },
   "watcher": {

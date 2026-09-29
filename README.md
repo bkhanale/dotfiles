@@ -130,7 +130,7 @@ dotfiles/
 │   │   ├── zellij/
 │   │   ├── nvim/
 │   │   ├── git/
-│   │   ├── opencode/        # OpenCode config (opencode.json, tui.json)
+│   │   ├── opencode/        # OpenCode config (opencode.json, cli.json)
 │   │   └── ccstatusline/    # Claude Code status-line config
 │   ├── dot_claude/          # Claude Code base settings and keybindings
 │   ├── dot_codex/           # Codex config + plan/review profiles → ~/.codex/
@@ -156,7 +156,7 @@ its instructions list.
 | Claude keybindings | `home/dot_claude/keybindings.json` | `~/.claude/keybindings.json` |
 | Claude statusline | `home/dot_config/ccstatusline/settings.json` | `~/.config/ccstatusline/settings.json` |
 | OpenCode (config) | `home/dot_config/opencode/opencode.json` | `~/.config/opencode/opencode.json` |
-| OpenCode (TUI) | `home/dot_config/opencode/tui.json` | `~/.config/opencode/tui.json` |
+| OpenCode (CLI) | `home/dot_config/opencode/cli.json` | `~/.config/opencode/cli.json` |
 | Codex | `home/dot_codex/private_config.toml` | `~/.codex/config.toml` |
 | Codex profiles | `home/dot_codex/private_{plan,review}.config.toml` | `~/.codex/{plan,review}.config.toml` |
 | Antigravity CLI | `home/dot_gemini/antigravity-cli/settings.json` | `~/.gemini/antigravity-cli/settings.json` |
@@ -180,7 +180,7 @@ To install the CLIs on a fresh machine:
 curl -fsSL https://claude.ai/install.sh | bash
 
 # OpenCode (macOS / Linux)
-curl -fsSL https://opencode.ai/install | bash
+curl -fsSL https://opencode.ai/v2/install | bash
 
 # Codex (macOS / Linux)
 curl -fsSL https://chatgpt.com/codex/install.sh | sh
