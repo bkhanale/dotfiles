@@ -83,6 +83,10 @@ background-opacity     = 1.0
 # to be `native`, `transparent`, or `tabs` — `hidden` disables tabs entirely.
 macos-titlebar-style   = tabs
 macos-option-as-alt    = true
+# TEMPORARY: 1.3.1 stable renders `tabs` clipped/collapsed on macOS 27; fixed
+# on tip (ghostty-org/ghostty#13001, discussion #14421). Remove this line once
+# 1.4 stable ships to go back to the stable channel.
+auto-update-channel    = tip
 {{- else }}
 window-decoration      = true
 {{- end }}
