@@ -133,6 +133,19 @@ sessions with `TERM=xterm-ghostty`.
   before hand-editing. cmux `shortcuts` are app-actions only — raw-byte terminal
   binds stay in Ghostty config.
 
+## Rex (multiplexer)
+
+- `dot_config/rex/init.lua` (Lua 5.1), deployed on macOS and Linux. The Rex
+  **server** reads it, so it must be on the server's machine. Override path with
+  `REX_CONFIG` (server environment).
+- Holds only key bindings, key modes, custom actions and hosts. Theme/font are
+  app settings. Default client shortcuts are kept on purpose; the file is a scaffold.
+- No `rex.host` entries in tracked files (hostnames). Add hosts in the app.
+- No file watch: validate `rex config check`, apply `rex config reload`, inspect
+  `rex keymap`. Action names come from the client: `rex -C <label> actions`.
+- Not in Brewfile: no cask exists, and brew formula `rex` is a different tool.
+- Docs: `superlogical.com/rex/docs.md` (append `.md` to any docs page).
+
 ## Brewfile
 
 - Do NOT add `tap "homebrew/bundle"` (deprecated; `brew bundle` is built in).

@@ -1,0 +1,14 @@
+-- Rex configuration (https://www.superlogical.com/rex/docs/customize/config)
+--
+-- The Rex server reads this file. Rex does not watch it for changes:
+--   rex config check    validate without loading
+--   rex config reload   apply (run on the server's machine)
+--   rex keymap          show the merged keymap the server loaded
+--
+-- The client default shortcuts apply. Add overrides below, for example:
+--   rex.bind("cmd+d", "pane.split", { direction = "right" })
+--   rex.unbind("cmd+d")
+-- List the actions a client offers: rex client ls; rex -C <label> actions
+--
+-- Remote hosts (rex.host) are not tracked here. Add them in the app with
+-- "Add Remote Host...".
