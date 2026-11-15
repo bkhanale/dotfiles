@@ -154,6 +154,18 @@ sessions with `TERM=xterm-ghostty`.
 - Not in Brewfile: no cask exists, and brew formula `rex` is a different tool.
 - Docs: `superlogical.com/rex/docs.md` (append `.md` to any docs page).
 
+## Tinycast (macOS-only)
+
+- Launcher app, brew cask (auto-updating). Settings live in the defaults domain
+  `com.abueammar.tinycast`, not in a file.
+- `home/run_onchange_after_tinycast-defaults.sh.tmpl` writes the tracked keys
+  with `defaults write` (darwin guard renders it empty elsewhere). Do not track
+  the plist: it holds runtime state (window frames, status items, DB IDs).
+- Capture an in-app change: `defaults read com.abueammar.tinycast`, copy the
+  value into the script. Restart Tinycast after apply.
+- Not tracked: snippets (`~/Library/Application Support/com.abueammar.tinycast/
+  Snippets/*.md`, they contain org URLs) and quicklinks (SQLite).
+
 ## Brewfile
 
 - Do NOT add `tap "homebrew/bundle"` (deprecated; `brew bundle` is built in).
