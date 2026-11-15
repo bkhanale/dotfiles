@@ -50,7 +50,9 @@ agent rules belong in that project's own `CLAUDE.md`/`AGENTS.md`.
   `secrets.zsh`, written by hand. (2) On demand: Bitwarden Secrets Manager via
   `bws run -- <cmd>` or `bws secret get <id>`. No network call at shell start;
   do not add a startup fetch or cache. `BWS_ACCESS_TOKEN` (machine account) is a
-  type-1 secret; `BWS_SERVER_URL` (non-US region) goes in `local.zsh`.
+  type-1 secret; `BWS_SERVER_URL` (non-US region) and `BWS_PROJECT_ID` go in
+  `local.zsh`. `conf.d/bws.zsh` has pass-like helpers: `bws-ls`, `bws-show KEY`,
+  `bws-insert KEY`, `bws-edit KEY`. Keys are UPPER_SNAKE_CASE.
 - Never commit real secrets. A new tracked config that needs an env var:
   document it in `secrets.zsh.example` (secret) or `local.zsh.example` (not).
   Do not bake a default into `conf.d/*`.

@@ -19,3 +19,5 @@
 
 # Bitwarden Secrets Manager region (default is the US cloud):
 # export BWS_SERVER_URL='https://vault.bitwarden.eu'
+# Project that bws-insert creates secrets in (bws project list -o table):
+# export BWS_PROJECT_ID='00000000-0000-0000-0000-000000000000'
