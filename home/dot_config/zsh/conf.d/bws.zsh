@@ -31,7 +31,7 @@ bws-insert() {
   local val
   read -rs "val?Value for $1: "; print
   [[ -n $val ]] || { print -u2 "bws-insert: empty value"; return 1; }
-  bws secret create "$1" "$val" "$BWS_PROJECT_ID" -o none && print "created $1"
+  bws secret create -o none -- "$1" "$val" "$BWS_PROJECT_ID" && print "created $1"
 }
 
 bws-edit() {
@@ -41,5 +41,5 @@ bws-edit() {
   [[ -n $id ]] || { print -u2 "bws-edit: no secret named $1"; return 1; }
   read -rs "val?New value for $1: "; print
   [[ -n $val ]] || { print -u2 "bws-edit: empty value"; return 1; }
-  bws secret edit "$id" --value "$val" -o none && print "updated $1"
+  bws secret edit -o none --value="$val" -- "$id" && print "updated $1"
 }
