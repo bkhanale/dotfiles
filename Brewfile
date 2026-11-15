@@ -58,3 +58,4 @@ cask "cmux"          # Ghostty-based terminal for AI coding agents (macOS 14+)
 cask "font-fira-code-nerd-font"
 cask "font-symbols-only-nerd-font"
 cask "ghostty"
+cask "tinycast"      # launcher, clipboard history, snippets, window management

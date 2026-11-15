@@ -1,0 +1,52 @@
+{{- if eq .chezmoi.os "darwin" -}}
+#!/usr/bin/env bash
+# Apply Tinycast settings (macOS-only, cask "tinycast").
+#
+# Tinycast stores settings in the defaults domain com.abueammar.tinycast
+# (~/Library/Preferences/com.abueammar.tinycast.plist). The plist also holds
+# runtime state (window frames, status items, database IDs), so we do not track
+# the file. This script writes only the keys below.
+#
+# run_onchange_: edit a value here and the next `chezmoi apply` writes it again.
+# To capture a change made in the app: `defaults read com.abueammar.tinycast`,
+# then copy the new value here.
+#
+# Hotkey values are JSON strings. carbonKeyCode is the macOS virtual key code;
+# carbonModifiers is a bit mask: cmd=256, shift=512, option=2048, control=4096.
+#
+# Not tracked: snippets (~/Library/Application Support/com.abueammar.tinycast/
+# Snippets/*.md) and quicklinks (quicklinks.sqlite3).
+set -euo pipefail
+
+domain=com.abueammar.tinycast
+
+hotkey() {
+  defaults write "$domain" "hotkey.$1" -string \
+    "{\"combo\":{\"_0\":{\"carbonModifiers\":$2,\"carbonKeyCode\":$3}}}"
+}
+
+# General
+defaults write "$domain" showInMenuBar -bool false
+defaults write "$domain" supportReminders -bool false
+defaults write "$domain" calendarMenuBarDisplay -int 0
+
+# Launcher
+hotkey togglePalette 256 49 # cmd+space
+defaults write "$domain" launcherAliases -dict \
+  "command:create-snippet" sa \
+  "command:search-snippets" s
+
+# Clipboard history
+hotkey command:clipboard-history 768 8 # cmd+shift+c
+
+# Snippets
+defaults write "$domain" snippetsEnabled -bool true
+
+# Window management (control+option)
+defaults write "$domain" windowManagementEnabled -bool true
+hotkey windowCommand.left-half 6144 4    # h
+hotkey windowCommand.bottom-half 6144 38 # j
+hotkey windowCommand.top-half 6144 40    # k
+hotkey windowCommand.right-half 6144 37  # l
+hotkey windowCommand.maximize 6144 36    # return
+{{ end -}}
