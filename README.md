@@ -220,7 +220,9 @@ lines in `secrets.zsh`. Get all other secrets on demand from
 [Bitwarden Secrets Manager](https://bitwarden.com/products/secrets-manager/)
 with the `bws` CLI (`install.sh` installs it). Only `BWS_ACCESS_TOKEN` must be
 in `secrets.zsh`; then use `bws run -- <cmd>` to give a command its secrets.
-No secret is fetched at shell start.
+No secret is fetched at shell start. For day-to-day use, `conf.d/bws.zsh` has
+`pass`-like helpers: `bws-ls`, `bws-show KEY`, `bws-insert KEY` and
+`bws-edit KEY`. Set `BWS_PROJECT_ID` in `local.zsh` for `bws-insert`.
 
 The example files are intentionally generic — there is no canonical list of
 expected variables. Add whatever your workflow needs.
