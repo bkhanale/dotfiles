@@ -1,0 +1,17 @@
+{{- /*
+  ~/.claude/settings.json = tracked base + untracked local overlay.
+
+  Base:    .chezmoitemplates/claude-settings.json (edit settings here).
+  Overlay: ~/.config/claude/settings.local.json (never committed). Holds
+           permissions.allow/deny and autoMode, which name private paths, orgs
+           and hosts. Template: ~/.config/claude/settings.local.json.example.
+
+  Objects merge deeply; the overlay wins on conflicts and replaces lists.
+  Claude Code has no user-level settings.local.json, so chezmoi does the merge.
+*/ -}}
+{{- $settings := includeTemplate "claude-settings.json" . | fromJson -}}
+{{- $local := joinPath .chezmoi.homeDir ".config/claude/settings.local.json" -}}
+{{- if stat $local -}}
+{{-   $settings = mergeOverwrite $settings (include $local | fromJson) -}}
+{{- end -}}
+{{ toPrettyJson "  " $settings }}

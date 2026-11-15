@@ -81,8 +81,8 @@ sessions with `TERM=xterm-ghostty`.
 
 ## AI coding agents (Claude Code + OpenCode + Codex + Antigravity CLI)
 
-- Tracked configs: `dot_claude/settings.json` (+`keybindings.json`),
-  `dot_config/ccstatusline/settings.json`, `dot_config/opencode/{opencode,tui}.json`,
+- Tracked configs: `dot_claude/settings.json.tmpl` (+`keybindings.json`),
+  `dot_config/ccstatusline/settings.json`, `dot_config/opencode/{opencode.json.tmpl,tui.json}`,
   `dot_codex/private_{config,plan.config,review.config}.toml`,
   `dot_gemini/antigravity-cli/settings.json`.
 - One source of truth: `CLAUDE.md` and `GEMINI.md` are thin `@AGENTS.md` imports.
@@ -106,6 +106,18 @@ sessions with `TERM=xterm-ghostty`.
   `trustedWorkspaces` back into `~/.gemini/antigravity-cli/settings.json`.
   Those are NOT tracked — if `chezmoi diff` shows them, run `chezmoi apply --force`;
   don't promote upstream.
+- Claude settings = tracked base + local overlay. Edit settings in
+  `home/.chezmoitemplates/claude-settings.json`. `permissions.allow/deny` and
+  `autoMode` live only in `~/.config/claude/settings.local.json` (never
+  committed; template `settings.local.json.example`). `dot_claude/settings.json.tmpl`
+  deep-merges the overlay on apply (overlay wins, lists replace). Claude Code
+  has no user-level `settings.local.json`, hence the chezmoi merge.
+- **Write-back pitfall (Claude):** "always allow" clicks and `/config` write to
+  `~/.claude/settings.json`. If `chezmoi diff` shows them, copy permission
+  rules into the overlay and other keys into the base, then apply.
+- Auto mode drops blanket allow rules (`Bash`, `Bash(*)`, interpreters, `Agent`).
+  Per-command rules (`Bash(gh *)`) survive. `mcp__*` is not a valid allow rule;
+  list each server (`mcp__<server>`).
 - ccstatusline: configured in Claude Code statusline; renderer uses the global
   `ccstatusline` executable (npm-installed separately). Antigravity CLI uses its
   own built-in native statusline.

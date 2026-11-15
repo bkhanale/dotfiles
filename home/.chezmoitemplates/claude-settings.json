@@ -16,7 +16,8 @@
   },
   "enabledPlugins": {
     "frontend-design@claude-plugins-official": true,
-    "typescript-lsp@claude-plugins-official": true
+    "typescript-lsp@claude-plugins-official": true,
+    "slack@anthropic-plugin-directory": true
   },
   "outputStyle": "Concise",
   "alwaysThinkingEnabled": true,
@@ -38,5 +39,11 @@
   "voiceEnabled": true,
   "spinnerTipsEnabled": false,
   "feedbackDrafts": "off",
-  "teammateDefaultModel": "opus"
+  "teammateDefaultModel": "opus",
+  "model": "opus",
+  "modelSettings": {
+    "claude-opus-5-5": {
+      "effortLevel": "high"
+    }
+  }
 }

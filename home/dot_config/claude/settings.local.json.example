@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash",
+      "Edit",
+      "Read",
+      "WebFetch",
+      "WebSearch",
+      "Write",
+      "Bash(gh *)",
+      "Bash(git *)",
+      "mcp__my-server"
+    ],
+    "deny": [
+      "Bash(git push --force*)",
+      "Bash(terraform -chdir=infrastructure/environments/production *)"
+    ]
+  },
+  "autoMode": {
+    "environment": [
+      "**Organization**: my-org (github.com/my-org)",
+      "**Trusted internal domains**: example.com"
+    ],
+    "allow": ["$defaults"],
+    "soft_deny": ["$defaults"]
+  }
+}
