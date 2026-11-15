@@ -96,6 +96,8 @@ install_macos() {
   else
     warn "Brewfile not found at $SCRIPT_DIR/Brewfile — skipping"
   fi
+
+  install_bws_upstream
 }
 
 # ── Arch Linux ────────────────────────────────────────────────────────────────
@@ -136,6 +138,7 @@ install_arch() {
 
   install_ghostty_terminfo
   install_neovim_upstream  # no-op on current Arch (already >= 0.11)
+  install_bws_upstream
 }
 
 # ── Debian / Ubuntu ───────────────────────────────────────────────────────────
@@ -226,6 +229,7 @@ install_debian() {
   install_lazygit_upstream
   install_zellij_upstream
   install_nvm_upstream
+  install_bws_upstream
 
   warn "ghostty is not packaged for Debian — if you want it as a *local*"
   warn "terminal on this box, install manually: https://ghostty.org/docs/install/binary"
@@ -295,6 +299,17 @@ install_nvm_upstream() {
   curl -fsSL "https://raw.githubusercontent.com/nvm-sh/nvm/$tag/install.sh" \
     | NVM_DIR="$nvm_dir" PROFILE=/dev/null GIT_CONFIG_GLOBAL=/dev/null bash
   success "nvm $tag installed"
+}
+
+# ── Helper: install bws (Bitwarden Secrets Manager CLI) on every OS ──────────
+# No Homebrew formula, no pacman/apt package. Use Bitwarden's official
+# installer: it downloads the current release, verifies its sha256, and
+# installs to /usr/local/bin (sudo) or ~/.local/bin (no sudo).
+install_bws_upstream() {
+  command -v bws &>/dev/null && { success "bws already installed ($(bws --version 2>&1 | awk '{print $2}'))"; return 0; }
+  info "Installing bws (official installer)…"
+  curl -fsSL --max-time 60 https://bws.bitwarden.com/install | sh
+  success "bws installed"
 }
 
 # ── Helper: install eza from upstream release (Linux-only) ───────────────────
@@ -741,7 +756,10 @@ main() {
   printf "         gpgconf --kill gpg-agent\n"
   printf "         pass init <your-key-id>   # if you use the pass vault\n"
   printf "\n"
-  printf "    3. Verify:\n"
+  printf "    3. Set BWS_ACCESS_TOKEN (Bitwarden Secrets Manager machine account)\n"
+  printf "       in ~/.config/zsh/secrets.zsh. See secrets.zsh.example.\n"
+  printf "\n"
+  printf "    4. Verify:\n"
   printf "         chezmoi diff         # should be clean\n"
   printf "         time zsh -i -c exit  # should be < 200ms\n"
   printf "\n"
