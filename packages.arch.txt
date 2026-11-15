@@ -39,9 +39,6 @@ lazygit
 gnupg
 pinentry
 
-# ── Secrets vault ─────────────────────────────────────────────────────────────
-pass
-
 # ── Utilities ─────────────────────────────────────────────────────────────────
 # `watch` ships with procps-ng (preinstalled), so it is intentionally omitted.
 curl

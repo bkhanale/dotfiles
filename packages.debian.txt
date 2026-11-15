@@ -74,9 +74,6 @@ lazygit
 gnupg
 pinentry-curses
 
-# ── Secrets vault ─────────────────────────────────────────────────────────────
-pass
-
 # ── Remote access ─────────────────────────────────────────────────────────────
 # mosh: roaming-friendly SSH replacement — survives IP changes, sleep/wake and
 # flaky links (e.g. reaching this box from a tablet on cellular). Run zellij

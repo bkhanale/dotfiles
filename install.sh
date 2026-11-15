@@ -678,31 +678,6 @@ fix_gnupg_perms() {
   success "GPG permissions fixed"
 }
 
-# ── Initialise pass (passwordstore.org) with this machine's GPG key ───────────
-# Bootstrap step. Safe to re-run — every guard below exits early. If the GPG key
-# has not been imported/generated yet, this skips and prints how to finish later.
-init_password_store() {
-  command -v pass >/dev/null 2>&1 || return 0
-  command -v gpg  >/dev/null 2>&1 || return 0
-
-  local gpg_key
-  gpg_key="$(chezmoi execute-template '{{ .gpgKey }}' 2>/dev/null || true)"
-  [[ -n "$gpg_key" ]] || return 0
-
-  local store="${PASSWORD_STORE_DIR:-$HOME/.password-store}"
-  [[ -f "$store/.gpg-id" ]] && return 0   # already initialised or cloned
-
-  if ! gpg --list-secret-keys "$gpg_key" >/dev/null 2>&1; then
-    info "pass: GPG secret key $gpg_key not found yet; skipping store init (run 'pass init $gpg_key' after importing it)"
-    return 0
-  fi
-
-  info "Initialising pass store for $gpg_key…"
-  pass init "$gpg_key"
-  pass git init
-  success "pass store initialised at $store"
-}
-
 # ── Main ──────────────────────────────────────────────────────────────────────
 main() {
   header "Step 1 — Install packages"
@@ -738,7 +713,6 @@ main() {
   write_chezmoi_config
   apply_chezmoi
   fix_gnupg_perms
-  init_password_store
   maybe_chsh_to_zsh
 
   printf "\n"
@@ -754,7 +728,6 @@ main() {
   printf "    2. Import your GPG key (if using commit signing):\n"
   printf "         gpg --import private-key.asc\n"
   printf "         gpgconf --kill gpg-agent\n"
-  printf "         pass init <your-key-id>   # if you use the pass vault\n"
   printf "\n"
   printf "    3. Set BWS_ACCESS_TOKEN (Bitwarden Secrets Manager machine account)\n"
   printf "       in ~/.config/zsh/secrets.zsh. See secrets.zsh.example.\n"
