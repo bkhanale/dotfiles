@@ -157,27 +157,17 @@ sessions with `TERM=xterm-ghostty`.
 - Do NOT add `tap "homebrew/bundle"` (deprecated; `brew bundle` is built in).
 - Casks go at the bottom after all `brew` lines. Verify with `brew bundle`.
 
-## GPG / pass
+## GPG
 
 - **Perms pitfall:** after chezmoi touches `~/.gnupg`, keyboxd may go read-only
   (`Attempt to write a readonly SQL database`). Fix (install.sh does this):
   `chmod 700 ~/.gnupg`; dirs 700, files 600; `gpgconf --kill all`.
 - Signing: `git commit` `Inappropriate ioctl for device` → ensure `GPG_TTY=$(tty)`
   (exported in `conf.d/exports.zsh`). pinentry missing → `gpgconf --kill gpg-agent`.
-- `pass` is the local vault at default `~/.password-store` (deliberately not moved
-  via `PASSWORD_STORE_DIR`: agents run plain bash, which ignores that var). Its own
-  git repo, synced independently — never nest inside this repo.
-- Key model: one GPG key per device; private keys never leave their device; store
-  encrypted to all devices' keys (`.gpg-id`). `gpgKey` doubles as git signingkey
-  and pass identity. Init via `install.sh` (`init_password_store`); safe to
-  re-run. Not a chezmoi `run_` script — those show in `chezmoi diff` on every
-  apply. If the key isn't imported yet, run `pass init <gpgKey>` afterward.
-- **Migration:** secrets are moving from `pass` to bws. Keep `pass`, its store and
-  `init_password_store` until the owner says the migration is done.
-- Agent access: `pass show ai/<name>` (agent-readable convention `ai/`; human-only
-  elsewhere). Every-shell env vars live in one `env/shell` entry that `secrets.zsh`
-  evals with a single `gpg -dq` — do NOT add one `pass show` per var (~190ms each
-  at startup). Templates can pull via `{{ pass "ai/example" }}`.
+- Key model: one GPG key per device; private keys never leave their device.
+  `gpgKey` is the git signing key.
+- Secrets manager is Bitwarden Secrets Manager (`bws`), not `pass`. See
+  "Per-machine overrides" for the two types of secrets.
 
 ## install.sh
 
