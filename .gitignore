@@ -19,3 +19,6 @@ home/dot_gemini/antigravity-cli/cache/
 home/dot_gemini/antigravity-cli/conversations/
 GEMINI.local.md
 
+
+# git worktrees
+.worktrees/
