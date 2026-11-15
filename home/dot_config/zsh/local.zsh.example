@@ -16,3 +16,6 @@
 # export PATH="$HOME/work/bin:$PATH"
 # alias deploy='kubectl --context=staging'
 # export EDITOR='nvim'   # override the default
+
+# Bitwarden Secrets Manager region (default is the US cloud):
+# export BWS_SERVER_URL='https://vault.bitwarden.eu'

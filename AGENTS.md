@@ -46,6 +46,11 @@ agent rules belong in that project's own `CLAUDE.md`/`AGENTS.md`.
   — non-secret per-machine config (PATH, work aliases, env overrides).
 - Both are gitignored AND in `home/.chezmoiignore`; both sourced at end of
   `dot_zshrc` (secrets first). `*.example` templates are committed.
+- Two types of secrets. (1) Exported at shell start: plain `export` lines in
+  `secrets.zsh`, written by hand. (2) On demand: Bitwarden Secrets Manager via
+  `bws run -- <cmd>` or `bws secret get <id>`. No network call at shell start;
+  do not add a startup fetch or cache. `BWS_ACCESS_TOKEN` (machine account) is a
+  type-1 secret; `BWS_SERVER_URL` (non-US region) goes in `local.zsh`.
 - Never commit real secrets. A new tracked config that needs an env var:
   document it in `secrets.zsh.example` (secret) or `local.zsh.example` (not).
   Do not bake a default into `conf.d/*`.
@@ -67,6 +72,7 @@ Package sources: macOS `Brewfile`, Arch `packages.arch.txt`, Debian/Ubuntu
 | native build deps | Xcode CLT | base-devel | build-essential |
 | ghostty | brew cask | pacman | not packaged (install manually only if local terminal wanted) |
 | cmux | brew cask (macOS-only) | — | — |
+| bws (Bitwarden Secrets Manager CLI) | official installer (`bws.bitwarden.com/install`) | same | same |
 
 Debian also compiles `terminfo/ghostty.terminfo` into `~/.terminfo` for SSH
 sessions with `TERM=xterm-ghostty`.
@@ -166,6 +172,8 @@ sessions with `TERM=xterm-ghostty`.
   and pass identity. Init via `install.sh` (`init_password_store`); safe to
   re-run. Not a chezmoi `run_` script — those show in `chezmoi diff` on every
   apply. If the key isn't imported yet, run `pass init <gpgKey>` afterward.
+- **Migration:** secrets are moving from `pass` to bws. Keep `pass`, its store and
+  `init_password_store` until the owner says the migration is done.
 - Agent access: `pass show ai/<name>` (agent-readable convention `ai/`; human-only
   elsewhere). Every-shell env vars live in one `env/shell` entry that `secrets.zsh`
   evals with a single `gpg -dq` — do NOT add one `pass show` per var (~190ms each
@@ -175,7 +183,8 @@ sessions with `TERM=xterm-ghostty`.
 
 Single bootstrap for all OSes. Non-destructive — backs up (`.pre-chezmoi.bak`,
 `cp -p`), never deletes. Idempotent/re-runnable; each step short-circuits.
-Runs `chezmoi init --apply --force` (init renders full `chezmoi.toml`; force
+Tools install at their latest version with the tool's own recommended
+method. Never pin a version. Runs `chezmoi init --apply --force` (init renders full `chezmoi.toml`; force
 avoids TTY prompts). Deliberately does NOT remove version managers/oh-my-zsh/etc.
 or extract secrets from old configs. Don't add a removal step — back up, don't delete.
 
