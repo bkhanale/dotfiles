@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 # Install the agent-browser CLI and its Chrome for Testing.
 #
-# run_onchange_: change the version below and the next `chezmoi apply` installs it.
+# Installs the latest release. run_onchange_ runs this only when the script
+# changes. To upgrade later:
+#   npm install -g --prefix ~/.local agent-browser@latest
 # The prefix is ~/.local, so the install needs no sudo and does not depend on the
 # active nvm Node version. dot_zshenv puts ~/.local/bin on PATH.
 #
@@ -10,7 +12,6 @@
 #   agent-browser install --with-deps
 set -euo pipefail
 
-version=0.43.0
 prefix="$HOME/.local"
 bin="$prefix/bin/agent-browser"
 
@@ -28,9 +29,7 @@ if ! command -v npm >/dev/null 2>&1; then
   exit 0
 fi
 
-if [[ "$("$bin" --version 2>/dev/null || true)" != *"$version"* ]]; then
-  limit 600 npm install --global --prefix "$prefix" --no-fund --no-audit "agent-browser@$version"
-fi
+limit 600 npm install --global --prefix "$prefix" --no-fund --no-audit agent-browser@latest
 
 deps=()
 if [[ "$(uname -s)" == Linux ]]; then

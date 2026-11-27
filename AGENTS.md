@@ -228,10 +228,10 @@ or extract secrets from old configs. Don't add a removal step — back up, don't
 
 ## agent-browser
 
-- `home/run_onchange_after_install-agent-browser.sh` installs the pinned
+- `home/run_onchange_after_install-agent-browser.sh` installs the latest
   `agent-browser` npm package into `~/.local` (no sudo, independent of nvm),
-  then its Chrome for Testing. To upgrade, change `version` in the script and
-  run `chezmoi apply`.
+  then its Chrome for Testing. It runs again only when the script changes.
+  To upgrade: `npm install -g --prefix ~/.local agent-browser@latest`.
 - Linux: it adds `--with-deps` (apt system libraries) only when `sudo -n`
   works. Otherwise run `agent-browser install --with-deps` once by hand.
 - The rules repo (`rules/common/browser.md`) and the skills repo
