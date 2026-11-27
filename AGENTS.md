@@ -225,3 +225,14 @@ or extract secrets from old configs. Don't add a removal step — back up, don't
 - Portability: no personal names, usernames, private hostnames, org names, or
   service endpoints in tracked files — those go in `local.zsh`. Use placeholders
   (`your-github-user`, `example.com`, `my-project`) in examples.
+
+## agent-browser
+
+- `home/run_onchange_after_install-agent-browser.sh` installs the pinned
+  `agent-browser` npm package into `~/.local` (no sudo, independent of nvm),
+  then its Chrome for Testing. To upgrade, change `version` in the script and
+  run `chezmoi apply`.
+- Linux: it adds `--with-deps` (apt system libraries) only when `sudo -n`
+  works. Otherwise run `agent-browser install --with-deps` once by hand.
+- The rules repo (`rules/common/browser.md`) and the skills repo
+  (`bk-agent-browser`) tell agents when and how to use it.
